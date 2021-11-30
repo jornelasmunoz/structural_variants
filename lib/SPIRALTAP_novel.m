@@ -124,7 +124,7 @@ mu = 0;
 % Add a path to the denoising methods folder
 spiraltapdir = which('SPIRALTAP');
 [spiraltapdir dummy] = fileparts(spiraltapdir);
-path([spiraltapdir,'/denoise'],path)
+path([spiraltapdir,'./denoise'],path)
 
 % ---- Noise Type ----
 noisetype = 'Poisson';
