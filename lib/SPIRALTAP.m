@@ -124,7 +124,7 @@ mu = 0;
 % Add a path to the denoising methods folder
 spiraltapdir = which('SPIRALTAP');
 [spiraltapdir, dummy] = fileparts(spiraltapdir);
-path([spiraltapdir,'/denoise'],path)
+path([spiraltapdir,'./denoise'],path)
 
 % ---- Noise Type ----
 noisetype = 'Poisson';
@@ -561,10 +561,10 @@ if (verbose > 0)
     fprintf(['=========================================================\n',...
         '= Beginning SPIRAL Reconstruction    @ %2d:%2d %02d/%02d/%4d =\n',...
         '=   Noisetype: %-8s         Penalty: %-9s      =\n',...
-        '=   Tau Vals:       %-10.5e, %-10.5e      Maxiter: %-5d          =\n',...
+        '=   Tau:       %-10.5e      Maxiter: %-5d          =\n',...
         '=========================================================\n'],...
         thetime(4),thetime(5),thetime(2),thetime(3),thetime(1),...
-        noisetype,penalty,tau(1), tau(2),maxiter)      
+        noisetype,penalty,tau,maxiter)      
 end
 
 tic; % Start clock for calculating computation time.
@@ -788,11 +788,7 @@ end
 % 2) Compute Penalty:
 switch lower(penalty)
     case 'canonical'
-        n = length(x)/3;
-        objective = objective + sum(abs(tau(1).*x(1:n))); % use tau(1) for child inherited variants
-        objective = objective + sum(abs(tau(2).*x(n+1:2*n))); % use tau(2) for child novel variants
-        objective = objective + sum(abs(tau(1).*x(2*n+1:3*n))); % use tau(1) for parent variants
-%        objective = objective + sum(abs(tau(:).*x(:)));
+        objective = objective + sum(abs(tau(:).*x(:)));
 	case 'onb' 
     	WT = varargin{1};
         WTx = WT(x);
@@ -812,23 +808,9 @@ end
 function subsolution = computesubsolution(step,tau,alpha,penalty,mu,varargin)
     switch lower(penalty)
         case 'canonical'
-            %%%subsolution = max(step - tau./alpha + mu, 0.0);
-            %subsolution = step - tau./alpha;
-            n = length(step)/3;
-            subsolution(1:n) = step(1:n) - tau(1)./alpha; % child
-            % variants inherited from parent
-            %subsolution(n+1:2*n) = step(1:n) - tau(2)./alpha; % novel
-            %AL:this is previous code with a potential error
-            subsolution(n+1:2*n) = step(n+1:2*n) - tau(2)./alpha;
-            % child variants
-            %subsolution(2*n+1:3*n) = step(1:n) - tau(1)./alpha; % parent
-            %AL: This has potential error
-            subsolution(2*n+1:3*n) = step(2*n+1:3*n) - tau(1)./alpha;
-            % variants
-            subsolution = Novel_const(subsolution);
-          %  subsolution
-            
-            
+            subsolution = max(step - tau./alpha + mu, 0.0);
+          % subsolution = min(max(step - tau./alpha + mu, 0.0),1.0);
+            subsolution = min(subsolution,1);
         case 'onb'
             % if onb is selected, varargin must be such that
             W                   = varargin{1};

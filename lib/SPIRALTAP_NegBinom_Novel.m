@@ -37,7 +37,7 @@
 %                   such that A(x) = A*x where x has n total elements.  In 
 %                   this case one must also specify a function call AT() 
 %                   using the 'AT' option that computes matrix-vector 
-%                   products with the adjoint of A such that AT(x) = A'*x.  
+%                   products with the adjoint of A such that AT(x) = A'*x.    
 %
 %   tau             Regularization parameter that trades off the data fit
 %                   (negative log-likelihood) with the regularization.
@@ -127,7 +127,7 @@ mu = 0;
 % Add a path to the denoising methods folder
 spiraltapdir = which('SPIRALTAP');
 [spiraltapdir dummy] = fileparts(spiraltapdir);
-path([spiraltapdir,'./denoise'],path)
+path([spiraltapdir,'/denoise'],path)
 
 % ---- Noise Type ----
 %noisetype = 'Poisson';
@@ -725,6 +725,8 @@ while (iter <= miniter) || ((iter <= maxiter) && not(converged))
     Axprevious = Ax; 
     iter = iter + 1;
 end
+
+
 % ===========================
 % = End Main Algorithm Loop =
 % ===========================

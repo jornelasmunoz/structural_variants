@@ -37,7 +37,7 @@
 %                   such that A(x) = A*x where x has n total elements.  In 
 %                   this case one must also specify a function call AT() 
 %                   using the 'AT' option that computes matrix-vector 
-%                   products with the adjoint of A such that AT(x) = A'*x.  
+%                   products with the adjoint of A such that AT(x) = A'*x.      
 %
 %   tau             Regularization parameter that trades off the data fit
 %                   (negative log-likelihood) with the regularization.
@@ -82,7 +82,7 @@
 %   reconerror      The evolution of the specified error metric with the
 %                   number of iterations.  The reconstruction error can
 %                   only be computed if the true underlying signal or image
-%                   is provided using the 'TRUTH' option.  The error
+%                   is provided using the "TRUTH" option.  The error
 %                   corresponding to the initial value is stored in
 %                   reconerror(1), and hence the length of reconerror will
 %                   be iter + 1.
@@ -105,8 +105,10 @@
 %                   will be iter + 1.
 %
 
+% === This code was edited by Andrew P Lazar in 2020 and later further modified by Jocelyn Ornelas in 2021
+%     We add an extension of SPIRALTAP to incorporate Negative Binomial noise
 
-function [x, varargout] = SPIRALTAP(y, A, tau, varargin)
+function [x, varargout] = NEBULA(y, A, tau, noisetype, varargin)
 % ==== Set default/initial parameter values ====
 % ---- All Methods ----
 verbose = 0;
@@ -122,13 +124,14 @@ recenter = 0;
 mu = 0;
 
 % Add a path to the denoising methods folder
-spiraltapdir = which('SPIRALTAP');
-[spiraltapdir, dummy] = fileparts(spiraltapdir);
-path([spiraltapdir,'/denoise'],path)
+nebula_dir = which('NEBULA');
+[nebula_dir, dummy] = fileparts(nebula_dir);
+path([nebula_dir,'/denoise'],path)
 
 % ---- Noise Type ----
-noisetype = 'Poisson';
-% ---- For Poisson Noise ----
+%noisetype = 'Poisson';
+%noisetype = 'Negative Binomial';
+
 logepsilon = 1e-10;
 sqrty = [];
 
@@ -141,7 +144,7 @@ subminiter = 1;
 submaxiter = 50;
 substopcriterion = 0;
 subtolerance = 1e-5;
-% Don't forget convergence criterion
+% Dont forget convergence criterion
 
 % ---- For Choosing Alpha ----
 alphamethod = 1;
@@ -219,10 +222,10 @@ else
 end
 
 % ---- check the validity of the input parameters ----
-% NOISETYPE:  For now only two options are available 'Poisson' and 'Gaussian'.
-if sum( strcmpi(noisetype,{'poisson','gaussian'})) == 0
+% NOISETYPE:  Three options are available 'Poisson', 'Gaussian', 'Negative Binomial'.
+if sum( strcmpi(noisetype,{'poisson','gaussian','negative binomial'})) == 0
     error(['Invalid setting ''NOISETYPE'' = ''',num2str(noisetype),'''.  ',...
-        'The parameter ''NOISETYPE'' may only be ''Gaussian'' or ''Poisson''.'])
+        'The parameter ''NOISETYPE'' may only be ''Gaussian'' or ''Poisson''or' 'Negative Binomial''.'])
 end
 % PENALTY:  The implemented penalty options are 'Canonical, 'ONB', 'RDP', 
 % 'RDP-TI','TV'.
@@ -357,11 +360,13 @@ end
 
 % Things to check and compute that depend on NOISETYPE:
 switch lower(noisetype)
-    case 'poisson'
+    %case 'poisson' or 'negative binomial' 
         % Ensure that y is a vector of nonnegative counts
         if sum(round(y(:)) ~= y(:)) || (min(y(:)) < 0)
+            %error(['The data ''Y'' must contain nonnegative integer ',...
+               % 'counts when ''NOISETYPE'' = ''Poisson'' or ''Negative Binomial''']);
             error(['The data ''Y'' must contain nonnegative integer ',...
-                'counts when ''NOISETYPE'' = ''Poisson''']);
+                'counts when ''NOISETYPE'' = ''Negative Binomial''']);
         end
         % Maybe in future could check to ensure A and AT contain nonnegative
         %   elements, but perhaps too computationally wasteful 
@@ -371,6 +376,7 @@ switch lower(noisetype)
         if recenter
             todo
         end
+       
     case 'gaussian'
         
 end
@@ -578,8 +584,9 @@ while (iter <= miniter) || ((iter <= maxiter) && not(converged))
         case 0 % Constant alpha throughout all iterations.
             % If convergence criteria requires it, compute dx or dobjective
             dx = xprevious;
-            step = xprevious - grad./alpha;
-            x = computesubsolution(step,tau,alpha,penalty,mu,...
+            %APL: (old stuff) step = xprevious - grad./alpha;
+            step = xprevious - alpha.*grad + tau(1);
+            x = computesubsolution(step,tau,alpha,grad,penalty,mu,...
                 W,WT,subminiter,submaxiter,substopcriterion,...
                 subtolerance);
             dx = x - dx;
@@ -596,7 +603,10 @@ while (iter <= miniter) || ((iter <= maxiter) && not(converged))
                     % --- Compute the step, and perform Gaussian 
                     %     denoising subproblem ----
                     dx = xprevious;
-                    step = xprevious - grad./alpha;
+                   %APL (old stuff) step = xprevious - grad./alpha;
+                   %step = xprevious - grad.*alpha + tau(1);
+                   step = xprevious - grad./alpha;
+                   %step = xprevious - 0.01.*grad + tau(1);
                     x = computesubsolution(step,tau,alpha,penalty,mu,...
                         W,WT,subminiter,submaxiter,substopcriterion,...
                         subtolerance);
@@ -621,8 +631,10 @@ while (iter <= miniter) || ((iter <= maxiter) && not(converged))
             else 
                 % just take bb setp, no enforcing monotonicity.
                 dx = xprevious;
-                step = xprevious - grad./alpha;
-                x = computesubsolution(step,tau,alpha,penalty,mu,...
+                %APL (old stuff) step = xprevious - grad./alpha;
+                step = xprevious - alpha.*grad + tau(1);
+                %step = xprevious - 0.01.*grad + tau(1);
+                x = computesubsolution(step,tau,alpha,grad,penalty,mu,...
                     W,WT,subminiter,submaxiter,substopcriterion,...
                     subtolerance);
                 dx = x - dx;
@@ -691,6 +703,9 @@ while (iter <= miniter) || ((iter <= maxiter) && not(converged))
             switch lower(noisetype)
                 case 'poisson'
                     Adx = Adx.*sqrty./(Ax + logepsilon); 
+                %APL: trying to keep this the same, may have to change
+                case 'negative binomial'
+                    Adx = Adx.*sqrty./(Ax + logepsilon); 
                 case 'gaussian'
                     % No need to scale Adx
             end
@@ -708,6 +723,8 @@ while (iter <= miniter) || ((iter <= maxiter) && not(converged))
     Axprevious = Ax; 
     iter = iter + 1;
 end
+
+
 % ===========================
 % = End Main Algorithm Loop =
 % ===========================
@@ -766,6 +783,10 @@ function grad = computegrad(y,Ax,AT,noisetype,logepsilon)
     switch lower(noisetype)
         case 'poisson'
             grad = AT(1 - (y./(Ax + logepsilon)));
+        case 'negative binomial'
+            r=1;
+            grad= AT((y + r)./(r+ Ax + logepsilon)) - AT(y./(Ax + logepsilon)); 
+            %grad= ((y+r)./(r+ Ax + logepsilon)).*AT(1) + (y./(Ax+logepsilon)).*AT(1);
         case 'gaussian'
             grad = AT(Ax - y);
     end
@@ -780,14 +801,21 @@ function objective = computeobjective(x,y,Ax,tau,noisetype,logepsilon,...
 % 1) Compute log-likelihood:
 switch lower(noisetype)
     case 'poisson'
-        precompute = y.*log(Ax + logepsilon);
-        objective = sum(Ax(:)) - sum(precompute(:));
+        precompute = y.*log(Ax + logepsilon); %APL: This computes the sum
+        in F(f) in SPIRAL paper
+        objective = sum(Ax(:)) - sum(precompute(:)); %APL: This computes
+        F(f) in SPIRAL Paper
+    case 'negative binomial'
+        precompute = (y + 1).*log(1 + Ax + logepsilon) - y.*log(Ax + logepsilon);
+        %APL: The objective function F(f) for negative binomial neagtive
+        %log likelihood
+        objective= sum(precompute(:));
     case 'gaussian'
         objective = sum( (y(:) - Ax(:)).^2)./2;
 end
 % 2) Compute Penalty:
 switch lower(penalty)
-    case 'canonical'
+    case 'canonical' %APL: this is the case we will be using
         n = length(x)/3;
         objective = objective + sum(abs(tau(1).*x(1:n))); % use tau(1) for child inherited variants
         objective = objective + sum(abs(tau(2).*x(n+1:2*n))); % use tau(2) for child novel variants
@@ -810,20 +838,34 @@ end
 % = Denoising Subproblem Computation: =
 % =====================================
 function subsolution = computesubsolution(step,tau,alpha,penalty,mu,varargin)
+%APL: Now adding the input grad which is the gradient
     switch lower(penalty)
         case 'canonical'
             %%%subsolution = max(step - tau./alpha + mu, 0.0);
             %subsolution = step - tau./alpha;
             n = length(step)/3;
+            
+            subsolution = step;
+          
             subsolution(1:n) = step(1:n) - tau(1)./alpha; % child
+            %APL: trying to mimic what is in the negative binomial paper
+            %APL: subsolution(1:n) = step(1:n) -alpha.*grad(1:n) +tau(1);
             % variants inherited from parent
-            %subsolution(n+1:2*n) = step(1:n) - tau(2)./alpha; % novel
-            %AL:this is previous code with a potential error
+            
+            %subsolution(n+1:2*n) = step(1:n) + tau(2)./alpha; % nove  %APL:this is previous code with a potential error
             subsolution(n+1:2*n) = step(n+1:2*n) - tau(2)./alpha;
-            % child variants
-            %subsolution(2*n+1:3*n) = step(1:n) - tau(1)./alpha; % parent
-            %AL: This has potential error
+         
+            %APL: Trying to mimic what is in the paper (negative binomial paper) 
+           %APL: subsolution(n+1:2*n) = step(n+1:2*n) - alpha.*grad(n+1:2*n) + tau(1);
+           
+           % child variants
+            
+            %subsolution(2*n+1:3*n) = step(1:n) - tau(1)./alpha; % parent   %APL: This has potential error
             subsolution(2*n+1:3*n) = step(2*n+1:3*n) - tau(1)./alpha;
+           
+            %APL: trying to mimic what is in the negative binomial paper
+            % APL: subsolution(2*n+1:3*n) = step(2*n+1:3*n) - alpha.*grad(2*n+1:3*n) +tau(1);
+           
             % variants
             subsolution = Novel_const(subsolution);
           %  subsolution
@@ -838,7 +880,9 @@ function subsolution = computesubsolution(step,tau,alpha,penalty,mu,varargin)
             substopcriterion    = varargin{5};
             subtolerance        = varargin{6};
                                    
-            subsolution = constrainedl2l1denoise(step,W,WT,tau./alpha,mu,...
+           % subsolution = constrainedl2l1denoise(step,W,WT,tau./alpha,mu,...
+                %subminiter,submaxiter,substopcriterion,subtolerance);
+             subsolution = constrainedl2l1denoise(step,W,WT,tau.*alpha,mu,...
                 subminiter,submaxiter,substopcriterion,subtolerance);
         case 'rdp'
             subsolution = haarTVApprox2DNN_recentered(step,tau./alpha,-mu);
