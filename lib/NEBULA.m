@@ -570,7 +570,7 @@ if (verbose > 0)
         '=   Tau Vals:       %-10.5e, %-10.5e      Maxiter: %-5d          =\n',...
         '=========================================================\n'],...
         thetime(4),thetime(5),thetime(2),thetime(3),thetime(1),...
-        noisetype,penalty,tau(1), tau(2),maxiter)      
+        noisetype,penalty,tau(1), tau(2),maxiter)     %tau needs to be a vector of two elements  
 end
 
 tic; % Start clock for calculating computation time.
@@ -584,8 +584,8 @@ while (iter <= miniter) || ((iter <= maxiter) && not(converged))
         case 0 % Constant alpha throughout all iterations.
             % If convergence criteria requires it, compute dx or dobjective
             dx = xprevious;
-            %APL: (old stuff) step = xprevious - grad./alpha;
-            step = xprevious - alpha.*grad + tau(1);
+            %APL: (old stuff) step = xprevious - grad./alpha; %
+            step = xprevious - alpha.*grad + tau(1);          % why this?
             x = computesubsolution(step,tau,alpha,grad,penalty,mu,...
                 W,WT,subminiter,submaxiter,substopcriterion,...
                 subtolerance);
@@ -603,10 +603,10 @@ while (iter <= miniter) || ((iter <= maxiter) && not(converged))
                     % --- Compute the step, and perform Gaussian 
                     %     denoising subproblem ----
                     dx = xprevious;
-                   %APL (old stuff) step = xprevious - grad./alpha;
-                   %step = xprevious - grad.*alpha + tau(1);
-                   step = xprevious - grad./alpha;
-                   %step = xprevious - 0.01.*grad + tau(1);
+                   %APL (old stuff) step = xprevious - grad./alpha; %
+                   %step = xprevious - grad.*alpha + tau(1);        %
+                   step = xprevious - grad./alpha;                  % why this?
+                   %step = xprevious - 0.01.*grad + tau(1);         % what is this for?
                     x = computesubsolution(step,tau,alpha,penalty,mu,...
                         W,WT,subminiter,submaxiter,substopcriterion,...
                         subtolerance);
@@ -631,9 +631,9 @@ while (iter <= miniter) || ((iter <= maxiter) && not(converged))
             else 
                 % just take bb setp, no enforcing monotonicity.
                 dx = xprevious;
-                %APL (old stuff) step = xprevious - grad./alpha;
-                step = xprevious - alpha.*grad + tau(1);
-                %step = xprevious - 0.01.*grad + tau(1);
+                %APL (old stuff) step = xprevious - grad./alpha; %
+                step = xprevious - alpha.*grad + tau(1);         % why this?
+                %step = xprevious - 0.01.*grad + tau(1);         % was alpha being hard-coded?
                 x = computesubsolution(step,tau,alpha,grad,penalty,mu,...
                     W,WT,subminiter,submaxiter,substopcriterion,...
                     subtolerance);
@@ -701,7 +701,7 @@ while (iter <= miniter) || ((iter <= maxiter) && not(converged))
             %Adx is overwritten at top of iteration, so this is an ok reuse
             % Adx is overwritten at top of iteration, so this is an ok reuse
             switch lower(noisetype)
-                case 'poisson'
+                case 'poisson'                                          % poisson and neg bin are the same... should they?
                     Adx = Adx.*sqrty./(Ax + logepsilon); 
                 %APL: trying to keep this the same, may have to change
                 case 'negative binomial'
@@ -775,7 +775,7 @@ end
 % =============================================================================
 % =============================================================================
 
-% =========================
+% =========================     %what is this section doing?
 % = Gradient Computation: =
 % =========================
 function grad = computegrad(y,Ax,AT,noisetype,logepsilon)
@@ -801,10 +801,8 @@ function objective = computeobjective(x,y,Ax,tau,noisetype,logepsilon,...
 % 1) Compute log-likelihood:
 switch lower(noisetype)
     case 'poisson'
-        precompute = y.*log(Ax + logepsilon); %APL: This computes the sum
-        in F(f) in SPIRAL paper
-        objective = sum(Ax(:)) - sum(precompute(:)); %APL: This computes
-        F(f) in SPIRAL Paper
+        precompute = y.*log(Ax + logepsilon); %APL: This computes the sum in F(f) in SPIRAL paper
+        objective = sum(Ax(:)) - sum(precompute(:)); %APL: This computes F(f) in SPIRAL Paper
     case 'negative binomial'
         precompute = (y + 1).*log(1 + Ax + logepsilon) - y.*log(Ax + logepsilon);
         %APL: The objective function F(f) for negative binomial neagtive
@@ -815,8 +813,10 @@ switch lower(noisetype)
 end
 % 2) Compute Penalty:
 switch lower(penalty)
-    case 'canonical' %APL: this is the case we will be using
-        n = length(x)/3;
+    case 'canonical' 
+        n = length(x)/3;            %any line that does /3 needs to be changed
+        
+        % Is there a way to automate this? (maybe parent first and novel last, for loop and [1 1 2])
         objective = objective + sum(abs(tau(1).*x(1:n))); % use tau(1) for child inherited variants
         objective = objective + sum(abs(tau(2).*x(n+1:2*n))); % use tau(2) for child novel variants
         objective = objective + sum(abs(tau(1).*x(2*n+1:3*n))); % use tau(1) for parent variants
@@ -834,9 +834,9 @@ switch lower(penalty)
 end
 end
 
-% =====================================
-% = Denoising Subproblem Computation: =
-% =====================================
+% ===================================== %
+% = Denoising Subproblem Computation: = % Need to understand this whole section
+% ===================================== %
 function subsolution = computesubsolution(step,tau,alpha,penalty,mu,varargin)
 %APL: Now adding the input grad which is the gradient
     switch lower(penalty)
