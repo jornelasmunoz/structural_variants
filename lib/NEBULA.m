@@ -375,8 +375,7 @@ switch lower(noisetype)
         % Ensure that recentering is not set
         if recenter
             todo
-        end
-       
+        end      
     case 'gaussian'
         
 end
@@ -565,7 +564,7 @@ end
 if (verbose > 0)
     thetime = fix(clock);
     fprintf(['=========================================================\n',...
-        '= Beginning SPIRAL Reconstruction    @ %2d:%2d %02d/%02d/%4d =\n',...
+        '= Beginning NEBULA Reconstruction    @ %2d:%2d %02d/%02d/%4d =\n',...
         '=   Noisetype: %-8s         Penalty: %-9s      =\n',...
         '=   Tau Vals:       %-10.5e, %-10.5e      Maxiter: %-5d          =\n',...
         '=========================================================\n'],...
@@ -584,9 +583,8 @@ while (iter <= miniter) || ((iter <= maxiter) && not(converged))
         case 0 % Constant alpha throughout all iterations.
             % If convergence criteria requires it, compute dx or dobjective
             dx = xprevious;
-            %APL: (old stuff) step = xprevious - grad./alpha; %
-            step = xprevious - alpha.*grad + tau(1);          % why this?
-            x = computesubsolution(step,tau,alpha,grad,penalty,mu,...
+            step = xprevious - grad./alpha; 
+            x = computesubsolution(step,tau,alpha,penalty,mu,...
                 W,WT,subminiter,submaxiter,substopcriterion,...
                 subtolerance);
             dx = x - dx;
@@ -603,10 +601,7 @@ while (iter <= miniter) || ((iter <= maxiter) && not(converged))
                     % --- Compute the step, and perform Gaussian 
                     %     denoising subproblem ----
                     dx = xprevious;
-                   %APL (old stuff) step = xprevious - grad./alpha; %
-                   %step = xprevious - grad.*alpha + tau(1);        %
-                   step = xprevious - grad./alpha;                  % why this?
-                   %step = xprevious - 0.01.*grad + tau(1);         % what is this for?
+                   step = xprevious - grad./alpha;                  %
                     x = computesubsolution(step,tau,alpha,penalty,mu,...
                         W,WT,subminiter,submaxiter,substopcriterion,...
                         subtolerance);
@@ -631,10 +626,8 @@ while (iter <= miniter) || ((iter <= maxiter) && not(converged))
             else 
                 % just take bb setp, no enforcing monotonicity.
                 dx = xprevious;
-                %APL (old stuff) step = xprevious - grad./alpha; %
-                step = xprevious - alpha.*grad + tau(1);         % why this?
-                %step = xprevious - 0.01.*grad + tau(1);         % was alpha being hard-coded?
-                x = computesubsolution(step,tau,alpha,grad,penalty,mu,...
+                step = xprevious - grad./alpha; %
+                x = computesubsolution(step,tau,alpha,penalty,mu,...
                     W,WT,subminiter,submaxiter,substopcriterion,...
                     subtolerance);
                 dx = x - dx;
@@ -753,7 +746,7 @@ end
 if (verbose > 0)
     thetime = fix(clock);
     fprintf(['=========================================================\n',...
-        '= Completed SPIRAL Reconstruction    @ %2d:%2d %02d/%02d/%4d =\n',...
+        '= Completed NEBULA Reconstruction    @ %2d:%2d %02d/%02d/%4d =\n',...
         '=   Noisetype: %-8s         Penalty: %-9s      =\n',...
         '=   Tau:       %-10.5e      Iter:    %-5d          =\n'],...
         thetime(4),thetime(5),thetime(2),thetime(3),thetime(1),...
@@ -801,12 +794,12 @@ function objective = computeobjective(x,y,Ax,tau,noisetype,logepsilon,...
 % 1) Compute log-likelihood:
 switch lower(noisetype)
     case 'poisson'
-        precompute = y.*log(Ax + logepsilon); %APL: This computes the sum in F(f) in SPIRAL paper
-        objective = sum(Ax(:)) - sum(precompute(:)); %APL: This computes F(f) in SPIRAL Paper
+        % negative Poisson log-likelihood
+        precompute = y.*log(Ax + logepsilon);
+        objective = sum(Ax(:)) - sum(precompute(:)); 
     case 'negative binomial'
+        % negative binomial negative log likelihood
         precompute = (y + 1).*log(1 + Ax + logepsilon) - y.*log(Ax + logepsilon);
-        %APL: The objective function F(f) for negative binomial neagtive
-        %log likelihood
         objective= sum(precompute(:));
     case 'gaussian'
         objective = sum( (y(:) - Ax(:)).^2)./2;
