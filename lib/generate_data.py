@@ -1,9 +1,10 @@
-import os, sys
-sys.path.insert(0, 'structural_variants/lib/')
+#import os, sys
+#sys.path.insert(0, 'structural_variants/lib/')
 import numpy as np
 #import pandas as pd
 import matplotlib.pyplot as plt
 from scipy import sparse
+from scipy.io import savemat
 #import sympy
 import random
 
@@ -103,15 +104,15 @@ def generate_haploid_data(params):
     
     
     return d
-
-# params = {
-#     'r': 1,
-#     'n': 10**2,
-#     'k': 10,
-#     'lambda_c': 4,
-#     'lambda_p': 8,
-#     'pctNovel': 0.15,
-#     'erreps'  : 1e-2,
-#     #'suffix'  : ['p','c'],
-#     'pct_similarity': 0.6}
-# data =generate_diploid_data(params)
+params = {
+    'r': 1,
+    'n': 10**2,
+    'k': 10,
+    'lambda_c': 4,
+    'lambda_p': 8,
+    'pctNovel': 0.15,
+    'erreps'  : 1e-2,
+    #'suffix'  : ['p','c'],
+    'pct_similarity': 0.6}
+data =generate_diploid_data(params)
+savemat("matlab_test.mat", data)

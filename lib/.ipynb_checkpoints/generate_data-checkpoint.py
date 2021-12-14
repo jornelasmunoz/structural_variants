@@ -1,5 +1,5 @@
-import os, sys
-sys.path.insert(0, 'structural_variants/lib/')
+#import os, sys
+#sys.path.insert(0, 'structural_variants/lib/')
 import numpy as np
 #import pandas as pd
 import matplotlib.pyplot as plt
@@ -57,14 +57,61 @@ def generate_diploid_data(params):
         d['s_%s'%letter]   = np.random.negative_binomial(d['mu_%s'%letter]/(d['var_%s'%letter]-d['mu_%s'%letter]),d['mu_%s'%letter]/d['var_%s'%letter])
         
     return d
-params = {
-    'r': 1,
-    'n': 10**2,
-    'k': 10,
-    'lambda_c': 4,
-    'lambda_p': 8,
-    'pctNovel': 0.15,
-    'erreps'  : 1e-2,
-    #'suffix'  : ['p','c'],
-    'pct_similarity': 0.6}
-data =generate_diploid_data(params)
+
+def generate_haploid_data(params):
+    '''
+    Generate simulated data for a one parent, one child Structural Variant analysis
+    Args: A dictionary containing the following parameters as keys
+        n: size of data vectors (signals)
+        k: total number of structural variants
+        pctNovel: percent of novel structural variants in [0,1] (biological reality- very small %)
+        lambda_p, lambda_c: sequence coverage of child and parent, respectively
+        erreps: error (>0) incurred by sequencing and mapping process
+        r: dispersion parameter for Negative Binomial distribution
+    
+    Output: A dictionary containing the following data elements as keys
+        A_c: (lambda_c - erreps) I_n, sparse diagonal nxn matrix. I_n is nxn identity matrix
+        A_p: (lambda_p - erreps) I_n, sparse diagonal nxn matrix. I_n is nxn identity matrix
+        mu_p, var_p: Mean and variance sequence coverage for parent; mu_p = A_p * f_p 
+        mu_c, var_c: Mean and variance sequence coverage for child;  mu_c = A_c * f_c 
+        s_p: nx1 random vector drawn from Negative binomial distribution (for parent)
+        s_c: nx1 random vector drawn from Negative binomial distribution (for child)
+        TODO: add mu and var
+        for i in {P (parent), H (inherited), N (novel)}:
+        z_i: nx1 indicator vector of homogeneous structural variants
+        y_i: nx1 indicator vector of heterogeneous structural variants
+        
+    '''
+    q = np.random.permutation(params['n'])
+    #print(q)
+    startVal = int(params['k']*params['pctNovel']); #print(startVal)
+    endVal = int(startVal +params['k']) ; #print(endVal)
+
+    f_p, f_c, f_h, f_n = np.zeros((params['n'],1), dtype=np.int8),np.zeros((params['n'],1), dtype=np.int8), np.zeros((params['n'],1), dtype=np.int8), np.zeros((params['n'],1), dtype=np.int8)
+    f_p[q[: params['k']]], f_c[q[startVal:endVal]] = 1,1
+    f_h[q[startVal:params['k']+1]], f_n[q[params['k']+1:endVal]] = 1,1
+    
+    
+    d = {}
+    d['f_p'] = f_p; d['f_h'] = f_h; d['f_n'] = f_n; d['f_c'] = f_h + f_n; 
+    
+    for i, letter in enumerate(['p','c']):
+        d['A_%s'%letter]   = (params["lambda_%s"%letter] - params['erreps'])*sparse.eye(params['n'])
+        d['mu_%s'%letter]  = np.matmul(d['A_%s'%letter].toarray(), d['f_%s'%letter]) + params['erreps']
+        d['var_%s'%letter] = d['mu_%s'%letter] +(1/params['r'])*(d['mu_%s'%letter]**2)
+        d['s_%s'%letter]   = np.random.negative_binomial(d['mu_%s'%letter]/(d['var_%s'%letter]-d['mu_%s'%letter]),d['mu_%s'%letter]/d['var_%s'%letter])
+    
+    
+    return d
+
+# params = {
+#     'r': 1,
+#     'n': 10**2,
+#     'k': 10,
+#     'lambda_c': 4,
+#     'lambda_p': 8,
+#     'pctNovel': 0.15,
+#     'erreps'  : 1e-2,
+#     #'suffix'  : ['p','c'],
+#     'pct_similarity': 0.6}
+# data =generate_diploid_data(params)
