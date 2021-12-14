@@ -108,7 +108,7 @@
 % === This code was edited by Andrew P Lazar in 2020 and later further modified by Jocelyn Ornelas in 2021
 %     We add an extension of SPIRALTAP to incorporate Negative Binomial noise
 
-function [x, varargout] = NEBULA(y, A, tau, noisetype, varargin)
+function [x, varargout] = NEBULA(y, A, tau, noisetype, subvectors, varargin)
 % ==== Set default/initial parameter values ====
 % ---- All Methods ----
 verbose = 0;
@@ -123,6 +123,10 @@ warnings = 1;
 recenter = 0;
 mu = 0;
 
+% specific to SV diploid model with novel variants
+% % for diploid with novel, this assumes the order of f is  
+    % [zP, zH, zN, yP, yH, yN] and we weigh the novel variants more
+delta = [tau(1), tau(1), tau(2), tau(1),tau(1),tau(2) ];
 % Add a path to the denoising methods folder
 nebula_dir = which('NEBULA');
 [nebula_dir, dummy] = fileparts(nebula_dir);
@@ -144,7 +148,7 @@ subminiter = 1;
 submaxiter = 50;
 substopcriterion = 0;
 subtolerance = 1e-5;
-% Dont forget convergence criterion
+% Don't forget convergence criterion
 
 % ---- For Choosing Alpha ----
 alphamethod = 1;
@@ -225,7 +229,7 @@ end
 % NOISETYPE:  Three options are available 'Poisson', 'Gaussian', 'Negative Binomial'.
 if sum( strcmpi(noisetype,{'poisson','gaussian','negative binomial'})) == 0
     error(['Invalid setting ''NOISETYPE'' = ''',num2str(noisetype),'''.  ',...
-        'The parameter ''NOISETYPE'' may only be ''Gaussian'' or ''Poisson''or' 'Negative Binomial''.'])
+        'The parameter ''NOISETYPE'' may only be ''Gaussian'', ''Poisson''or' 'Negative Binomial''.'])
 end
 % PENALTY:  The implemented penalty options are 'Canonical, 'ONB', 'RDP', 
 % 'RDP-TI','TV'.
@@ -280,7 +284,7 @@ if isa(A, 'function_handle') % A is a function call, so AT is required
     else % AT was provided
         if isa(AT, 'function_handle') % A and AT are function calls
             try dummy = y + A(AT(y));
-            catch exception; 
+            catch exception
                 error('Size incompatability between ''A'' and ''AT''.')
             end
         else % A is a function call, AT is a matrix        
@@ -360,13 +364,14 @@ end
 
 % Things to check and compute that depend on NOISETYPE:
 switch lower(noisetype)
-    %case 'poisson' or 'negative binomial' 
+    case {'poisson','negative binomial'} 
         % Ensure that y is a vector of nonnegative counts
         if sum(round(y(:)) ~= y(:)) || (min(y(:)) < 0)
             %error(['The data ''Y'' must contain nonnegative integer ',...
                % 'counts when ''NOISETYPE'' = ''Poisson'' or ''Negative Binomial''']);
             error(['The data ''Y'' must contain nonnegative integer ',...
-                'counts when ''NOISETYPE'' = ''Negative Binomial''']);
+                'counts when ''NOISETYPE'' = ''Poisson''']);
+                'counts when ''NOISETYPE'' =  or ''Negative Binomial''']);
         end
         % Maybe in future could check to ensure A and AT contain nonnegative
         %   elements, but perhaps too computationally wasteful 
@@ -601,7 +606,7 @@ while (iter <= miniter) || ((iter <= maxiter) && not(converged))
                     % --- Compute the step, and perform Gaussian 
                     %     denoising subproblem ----
                     dx = xprevious;
-                   step = xprevious - grad./alpha;                  %
+                   step = xprevious - grad./alpha;                  
                     x = computesubsolution(step,tau,alpha,penalty,mu,...
                         W,WT,subminiter,submaxiter,substopcriterion,...
                         subtolerance);
@@ -626,7 +631,7 @@ while (iter <= miniter) || ((iter <= maxiter) && not(converged))
             else 
                 % just take bb setp, no enforcing monotonicity.
                 dx = xprevious;
-                step = xprevious - grad./alpha; %
+                step = xprevious - grad./alpha; 
                 x = computesubsolution(step,tau,alpha,penalty,mu,...
                     W,WT,subminiter,submaxiter,substopcriterion,...
                     subtolerance);
@@ -694,10 +699,7 @@ while (iter <= miniter) || ((iter <= maxiter) && not(converged))
             %Adx is overwritten at top of iteration, so this is an ok reuse
             % Adx is overwritten at top of iteration, so this is an ok reuse
             switch lower(noisetype)
-                case 'poisson'                                          % poisson and neg bin are the same... should they?
-                    Adx = Adx.*sqrty./(Ax + logepsilon); 
-                %APL: trying to keep this the same, may have to change
-                case 'negative binomial'
+                case {'poisson', 'negative binomial'}                                          % poisson and neg bin are the same... should they?
                     Adx = Adx.*sqrty./(Ax + logepsilon); 
                 case 'gaussian'
                     % No need to scale Adx
@@ -716,8 +718,6 @@ while (iter <= miniter) || ((iter <= maxiter) && not(converged))
     Axprevious = Ax; 
     iter = iter + 1;
 end
-
-
 % ===========================
 % = End Main Algorithm Loop =
 % ===========================
@@ -748,9 +748,9 @@ if (verbose > 0)
     fprintf(['=========================================================\n',...
         '= Completed NEBULA Reconstruction    @ %2d:%2d %02d/%02d/%4d =\n',...
         '=   Noisetype: %-8s         Penalty: %-9s      =\n',...
-        '=   Tau:       %-10.5e      Iter:    %-5d          =\n'],...
+        '=   Tau:       %-10.5e,%-10.5e      Iter:    %-5d          =\n'],...
         thetime(4),thetime(5),thetime(2),thetime(3),thetime(1),...
-        noisetype,penalty,tau,iter)      
+        noisetype,penalty,tau(1), tau(2),iter)      
     fprintf('=========================================================\n');
 end
 
@@ -777,9 +777,7 @@ function grad = computegrad(y,Ax,AT,noisetype,logepsilon)
         case 'poisson'
             grad = AT(1 - (y./(Ax + logepsilon)));
         case 'negative binomial'
-            r=1;
-            grad= AT((y + r)./(r+ Ax + logepsilon)) - AT(y./(Ax + logepsilon)); 
-            %grad= ((y+r)./(r+ Ax + logepsilon)).*AT(1) + (y./(Ax+logepsilon)).*AT(1);
+            grad= AT((y + 1)./(1+ Ax + logepsilon)) - AT(y./(Ax + logepsilon)); 
         case 'gaussian'
             grad = AT(Ax - y);
     end
@@ -807,14 +805,14 @@ end
 % 2) Compute Penalty:
 switch lower(penalty)
     case 'canonical' 
-        n = length(x)/3;            %any line that does /3 needs to be changed
-        
-        % Is there a way to automate this? (maybe parent first and novel last, for loop and [1 1 2])
-        objective = objective + sum(abs(tau(1).*x(1:n))); % use tau(1) for child inherited variants
-        objective = objective + sum(abs(tau(2).*x(n+1:2*n))); % use tau(2) for child novel variants
-        objective = objective + sum(abs(tau(1).*x(2*n+1:3*n))); % use tau(1) for parent variants
+        n = length(x)/subvectors;            %any line that does /3 needs to be changed
+        % for diploid with novel, this assumes the order of f is  
+        % zP, zH, zN, yP, yH, yN and we weigh the novel variants more
+        for i=0:subvectors
+            objective = objective + sum(abs(delta(i+1).*x(i*n +1: (i+1)*n)));
 %        objective = objective + sum(abs(tau(:).*x(:)));
-	case 'onb' 
+	% the following cases must be changed if the penalty changes
+    case 'onb' 
     	WT = varargin{1};
         WTx = WT(x);
         objective = objective + sum(abs(tau(:).*WTx(:)));
@@ -836,32 +834,32 @@ function subsolution = computesubsolution(step,tau,alpha,penalty,mu,varargin)
         case 'canonical'
             %%%subsolution = max(step - tau./alpha + mu, 0.0);
             %subsolution = step - tau./alpha;
-            n = length(step)/3;
+            n = length(step)/subvectors;
             
             subsolution = step;
-          
-            subsolution(1:n) = step(1:n) - tau(1)./alpha; % child
-            %APL: trying to mimic what is in the negative binomial paper
-            %APL: subsolution(1:n) = step(1:n) -alpha.*grad(1:n) +tau(1);
-            % variants inherited from parent
+            for i=0:subvectors
+                subsolution(i*n +1: (i+1)*n) = step(i*n +1: (i+1)*n) - delta(i+1)./alpha;
+        %     subsolution(1:n) = step(1:n) - tau(1)./alpha; % child
+        %     %APL: trying to mimic what is in the negative binomial paper
+        %     %APL: subsolution(1:n) = step(1:n) -alpha.*grad(1:n) +tau(1);
+        %     % variants inherited from parent
             
-            %subsolution(n+1:2*n) = step(1:n) + tau(2)./alpha; % nove  %APL:this is previous code with a potential error
-            subsolution(n+1:2*n) = step(n+1:2*n) - tau(2)./alpha;
+        %     %subsolution(n+1:2*n) = step(1:n) + tau(2)./alpha; % nove  %APL:this is previous code with a potential error
+        %     subsolution(n+1:2*n) = step(n+1:2*n) - tau(2)./alpha;
          
-            %APL: Trying to mimic what is in the paper (negative binomial paper) 
-           %APL: subsolution(n+1:2*n) = step(n+1:2*n) - alpha.*grad(n+1:2*n) + tau(1);
+        %     %APL: Trying to mimic what is in the paper (negative binomial paper) 
+        %    %APL: subsolution(n+1:2*n) = step(n+1:2*n) - alpha.*grad(n+1:2*n) + tau(1);
            
-           % child variants
+        %    % child variants
             
-            %subsolution(2*n+1:3*n) = step(1:n) - tau(1)./alpha; % parent   %APL: This has potential error
-            subsolution(2*n+1:3*n) = step(2*n+1:3*n) - tau(1)./alpha;
+        %     %subsolution(2*n+1:3*n) = step(1:n) - tau(1)./alpha; % parent   %APL: This has potential error
+        %     subsolution(2*n+1:3*n) = step(2*n+1:3*n) - tau(1)./alpha;
            
-            %APL: trying to mimic what is in the negative binomial paper
-            % APL: subsolution(2*n+1:3*n) = step(2*n+1:3*n) - alpha.*grad(2*n+1:3*n) +tau(1);
+        %     %APL: trying to mimic what is in the negative binomial paper
+        %     % APL: subsolution(2*n+1:3*n) = step(2*n+1:3*n) - alpha.*grad(2*n+1:3*n) +tau(1);
            
-            % variants
-            subsolution = Novel_const(subsolution);
-          %  subsolution
+            % Projection onto feasible region
+            subsolution = diploid_novel_projection(subsolution, subvectors, 6);
             
             
         case 'onb'
@@ -873,9 +871,7 @@ function subsolution = computesubsolution(step,tau,alpha,penalty,mu,varargin)
             substopcriterion    = varargin{5};
             subtolerance        = varargin{6};
                                    
-           % subsolution = constrainedl2l1denoise(step,W,WT,tau./alpha,mu,...
-                %subminiter,submaxiter,substopcriterion,subtolerance);
-             subsolution = constrainedl2l1denoise(step,W,WT,tau.*alpha,mu,...
+             subsolution = constrainedl2l1denoise(step,W,WT,tau./alpha,mu,...
                 subminiter,submaxiter,substopcriterion,subtolerance);
         case 'rdp'
             subsolution = haarTVApprox2DNN_recentered(step,tau./alpha,-mu);
