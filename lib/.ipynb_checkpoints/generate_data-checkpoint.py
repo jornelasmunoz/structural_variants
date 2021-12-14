@@ -4,6 +4,7 @@ import numpy as np
 #import pandas as pd
 import matplotlib.pyplot as plt
 from scipy import sparse
+from scipy.io import savemat
 #import sympy
 import random
 
@@ -51,12 +52,18 @@ def generate_diploid_data(params):
             elif d['f_%s'%letter][i]==1: d['y_%s'%letter][i]=1
             
     for i, letter in enumerate(['p','c']):
-        d['A_%s'%letter]   = (params['lambda_%s'%letter] - params['erreps'])*sparse.eye(params['n'])
-        d['mu_%s'%letter]  = np.matmul(d['A_%s'%letter].toarray(), d['f_%s'%letter]) + params['erreps']
+        d['A_z%s'%letter]   = (2*params["lambda_%s"%letter] - params['erreps'])*sparse.eye(params['n'])
+        d['A_y%s'%letter]   = (params["lambda_%s"%letter] - params['erreps'])*sparse.eye(params['n'])
+        d['mu_%s'%letter]  = np.matmul((d['A_z%s'%letter]+d['A_y%s'%letter]).toarray(), d['f_%s'%letter]) + params['erreps']
         d['var_%s'%letter] = d['mu_%s'%letter] +(1/params['r'])*(d['mu_%s'%letter]**2)
         d['s_%s'%letter]   = np.random.negative_binomial(d['mu_%s'%letter]/(d['var_%s'%letter]-d['mu_%s'%letter]),d['mu_%s'%letter]/d['var_%s'%letter])
-        
-    return d
+    
+    data = {**d, **params}
+    print()
+    print('Using parameters:')
+    for key, val in params.items():
+        print('\t', key, ': ', val)  
+    return data
 
 def generate_haploid_data(params):
     '''
@@ -103,7 +110,6 @@ def generate_haploid_data(params):
     
     
     return d
-
 # params = {
 #     'r': 1,
 #     'n': 10**2,
@@ -115,3 +121,4 @@ def generate_haploid_data(params):
 #     #'suffix'  : ['p','c'],
 #     'pct_similarity': 0.6}
 # data =generate_diploid_data(params)
+# savemat("matlab_test.mat", data)

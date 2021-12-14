@@ -25,11 +25,11 @@ switch upper(vary)
     if (vary == 'P')
         x1 = zP; x2 = yP;
         zF = zH; yF = yH;
-        disp('vary P')
+        %disp('vary P')
     elseif (vary == 'H')
         x1 = zH; x2 = yH;
         zF = zP; yF = yP;
-        disp('vary H')
+        %disp('vary H')
     end
     
     % Feasible Region
@@ -38,14 +38,14 @@ switch upper(vary)
             x1 <= (zF + yF) )
         z_proj = x1;
         y_proj = x2;
-        disp('Feasible Region')
+        %disp('Feasible Region')
         return;
         
     % Region 1 
     elseif (x2 >= 1 - (zN + yN) - x1 && ...
             x2 <= x1 + 1 - (zN + yN) && ...
             x2 >= x1 + 1 - 2*(zF + yF)- (zN + yN))
-        disp('Region 1')
+        %disp('Region 1')
         z_proj = (1/2)*(1 + x1 - x2 - (zN + yN)) ;
         y_proj = 1 - (zN + yN) - z_proj;
         return;
@@ -54,7 +54,7 @@ switch upper(vary)
     elseif (x1 >= (zF + yF) && ...
             x2 >= 1 - (zN + yN) - (zF + yF) && ...
             x2 <= x1 + 1 - 2*(zF + yF) - (zN + yN))
-        disp('Region 2')
+        %disp('Region 2')
         z_proj = zF + yF;
         y_proj = 1 - (zN + yN) - z_proj;
         return;
@@ -62,28 +62,28 @@ switch upper(vary)
     % Region 3
     elseif (x1 >= (zF + yF) && x2 >= 0 && ...
             x2 <= 1 - (zN + yN) - (zF + yF))
-        disp('Region 3')
+        %disp('Region 3')
         z_proj = zF + yF;
         y_proj = x2;
         return;
     
     % Region 4
     elseif (x1 >= (zF + yF) && x2 <= 0)
-        disp('Region 4')
+        %disp('Region 4')
         z_proj = zF + yF;
         y_proj = 0;
         return;
    
     % Region 5    
     elseif (x1 >= zF && x2 <= 0 && x1 <= (zF + yF))
-        disp('Region 5')
+        %disp('Region 5')
         z_proj = x1;
         y_proj = 0;
         return;
         
     % Region 6
     elseif (x2 <= x1 - zF && x1 <= zF && x2 <= 0)
-        disp('Region 6')
+        %disp('Region 6')
         z_proj = zF;
         y_proj = 0;
         return;
@@ -92,28 +92,28 @@ switch upper(vary)
     elseif (x2 <= x1 + zF && ...
             x2 <= zF - x1 && ...
             x2 >= x1 - zF)
-        disp('Region 7')
+        %disp('Region 7')
         z_proj = (1/2) * (zF + x1 - x2);
         y_proj = (1/2) * (zF + x2 - x1);
         return;
         
     % Region 8
     elseif (x1 <= 0 && x2 <= zF && x2 >= x1 + zF)
-        disp('Region 8')
+        %disp('Region 8')
         z_proj = 0;
         y_proj = zF;
         return;
         
     % Region 9
     elseif (x1 <= 0 && x2 >= zF && x2 <= 1- (zN + yN))
-        disp('Region 9')
+       % disp('Region 9')
         z_proj = 0;
         y_proj = x2;
         return;
         
     % Region 10
     elseif (x2 >= x1 + 1 && x2 >= 1)
-        disp('Region 10')
+        %disp('Region 10')
         z_proj = 0;
         y_proj = 1- (zN + yN);
         return;
@@ -127,7 +127,7 @@ switch upper(vary)
     % vary N, fix P and H 
     % (zN,yN) is a point in the plane
     % zP,yP,zH,yH are fixed values (i.e. constants)
-    disp('vary N')
+    %disp('vary N')
     min_of_P_and_H = min([1- (zP+yP), 1- (zH+yH)]);
     
     % Feasible Region

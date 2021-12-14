@@ -1,4 +1,4 @@
-function [f_feas] = diploid_novel_projection(f, subvectors, maxiter)
+function [f_feas] = diploid_novel_projection(f, subvectors, maxit)
 %Inputs:
 %   f: subsolution reconstruction vector 
 %   subvectors: number of vectors which f is composed of
@@ -23,9 +23,9 @@ for i = 1:n
     % start iteration counter
     iter = 1;
     
-    while (iter < maxiter)
+    while (iter < maxit)
         if (iter == 1)
-            disp('iter ==1')
+            %disp('iter ==1')
             % Check if reconstruction vector already satisfies the
             % constraints
             
@@ -44,15 +44,15 @@ for i = 1:n
                  (zP(i) <= (zH(i) + yH(i))) && ...
                  (zN(i) + yN(i) <= 1 - (zP(i) + yP(i))) && ...
                  (1 - (zP(i) + yP(i)) <= 1) )
-             iter = maxiter;
+             iter = maxit;
              f_feas = [zP;zH;zN;yP;yH;yN];
-             disp('constraints feasible initially')
+             %disp('constraints feasible initially')
             return;
             
             else
             % If constraints are not satisfied, start projections onto
             % feasible regions
-            disp('constraints NOT feasible initially')
+            %disp('constraints NOT feasible initially')
             
             % Ensure elements are nonnegative
             %zP_pos = sort([0, zP(i),1]); z_p = zP_pos(2);
@@ -91,7 +91,6 @@ for i = 1:n
         [zP_new, yP_new] = fix_one_indiv(zP(i),yP(i),z_h,y_h,z_n,y_n, 'P'); 
         z_p = zP_new;
         y_p = yP_new;
-        disp(y_p)
         % Fix P,N, and vary H 
         [zH_new, yH_new] = fix_one_indiv(z_p,y_p,zH(i),yH(i),z_n,y_n, 'H');
         z_h = zH_new;

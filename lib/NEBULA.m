@@ -244,17 +244,17 @@ if (round(verbose) ~= verbose) || (verbose < 0)
         'integer.  The setting ''VERBOSE'' = ',num2str(verbose),' is invalid.']);
 end
 % LOGEPSILON:  Needs to be nonnegative, usually small but that's relative.
-if logepsilon < 0;
+if logepsilon < 0
     error(['The parameter ''LOGEPSILON'' is required to be nonnegative.  ',...
         'The setting ''LOGEPSILON'' = ',num2str(tolerance),' is invalid.'])
 end
 % TOLERANCE:  Needs to be nonnegative, usually small but that's relative.
-if tolerance < 0;
+if tolerance < 0
     error(['The parameter ''TOLERANCE'' is required to be nonnegative.  ',...
         'The setting ''TOLERANCE'' = ',num2str(tolerance),' is invalid.'])
 end
 % SUBTOLERANCE:  Needs to be nonnegative, usually small but that's relative.
-if subtolerance < 0;
+if subtolerance < 0
     error(['The parameter ''SUBTOLERANCE'' is required to be nonnegative.  ',...
         'The setting ''SUBTOLERANCE'' = ',num2str(subtolerance),' is invalid.'])
 end
@@ -370,8 +370,7 @@ switch lower(noisetype)
             %error(['The data ''Y'' must contain nonnegative integer ',...
                % 'counts when ''NOISETYPE'' = ''Poisson'' or ''Negative Binomial''']);
             error(['The data ''Y'' must contain nonnegative integer ',...
-                'counts when ''NOISETYPE'' = ''Poisson''']);
-                'counts when ''NOISETYPE'' =  or ''Negative Binomial''']);
+                'counts when ''NOISETYPE'' =  ''Poisson'' or ''Negative Binomial'' ']);
         end
         % Maybe in future could check to ensure A and AT contain nonnegative
         %   elements, but perhaps too computationally wasteful 
@@ -404,40 +403,40 @@ switch lower(penalty)
                 error(['Parameter ''WT'' not specified.  Please provide a ',...
                     'method to compute W''*x matrix-vector products.'])
             else % WT was provided
-        if isa(WT, 'function_handle') % W and WT are function calls
-            try dummy = y + A(WT(W(AT(y))));
-            catch exception; 
-                error('Size incompatability between ''W'' and ''WT''.')
+            if isa(WT, 'function_handle') % W and WT are function calls
+                try dummy = y + A(WT(W(AT(y))));
+                catch exception 
+                    error('Size incompatability between ''W'' and ''WT''.')
+                end
+            else % W is a function call, WT is a matrix        
+                try dummy = y + A(WT*W(AT(y)));
+                catch exception
+                    error('Size incompatability between ''W'' and ''WT''.')
+                end
+                WT = @(x) WT*x; % Define WT as a function call
             end
-        else % W is a function call, WT is a matrix        
-            try dummy = y + A(WT*W(AT(y)));
-            catch exception
-                error('Size incompatability between ''W'' and ''WT''.')
             end
-            WT = @(x) WT*x; % Define WT as a function call
+        else
+            if isempty(WT) % W is a matrix, and WT not provided.
+                AT = @(x) W'*x; % Just define function calls.
+                A = @(x) W*x;
+            else % W is a matrix, and WT provided, we need to check
+                if isa(WT, 'function_handle') % W is a matrix, WT is a function call            
+                    try dummy = y + A(WT(W*AT(y)));
+                    catch exception
+                        error('Size incompatability between ''W'' and ''WT''.')
+                    end
+                    W = @(x) W*x; % Define W as a function call
+                else % W and WT are matrices
+                    try dummy = y + A(WT(W*(AT(y))));
+                    catch exception
+                        error('Size incompatability between ''W'' and ''WT''.')
+                    end
+                    WT = @(x) WT*x; % Define A and AT as function calls
+                    W = @(x) W*x;
+                end
+            end
         end
-    end
-else
-    if isempty(WT) % W is a matrix, and WT not provided.
-        AT = @(x) W'*x; % Just define function calls.
-        A = @(x) W*x;
-    else % W is a matrix, and WT provided, we need to check
-        if isa(WT, 'function_handle') % W is a matrix, WT is a function call            
-            try dummy = y + A(WT(W*AT(y)));
-            catch exception
-                error('Size incompatability between ''W'' and ''WT''.')
-            end
-            W = @(x) W*x; % Define W as a function call
-        else % W and WT are matrices
-            try dummy = y + A(WT(W*(AT(y))));
-            catch exception
-                error('Size incompatability between ''W'' and ''WT''.')
-            end
-            WT = @(x) WT*x; % Define A and AT as function calls
-            W = @(x) W*x;
-        end
-    end
-end
 
 	case 'rdp'
         %todo
@@ -487,7 +486,7 @@ end
 
 % check that initialization is a scalar or a vector
 % set initialization
-if isempty(initialization);
+if isempty(initialization)
     xinit = AT(y);
 else
     xinit = initialization;
@@ -543,7 +542,7 @@ if savecputime
 end
 if saveobjective
     objective = zeros(maxiter+1,1);
-    objective(iter) = computeobjective(x,y,Ax,tau,noisetype,logepsilon,penalty,WT);
+    objective(iter) = computeobjective(x,y,Ax,tau,noisetype,subvectors,delta,logepsilon,penalty,WT);
 end
 if savereconerror
     reconerror = zeros(maxiter+1,1);
@@ -568,11 +567,11 @@ end
 
 if (verbose > 0)
     thetime = fix(clock);
-    fprintf(['=========================================================\n',...
-        '= Beginning NEBULA Reconstruction    @ %2d:%2d %02d/%02d/%4d =\n',...
-        '=   Noisetype: %-8s         Penalty: %-9s      =\n',...
-        '=   Tau Vals:       %-10.5e, %-10.5e      Maxiter: %-5d          =\n',...
-        '=========================================================\n'],...
+    fprintf(['===============================================================\n',...
+        '= Beginning NEBULA Reconstruction    @ %2d:%2d %02d/%02d/%4d       =\n',...
+        '=   Noisetype: %-8s         Penalty: %-9s   =\n',...
+        '=   Tau Vals:   %-10.5e, %-10.5e      Maxiter: %-5d  =\n',...
+        '===============================================================\n'],...
         thetime(4),thetime(5),thetime(2),thetime(3),thetime(1),...
         noisetype,penalty,tau(1), tau(2),maxiter)     %tau needs to be a vector of two elements  
 end
@@ -589,7 +588,7 @@ while (iter <= miniter) || ((iter <= maxiter) && not(converged))
             % If convergence criteria requires it, compute dx or dobjective
             dx = xprevious;
             step = xprevious - grad./alpha; 
-            x = computesubsolution(step,tau,alpha,penalty,mu,...
+            x = computesubsolution(step,tau,alpha,penalty,subvectors,delta,mu,...
                 W,WT,subminiter,submaxiter,substopcriterion,...
                 subtolerance);
             dx = x - dx;
@@ -606,8 +605,8 @@ while (iter <= miniter) || ((iter <= maxiter) && not(converged))
                     % --- Compute the step, and perform Gaussian 
                     %     denoising subproblem ----
                     dx = xprevious;
-                   step = xprevious - grad./alpha;                  
-                    x = computesubsolution(step,tau,alpha,penalty,mu,...
+                    step = xprevious - grad./alpha;                  
+                    x = computesubsolution(step,tau,alpha,penalty,subvectors,delta,mu,...
                         W,WT,subminiter,submaxiter,substopcriterion,...
                         subtolerance);
                     dx = x - dx;
@@ -618,7 +617,7 @@ while (iter <= miniter) || ((iter <= maxiter) && not(converged))
                     
                     % --- Compute the resulting objective 
                     objective(iter + 1) = computeobjective(x,y,Ax,tau,...
-                        noisetype,logepsilon,penalty,WT);
+                    noisetype,subvectors,delta,logepsilon,penalty,WT);
                         
                     if ( objective(iter+1) <= (maxpastobjective ...
                             - acceptdecrease*alpha/2*normsqdx) ) ...
@@ -632,7 +631,7 @@ while (iter <= miniter) || ((iter <= maxiter) && not(converged))
                 % just take bb setp, no enforcing monotonicity.
                 dx = xprevious;
                 step = xprevious - grad./alpha; 
-                x = computesubsolution(step,tau,alpha,penalty,mu,...
+                x = computesubsolution(step,tau,alpha,penalty,subvectors,delta,mu,...
                     W,WT,subminiter,submaxiter,substopcriterion,...
                     subtolerance);
                 dx = x - dx;
@@ -642,7 +641,7 @@ while (iter <= miniter) || ((iter <= maxiter) && not(converged))
                 normsqdx = sum( dx(:).^2 );
                 if saveobjective
                     objective(iter + 1) = computeobjective(x,y,Ax,tau,...
-                        noisetype,logepsilon,penalty,WT);
+                    noisetype,subvectors,delta,logepsilon,penalty,WT);
                 end
                     
             end
@@ -786,7 +785,7 @@ end
 % ==========================
 % = Objective Computation: =
 % ==========================
-function objective = computeobjective(x,y,Ax,tau,noisetype,logepsilon,...
+function objective = computeobjective(x,y,Ax,tau,noisetype,subvectors,delta,logepsilon,...
     penalty,varargin)
 % Perhaps change to varargin 
 % 1) Compute log-likelihood:
@@ -808,15 +807,16 @@ switch lower(penalty)
         n = length(x)/subvectors;            %any line that does /3 needs to be changed
         % for diploid with novel, this assumes the order of f is  
         % zP, zH, zN, yP, yH, yN and we weigh the novel variants more
-        for i=0:subvectors
+        for i=0:subvectors-1
             objective = objective + sum(abs(delta(i+1).*x(i*n +1: (i+1)*n)));
-%        objective = objective + sum(abs(tau(:).*x(:)));
+        end
+        % objective = objective + sum(abs(tau(:).*x(:)));
 	% the following cases must be changed if the penalty changes
     case 'onb' 
     	WT = varargin{1};
         WTx = WT(x);
         objective = objective + sum(abs(tau(:).*WTx(:)));
-	case 'rdp'
+    case 'rdp'
         todo
     case 'rdp-ti'
         todo
@@ -828,7 +828,7 @@ end
 % ===================================== %
 % = Denoising Subproblem Computation: = % Need to understand this whole section
 % ===================================== %
-function subsolution = computesubsolution(step,tau,alpha,penalty,mu,varargin)
+function subsolution = computesubsolution(step,tau,alpha,penalty,subvectors,delta,mu,varargin)
 %APL: Now adding the input grad which is the gradient
     switch lower(penalty)
         case 'canonical'
@@ -837,8 +837,9 @@ function subsolution = computesubsolution(step,tau,alpha,penalty,mu,varargin)
             n = length(step)/subvectors;
             
             subsolution = step;
-            for i=0:subvectors
+            for i=0:subvectors-1
                 subsolution(i*n +1: (i+1)*n) = step(i*n +1: (i+1)*n) - delta(i+1)./alpha;
+            end
         %     subsolution(1:n) = step(1:n) - tau(1)./alpha; % child
         %     %APL: trying to mimic what is in the negative binomial paper
         %     %APL: subsolution(1:n) = step(1:n) -alpha.*grad(1:n) +tau(1);
@@ -859,7 +860,7 @@ function subsolution = computesubsolution(step,tau,alpha,penalty,mu,varargin)
         %     % APL: subsolution(2*n+1:3*n) = step(2*n+1:3*n) - alpha.*grad(2*n+1:3*n) +tau(1);
            
             % Projection onto feasible region
-            subsolution = diploid_novel_projection(subsolution, subvectors, 6);
+            subsolution = diploid_novel_projection(subsolution, subvectors, 1);
             
             
         case 'onb'
