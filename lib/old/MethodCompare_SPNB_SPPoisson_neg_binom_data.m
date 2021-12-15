@@ -18,9 +18,11 @@ close all
 
 % Load Simulated Data
 % --------------------------------------------------------
-filename1 = 'neg_binom_nov_p4_c4_5perNov.mat';
-load(filename1)
+% filename1 = 'neg_binom_nov_p4_c4_5perNov.mat';
+% load(filename1)
 
+filename = '/Users/jocelynornelas/iCloud Drive (Archive)/Desktop/UC Merced/Research/structural_variants/data/simulated/4p_4c_coverage/0.02pctNovel.mat';
+load(filename)
 %increment=1;
 % use to loop
 %tau_range = logspace(-2,2,5);
@@ -245,7 +247,7 @@ ylabel('True Positive Rate','FontSize',16);
 %     '  tau_n = ' num2str(tau(2))],['Reconstructed from Child and Parent']},'FontSize',16)
 %legend1=legend(['Novel Method Negative Binomial SPIRAL AUC=' num2str(AreavecSPNB(1))],['Novel Method Poisson SPIRAL AUC=' num2str(AreavecSP(1))]);
 %legend1=legend( 'Novel Method Negative Binomial SPIRAL','Novel Method Poisson SPIRAL');
-legend1=legend('NEBULA','SPIRAL')
+legend1=legend('NEBULA','SPIRAL');
 set(legend1,...
     'Location','southeast',...
     'FontSize',14);

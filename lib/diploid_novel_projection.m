@@ -102,13 +102,14 @@ for i = 1:n
         %y_n = yN_new;
         
         iter = iter + 1;
+        zP(i) = zP_new;
+        yP(i) = yP_new;
+        zH(i) = zH_new;
+        yH(i) = yH_new;
+        zN(i) = zN_new;
+        yN(i) = yN_new;
     end
-    zP(i) = zP_new;
-    yP(i) = yP_new;
-    zH(i) = zH_new;
-    yH(i) = yH_new;
-    zN(i) = zN_new;
-    yN(i) = yN_new;
+    
 end
 
 f_feas = [zP;zH;zN;yP;yH;yN];
