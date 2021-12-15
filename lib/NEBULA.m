@@ -82,7 +82,7 @@
 %   reconerror      The evolution of the specified error metric with the
 %                   number of iterations.  The reconstruction error can
 %                   only be computed if the true underlying signal or image
-%                   is provided using the "TRUTH" option.  The error
+%                   is provided using the 'TRUTH' option.  The error
 %                   corresponding to the initial value is stored in
 %                   reconerror(1), and hence the length of reconerror will
 %                   be iter + 1.

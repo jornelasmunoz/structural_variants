@@ -14,14 +14,14 @@ close all
 % =========================================================================
 
 % Load Simulated Data
-% filename = ['Users/jocelynornelasmunoz/Desktop/structural_variants/data/simulated/' ...
-%             '4p_4c_coverage/0.02pctNovel.mat'];
-filename = ['/Users/jocelynornelas/iCloud Drive (Archive)/Desktop/UC Merced/Research/'...
-            'structural_variants/data/simulated/4p_4c_coverage/100_2pctNovel.mat'];
+filename = ['/Users/jocelynornelasmunoz/Desktop/structural_variants/data/simulated/' ...
+            '4p_4c_coverage/100000_2pctNovel.mat'];
+% filename = ['/Users/jocelynornelas/iCloud Drive (Archive)/Desktop/UC Merced/Research/'...
+%             'structural_variants/data/simulated/4p_4c_coverage/100_2pctNovel.mat'];
 load(filename)
 
-tauvals= [0.1];
-gamma= 5;
+tauvals= [100,150,500];
+gamma= 10;
 for i=1:length(tauvals)
      t= tauvals(i);
      
@@ -123,5 +123,5 @@ for i=1:length(tauvals)
     fhat_NEBULA_n = 2*fhat_NEBULA(2*n+1:3*n)+ fhat_NEBULA(5*n+1:6*n);
     fhat_NEBULA_c = fhat_NEBULA_h + fhat_NEBULA_n;
     
-    
+    save_to_JSON
 end
