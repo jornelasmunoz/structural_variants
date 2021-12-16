@@ -860,7 +860,7 @@ function subsolution = computesubsolution(step,tau,alpha,penalty,subvectors,delt
         %     % APL: subsolution(2*n+1:3*n) = step(2*n+1:3*n) - alpha.*grad(2*n+1:3*n) +tau(1);
            
             % Projection onto feasible region
-            subsolution = diploid_novel_projection(subsolution, subvectors, 1);
+            subsolution = diploid_novel_projection(subsolution, subvectors, 6);
             
             
         case 'onb'

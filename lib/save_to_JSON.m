@@ -30,7 +30,7 @@ data.erreps =  erreps;
 test_json = jsonencode(data,'PrettyPrint',true);
 %test_json = jsonencode(data,'ConvertInfAndNaN',true);
 %filename = sprintf('reconstruction_%dsize_%dnovel_%.2ftau_%.2fgamma.json',n,pctNovel*100,tau, gamma);
-filename = sprintf('reconstruction_%dsize_%dnovel_%dftau_%dfgamma.json',n,pctNovel*100,tau,gamma);
+filename = sprintf('%.2ftau_%.2fgamma.json',tau,gamma);
 fileID = fopen(filename,'w');
 test_file = fprintf(fileID, test_json);
 
