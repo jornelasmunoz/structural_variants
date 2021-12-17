@@ -14,14 +14,14 @@ close all
 % =========================================================================
 
 % Load Simulated Data
-filename = ['/Users/jocelynornelas/iCloud Drive (Archive)/Desktop/UC Merced/Research/'...
-    'structural_variants/data/simulated/4p_4c_coverage/100000_2pctNovel.mat'];%/Users/jocelynornelasmunoz/Desktop/structural_variants/data/simulated/' ...
-            
 % filename = ['/Users/jocelynornelas/iCloud Drive (Archive)/Desktop/UC Merced/Research/'...
-%             'structural_variants/data/simulated/4p_4c_coverage/100_2pctNovel.mat'];
+%     'structural_variants/data/simulated/4p_4c_coverage/100000_2pctNovel.mat'];%/Users/jocelynornelasmunoz/Desktop/structural_variants/data/simulated/' ...
+%             
+ filename = ['/Users/jocelynornelasmunoz/Desktop/'...
+             'structural_variants/data/simulated/4p_4c_coverage/100_2pctNovel.mat'];
 load(filename)
 
-tauvals= [0.1,0.2,0.3];
+tauvals= [0.1];
 gamma= 50;
 for i=1:length(tauvals)
      t= tauvals(i);
