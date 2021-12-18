@@ -18,7 +18,7 @@ close all
 %     'structural_variants/data/simulated/4p_4c_coverage/100000_2pctNovel.mat'];%/Users/jocelynornelasmunoz/Desktop/structural_variants/data/simulated/' ...
 %             
  filename = ['/Users/jocelynornelasmunoz/Desktop/'...
-             'structural_variants/data/simulated/4p_4c_coverage/100_2pctNovel.mat'];
+             'structural_variants/data/simulated/100_2pctNovel.mat'];
 load(filename)
 
 tauvals= [0.1];
@@ -51,7 +51,7 @@ for i=1:length(tauvals)
     A   = @(x)A*x;
 
     % set maximum number of iterations, tol, and when to print to screen
-    maxiter = 1000;
+    maxiter = 700;
     tolerance = 1e-8;
     verbose = 100;
 
@@ -124,5 +124,6 @@ for i=1:length(tauvals)
     fhat_NEBULA_n = 2*fhat_NEBULA(2*n+1:3*n)+ fhat_NEBULA(5*n+1:6*n);
     fhat_NEBULA_c = fhat_NEBULA_h + fhat_NEBULA_n;
     
+        ROC_curve
     save_to_JSON
 end

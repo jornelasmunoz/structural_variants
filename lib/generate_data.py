@@ -35,11 +35,11 @@ def generate_diploid_data(params):
     # child signal
     #     inherited
     for i in np.arange(d['f_p'].shape[0]):
-        if   (d['f_p'][i]==2 and d['f_p2'][i]==2): d['f_c'][i]= 2
-        elif (d['f_p'][i]==1 and d['f_p2'][i]==1): d['f_c'][i]= np.random.randint(0,3)
-        elif (d['f_p'][i]==2 and d['f_p2'][i]==0) or (d['f_p'][i]==0 and d['f_p2'][i]==2): d['f_c'][i]= 1
-        elif (d['f_p'][i]==2 and d['f_p2'][i]==1) or (d['f_p'][i]==1 and d['f_p2'][i]==2): d['f_c'][i]= np.random.randint(1,3)
-        elif (d['f_p'][i]==1 and d['f_p2'][i]==0) or (d['f_p'][i]==0 and d['f_p2'][i]==1): d['f_c'][i]= np.random.randint(0,2)
+        if   (d['f_p'][i]==2 and d['f_p2'][i]==2): d['f_h'][i]= 2
+        elif (d['f_p'][i]==1 and d['f_p2'][i]==1): d['f_h'][i]= np.random.randint(0,3)
+        elif (d['f_p'][i]==2 and d['f_p2'][i]==0) or (d['f_p'][i]==0 and d['f_p2'][i]==2): d['f_h'][i]= 1
+        elif (d['f_p'][i]==2 and d['f_p2'][i]==1) or (d['f_p'][i]==1 and d['f_p2'][i]==2): d['f_h'][i]= np.random.randint(1,3)
+        elif (d['f_p'][i]==1 and d['f_p2'][i]==0) or (d['f_p'][i]==0 and d['f_p2'][i]==1): d['f_h'][i]= np.random.randint(0,2)
         
     #     novel        
     d['f_n'][random.choices(q, k=params['k'] -similarity)]= np.random.randint(1,3) 

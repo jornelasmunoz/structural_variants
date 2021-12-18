@@ -1,11 +1,19 @@
 %save to JSON file
 data.f_true = f_true;
 data.fhat_SPIRAL = fhat_SPIRAL;
+data.fhat_SPIRAL_p = fhat_SPIRAL_p;
+data.fhat_SPIRAL_c = fhat_SPIRAL_c;
+data.fhat_SPIRAL_h = fhat_SPIRAL_h;
+data.fhat_SPIRAL_n = fhat_SPIRAL_n;
 data.cputime_SPIRAL = cputime_SPIRAL;
 data.iterations_SPIRAL = iterations_SPIRAL;
 %data.objective_SPIRAL = objective_SPIRAL
 data.reconerror_SPIRAL= reconerror_SPIRAL;
 data.fhat_NEBULA = fhat_NEBULA;
+data.fhat_NEBULA_p = fhat_NEBULA_p;
+data.fhat_NEBULA_c = fhat_NEBULA_c;
+data.fhat_NEBULA_h = fhat_NEBULA_h;
+data.fhat_NEBULA_n = fhat_NEBULA_n;
 data.cputime_NEBULA = cputime_NEBULA;
 data.iterations_NEBULA = iterations_NEBULA;
 %data.objective_NEBULA = objective_NEBULA
@@ -30,7 +38,7 @@ data.erreps =  erreps;
 test_json = jsonencode(data,'PrettyPrint',true);
 %test_json = jsonencode(data,'ConvertInfAndNaN',true);
 %filename = sprintf('reconstruction_%dsize_%dnovel_%.2ftau_%.2fgamma.json',n,pctNovel*100,tau, gamma);
-filename = sprintf('%.2ftau_%.2fgamma.json',tau,gamma);
+filename = sprintf("%0.2ftau_%0.2fgamma_700it.json",tau,gamma);
 fileID = fopen(filename,'w');
 test_file = fprintf(fileID, test_json);
 
