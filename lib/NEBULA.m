@@ -146,7 +146,7 @@ W = [];
 WT = [];
 subminiter = 1;
 submaxiter = 50;
-substopcriterion = 0;
+substopcriterion = 3;
 subtolerance = 1e-5;
 % Don't forget convergence criterion
 
@@ -621,7 +621,7 @@ while (iter <= miniter) || ((iter <= maxiter) && not(converged))
                         
                     if ( objective(iter+1) <= (maxpastobjective ...
                             - acceptdecrease*alpha/2*normsqdx) ) ...
-                            || (alpha >= acceptalphamax);
+                            || (alpha >= acceptalphamax)
                         accept = 1;
                     end
                     acceptalpha = alpha;  % Keep value for displaying
@@ -695,7 +695,6 @@ while (iter <= miniter) || ((iter <= maxiter) && not(converged))
     switch alphamethod
         case 0 % do nothing, constant alpha
         case 1 % bb method
-            %Adx is overwritten at top of iteration, so this is an ok reuse
             % Adx is overwritten at top of iteration, so this is an ok reuse
             switch lower(noisetype)
                 case {'poisson', 'negative binomial'}                                          % poisson and neg bin are the same... should they?

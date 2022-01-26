@@ -14,13 +14,13 @@ close all
 % =========================================================================
 
 % Load Simulated Data
- filename = ['/Users/jocelynornelas/iCloud Drive (Archive)/Desktop/UC Merced/Research/'...
-     'structural_variants/data/simulated/100000_2pctNovel.mat'];%/Users/jocelynornelasmunoz/Desktop/structural_variants/data/simulated/' ...
+% filename = ['/Users/jocelynornelas/iCloud Drive (Archive)/Desktop/UC Merced/Research/'...
+%     'structural_variants/data/simulated/4p_4c_coverage/100000_2pctNovel.mat'];%/Users/jocelynornelasmunoz/Desktop/structural_variants/data/simulated/' ...
 %             
- %filename = ['/Users/jocelynornelasmunoz/Desktop/'...
-  %           'structural_variants/data/simulated/100_2pctNovel.mat'];
+ filename = ['/Users/jocelynornelasmunoz/Desktop/'...
+             'structural_variants/data/simulated/100_2pctNovel.mat'];
 load(filename)
-%% run
+
 tauvals= [0.1];
 gamma= 50;
 for i=1:length(tauvals)
@@ -59,8 +59,8 @@ for i=1:length(tauvals)
     % initialization of f to start with
     % AT(y) rescaled to a least-squares fit to the mean intensity
     f_init = (sum(s_obs)*numel(AT(s_obs)))/(sum(AT(s_obs))...
-            *sum(AT(ones(size(s_obs)))))*AT(s_obs);
-
+            *sum(AT(ones(size(s_obs))))).*AT(s_obs);
+    
     % =====================================================================
     % =                  SPIRAL Method reconstruction                     =
     % =====================================================================
@@ -125,5 +125,5 @@ for i=1:length(tauvals)
     fhat_NEBULA_c = fhat_NEBULA_h + fhat_NEBULA_n;
     
         ROC_curve
-    %save_to_JSON
+    save_to_JSON
 end
