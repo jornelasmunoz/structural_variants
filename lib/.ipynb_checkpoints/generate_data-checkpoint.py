@@ -10,7 +10,8 @@ import random
 
 
 def generate_diploid_data(params):
-    q = np.random.permutation(params['n'])
+    # First, we randomly permute a sequence (1,2,3,...n)
+    q = np.random.permutation(np.arange(1,params['n']+1))
     startVal = int(params['k']*params['pctNovel']); #print(startVal)
     endVal = int(startVal +params['k']) ; #print(endVal)
     similarity = int(params['pct_similarity']* params['k']) # pct_similarity * number of SVs
@@ -110,15 +111,3 @@ def generate_haploid_data(params):
     
     
     return d
-# params = {
-#     'r': 1,
-#     'n': 10**2,
-#     'k': 10,
-#     'lambda_c': 4,
-#     'lambda_p': 8,
-#     'pctNovel': 0.15,
-#     'erreps'  : 1e-2,
-#     #'suffix'  : ['p','c'],
-#     'pct_similarity': 0.6}
-# data =generate_diploid_data(params)
-# savemat("matlab_test.mat", data)
