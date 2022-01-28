@@ -20,7 +20,7 @@ k = 10; %number of SVs
 % Initialize lambda and epsilon values
 
 lambda_c = 4;
-lambda_p = 8;
+lambda_p = 4;
 erreps = 0.01;
 
 % Change depending on appropriate loading data
