@@ -9,8 +9,37 @@ from scipy.io import savemat
 import random
 
 
-def generate_diploid_data(params):
-    q = np.random.permutation(params['n'])
+def generate_diploid_data(params, prnt=True):
+    '''
+    Generate simulated data for a one parent, one child Structural Variant (SV) analysis
+    Args: A dictionary containing the following parameters as keys
+        n: size of data vectors (signals)
+        k: total number of structural variants
+        pctNovel: percent of novel structural variants in [0,1] (biological reality- very small %)
+        lambda_p, lambda_c: sequence coverage of child and parent, respectively
+        erreps: error (>0) incurred by sequencing and mapping process
+        r: dispersion parameter for Negative Binomial distribution; we use 1 to maximize variance under Neg Bin
+    
+    The output is provided for different individuals. 
+    Here, p2 = parent 2, p = parent 1, c = child, h = inherited, and n = novel. 
+    We will calculate necessary variables for parent 1 (p) and the child's inherited (h) and novel (n) 
+    SV's, and only use parent 2 (p2) for the logical implementation of inheritance of the child's signals. 
+    
+    Output: A dictionary containing the following data elements as keys
+        Input parameters
+        f_{p2,c,p}: nx1 true signal of an individual
+        z_{p,h,c}:  nx1 indicator vector of homogeneous structural variants
+        y_{p,h,c}:  nx1 indicator vector of heterogeneous structural variants
+        mu_{p,c}:   Mean sequence coverage; mu_{} = A_{} * f_{};
+        var_{p,c}:  Variance of sequence coverage; var_{} = mu_{} + (1/r) mu_{}^2, where r=1
+        s_{p,c}:    nx1 random vector drawn from Negative binomial distribution
+        A_z,{c,p}:   (lambda_c - erreps) I_n  
+        A_y,{c,p}: (2*lambda_c - erreps) I_n
+                    Note: The matrices A_{} are sparse diagonal nxn matrix and I_n is nxn identity matrix
+        
+    '''
+    # First, we randomly permute a sequence (1,2,3,...n)
+    q = np.random.permutation(np.arange(1,params['n']+1))
     startVal = int(params['k']*params['pctNovel']); #print(startVal)
     endVal = int(startVal +params['k']) ; #print(endVal)
     similarity = int(params['pct_similarity']* params['k']) # pct_similarity * number of SVs
@@ -110,15 +139,3 @@ def generate_haploid_data(params):
     
     
     return d
-# params = {
-#     'r': 1,
-#     'n': 10**2,
-#     'k': 10,
-#     'lambda_c': 4,
-#     'lambda_p': 8,
-#     'pctNovel': 0.15,
-#     'erreps'  : 1e-2,
-#     #'suffix'  : ['p','c'],
-#     'pct_similarity': 0.6}
-# data =generate_diploid_data(params)
-# savemat("matlab_test.mat", data)
