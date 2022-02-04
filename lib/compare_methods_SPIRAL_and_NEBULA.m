@@ -13,21 +13,23 @@ close all
 % =         Comparison of methods for the dataset: Simulated Data
 % =========================================================================
 
-% Load Simulated Data
- filename = ['/Users/jocelynornelas/iCloud Drive (Archive)/Desktop/UC Merced/Research/'...
-     'structural_variants/data/simulated/100000_2pctNovel.mat'];%/Users/jocelynornelasmunoz/Desktop/structural_variants/data/simulated/' ...
-%             
- %filename = ['/Users/jocelynornelasmunoz/Desktop/'...
-  %           'structural_variants/data/simulated/100_2pctNovel.mat'];
+% Load Simulated Data 
+addpath([genpath('/Users/jocelynornelasmunoz/Desktop/Research/structural_variants/'), ...
+         genpath('/Users/jocelynornelas/iCloud Drive (Archive)/Desktop/UC Merced/Research/structural_variants/') ])
+
+      
+filename = 'data/20pctNovel_10k_100n.mat';
 load(filename)
-%% run
+
+% Define parameters tau and gamma 
 tauvals= [0.1];
 gamma= 50;
 for i=1:length(tauvals)
      t= tauvals(i);
      
      tau=[t; t*gamma];
-    % Define true signal f, observed signal s, and number of subvectors in
+    
+     % Define true signal f, observed signal s, and number of subvectors in
     % true signal
     f_true = double([z_p; z_h; z_n; y_p; y_h; y_n]);
     s_obs = double([s_p; s_c]);
