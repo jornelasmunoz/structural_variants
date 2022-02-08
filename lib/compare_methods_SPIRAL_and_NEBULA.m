@@ -10,58 +10,57 @@ clear;
 close all
 
 % =========================================================================
-% =         Comparison of methods for the dataset: Simulated Data
+% =         Preparation of data variables: Simulated Data
 % =========================================================================
 
 % Load Simulated Data 
 addpath([genpath('/Users/jocelynornelasmunoz/Desktop/Research/structural_variants/'), ...
          genpath('/Users/jocelynornelas/iCloud Drive (Archive)/Desktop/UC Merced/Research/structural_variants/') ])
 
-      
-filename = 'data/20pctNovel_10k_100n.mat';
-load(filename)
+filename = 'data/20pctNovel_10k_100n.mat'; load(filename)
+
+
+
+% Define true signal f, observed signal s
+f_true = double([z_p; z_h; z_n; y_p; y_h; y_n]);
+s_obs = double([s_p; s_c]);
+subvectors = 6;
+N = length(f_true);
+n = N/subvectors; 
+
+% Set up diagonal block matrix A (coverage matrix)
+A = sparse(2*n, 6*n);
+A(1:n,1:n) = A_zp;
+A(1:n, 3*n+1:4*n) = A_yp;
+A(n+1:2*n, n+1:2*n) = A_zc;
+A(n+1:2*n, 2*n+1:3*n) = A_zc;
+A(n+1:2*n, 4*n+1:5*n) = A_yc;
+A(n+1:2*n, 5*n+1:6*n) = A_yc;
+B = A;
+% Set up function handles for computing A and A^T
+AT  = @(x)A'*x;
+A   = @(x)A*x;
+
+% set maximum number of iterations, tol, and when to print to screen
+maxiter = 700;
+tolerance = 1e-8;
+verbose = 100;
+
+% Simple initialization:
+% initialization of f to start with
+% AT(s) rescaled to a least-squares fit to the mean intensity
+f_init = (sum(s_obs)*numel(AT(s_obs)))/(sum(AT(s_obs))...
+        *sum(AT(ones(size(s_obs)))))*AT(s_obs);
 
 % Define parameters tau and gamma 
 tauvals= [0.1];
 gamma= 50;
+
 for i=1:length(tauvals)
      t= tauvals(i);
-     
      tau=[t; t*gamma];
     
-     % Define true signal f, observed signal s, and number of subvectors in
-    % true signal
-    f_true = double([z_p; z_h; z_n; y_p; y_h; y_n]);
-    s_obs = double([s_p; s_c]);
-    subvectors = 6;
-
-    N = length(f_true);
-    n = N/subvectors;
-
-    % Set up diagonal block matrix A
-    % the choice to allocate for n nonzero values is arbitrary
-    A = sparse(2*n, 6*n);
-    A(1:n,1:n) = A_zp;
-    A(1:n, 3*n+1:4*n) = A_yp;
-    A(n+1:2*n, n+1:2*n) = A_zc;
-    A(n+1:2*n, 2*n+1:3*n) = A_zc;
-    A(n+1:2*n, 4*n+1:5*n) = A_yc;
-    A(n+1:2*n, 5*n+1:6*n) = A_yc;
-
-    % Set up function handles for computing A and A^T
-    AT  = @(x)A'*x;
-    A   = @(x)A*x;
-
-    % set maximum number of iterations, tol, and when to print to screen
-    maxiter = 700;
-    tolerance = 1e-8;
-    verbose = 100;
-
-    % Simple initialization:
-    % initialization of f to start with
-    % AT(y) rescaled to a least-squares fit to the mean intensity
-    f_init = (sum(s_obs)*numel(AT(s_obs)))/(sum(AT(s_obs))...
-            *sum(AT(ones(size(s_obs)))))*AT(s_obs);
+     
 
     % =====================================================================
     % =                  SPIRAL Method reconstruction                     =
@@ -94,6 +93,8 @@ for i=1:length(tauvals)
     fhat_SPIRAL_h = 2*fhat_SPIRAL(n+1:2*n)  + fhat_SPIRAL(4*n+1:5*n);
     fhat_SPIRAL_n = 2*fhat_SPIRAL(2*n+1:3*n)+ fhat_SPIRAL(5*n+1:6*n);
     fhat_SPIRAL_c = fhat_SPIRAL_h + fhat_SPIRAL_n;
+
+    [tpr_SPIRAL,fpr_SPIRAL,thresholds_SPIRAL] = roc(f_true,fhat_SPIRAL);
     % =====================================================================
     % =                  NEBULA Method reconstruction                     =
     % =====================================================================
@@ -126,6 +127,7 @@ for i=1:length(tauvals)
     fhat_NEBULA_n = 2*fhat_NEBULA(2*n+1:3*n)+ fhat_NEBULA(5*n+1:6*n);
     fhat_NEBULA_c = fhat_NEBULA_h + fhat_NEBULA_n;
     
-        ROC_curve
+    [tpr_NEBULA,fpr_NEBULA,thresholds_NEBULA] = roc(f_true,fhat_NEBULA);
+     %ROC_curve
     %save_to_JSON
 end

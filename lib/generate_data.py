@@ -9,7 +9,7 @@ from scipy.io import savemat
 import random
 
 
-def generate_diploid_data(params, prnt=True, seed=None):
+def generate_diploid_data(params, prnt=True, seed=None, filepath=None):
     '''
     Generate simulated data for a one parent, one child Structural Variant (SV) analysis
     Args: A dictionary containing the following parameters as keys
@@ -115,6 +115,10 @@ def generate_diploid_data(params, prnt=True, seed=None):
         print('Using parameters:')
         for key, val in params.items():
             print('\t', key, ': ', val)  
+            
+    if filepath is not None: 
+        savemat(filepath, data)
+        print('Saving data to:\t %s'%filepath)
     return data
 
 def generate_haploid_data(params):
