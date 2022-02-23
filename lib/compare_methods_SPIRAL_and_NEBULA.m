@@ -132,9 +132,23 @@ for i=1:length(tauvals)
     
     %ROC_curve
     %save_to_JSON
+    figure
     fhat_NEBULA_bin = fhat_NEBULA > 0.5;
     C = confusionmat(f_true, double(fhat_NEBULA_bin), 'Order', [1, 0]);
-    confusionchart(C)
+    cm = confusionchart(C);
+    cm.Title = 'Structural Variant Confusion Matrix using NEBULA';
+    cm.RowSummary = 'row-normalized';
+    cm.ColumnSummary = 'column-normalized';
+    cm.NormalizedValues;
+    figure
+    fhat_SPIRAL_bin = fhat_SPIRAL > 0.5;
+    C = confusionmat(f_true, double(fhat_SPIRAL_bin), 'Order', [1, 0]);
+    cm = confusionchart(C);
+    cm.Title = 'Structural Variant Confusion Matrix using SPIRAL';
+    cm.RowSummary = 'row-normalized';
+    cm.ColumnSummary = 'column-normalized';
+    cm.NormalizedValues;
+
     %calculate precision and recall
     % look into why ROC curve is not good for imbalanced data
 end
