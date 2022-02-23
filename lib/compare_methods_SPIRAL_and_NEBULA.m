@@ -42,9 +42,10 @@ AT  = @(x)A'*x;
 A   = @(x)A*x;
 
 % set maximum number of iterations, tol, and when to print to screen
-maxiter = 700;
+maxiter = 100;
 tolerance = 1e-8;
-verbose = 100;
+verbose = 10;
+
 
 % Simple initialization:
 % initialization of f to start with
@@ -53,8 +54,8 @@ f_init = (sum(s_obs)*numel(AT(s_obs)))/(sum(AT(s_obs))...
         *sum(AT(ones(size(s_obs)))))*AT(s_obs);
 
 % Define parameters tau and gamma 
-tauvals= [0.1];
-gamma= 50;
+tauvals= [1e-6];
+gamma= 10-4;
 
 for i=1:length(tauvals)
      t= tauvals(i);
@@ -128,6 +129,12 @@ for i=1:length(tauvals)
     fhat_NEBULA_c = fhat_NEBULA_h + fhat_NEBULA_n;
     
     [tpr_NEBULA,fpr_NEBULA,thresholds_NEBULA] = roc(f_true,fhat_NEBULA);
-     %ROC_curve
+    
+    %ROC_curve
     %save_to_JSON
+    fhat_NEBULA_bin = fhat_NEBULA > 0.5;
+    C = confusionmat(f_true, double(fhat_NEBULA_bin), 'Order', [1, 0]);
+    confusionchart(C)
+    %calculate precision and recall
+    % look into why ROC curve is not good for imbalanced data
 end
