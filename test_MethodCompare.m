@@ -23,7 +23,7 @@ addpath([genpath('/Users/jocelynornelasmunoz/Desktop/Research/structural_variant
 
 %filename = 'data/haploid_20pctNovel_10k_100n.mat';
 %filename = 'data/haploid_20pctNovel_10k_100n_reproducedAPL.mat'; %reproduced data
-filename = 'lib/old/neg_binom_nov_p4_c4_5perNov.mat'; %Andrew's 5%nov
+filename = 'lib/old/neg_binom_nov_p4_c4_5perNov.mat'; %Andrew's 5%nov 10^6n
 %filename = 'lib/old/neg_binom_nov_p4_c4_20perNov.mat'; %Andrew's 20%nov
 load(filename)
 
@@ -77,11 +77,10 @@ A   = @(x) A_neg_binom*x;
 % set maximum number of iterations, tol, and when to print to
 % screen
 maxiter = 1000;
-%maxiter = 500;
 tolerance = 1e-8;
-%tolerance = 1e-4;
 verbose = 100;
-%verbose = 30;
+
+
 % Simple initialization:
 % initialization of f to start with
 % AT(y) rescaled to a least-squares fit to the mean intensity
@@ -90,6 +89,7 @@ finit = (sum(sum(y_neg_binom)).*numel(AT(y_neg_binom)))...
     .*AT(y_neg_binom);
 
 %tic
+%%%% POISSON Reconstruction
 % Run the algorithm:
 % Demonstrating all the options for our algorithm:
 % fhatSPIRAL_1p1c_nov is the name of the reconstruction
@@ -126,31 +126,32 @@ fhatSPIRAL_c_neg_binom_SP =fhatSPIRAL_c_inh_neg_binom_SP + fhatSPIRAL_c_nov_neg_
 % =    Set up for Novel Method reconstruction    =
 % =====================================================================
 
-f_poisson = [f_c_inh_neg_binom; f_c_nov_neg_binom; f_p_neg_binom];
-y_poisson =[y_c_neg_binom; y_p_neg_binom];
+% f_poisson = [f_c_inh_neg_binom; f_c_nov_neg_binom; f_p_neg_binom];
+% y_poisson =[y_c_neg_binom; y_p_neg_binom];
+% 
+% N = length(f_neg_binom);
+% n = N/3;
+% 
+% % set up the block diagonal matrix A
+% A_neg_binom = sparse(2*n, 3*n);
+% A_neg_binom(1:n,1:n) = A_c_neg_binom;
+% A_neg_binom(1:n,n+1:2*n) = A_c_neg_binom;
+% A_neg_binom(n+1:2*n, 2*n+1:3*n) = A_p_neg_binom;
+% 
+% 
+% % Setup function handles for computing A and A^T:
+% AT  = @(x) A_neg_binom'*x;
+% A   = @(x) A_neg_binom*x;
+% 
+% % set maximum number of iterations, tol, and when to print to
+% % screen
+% maxiter = 1000;
+% %maxiter = 500;
+% tolerance = 1e-8;
+% %tolerance = 1e-4;
+% verbose = 100;
+% %verbose = 30;
 
-N = length(f_neg_binom);
-n = N/3;
-
-% set up the block diagonal matrix A
-A_neg_binom = sparse(2*n, 3*n);
-A_neg_binom(1:n,1:n) = A_c_neg_binom;
-A_neg_binom(1:n,n+1:2*n) = A_c_neg_binom;
-A_neg_binom(n+1:2*n, 2*n+1:3*n) = A_p_neg_binom;
-
-
-% Setup function handles for computing A and A^T:
-AT  = @(x) A_neg_binom'*x;
-A   = @(x) A_neg_binom*x;
-
-% set maximum number of iterations, tol, and when to print to
-% screen
-maxiter = 1000;
-%maxiter = 500;
-tolerance = 1e-8;
-%tolerance = 1e-4;
-verbose = 100;
-%verbose = 30;
 % Simple initialization:
 % initialization of f to start with
 % AT(y) rescaled to a least-squares fit to the mean intensity

@@ -8,9 +8,9 @@
 %This code uses Poisson Based SPIRAL to compare Poisson Data and Negative
 %Binomial Data
 
-% clc;
-% clear;
-% close all
+clc;
+clear;
+close all
 
 % =========================================================================
 % =         Comparison of methods for the dataset: Simulated Data
@@ -22,8 +22,9 @@ addpath([genpath('/Users/jocelynornelasmunoz/Desktop/Research/structural_variant
          genpath('/Users/jocelynornelas/iCloud Drive (Archive)/Desktop/UC Merced/Research/structural_variants/') ])
 
 %filename = 'data/haploid_20pctNovel_10k_100n.mat';
-filename = 'data/haploid_20pctNovel_10k_100n_reproducedAPL.mat'; %reproduced data
-filename = 
+%filename = 'data/haploid_20pctNovel_10k_100n_reproducedAPL.mat'; %reproduced data
+filename = 'lib/old/neg_binom_nov_p4_c4_5perNov.mat'; %Andrew's 5%nov 10^6n
+%filename = 'lib/old/neg_binom_nov_p4_c4_20perNov.mat'; %Andrew's 20%nov
 load(filename)
 
 
@@ -76,11 +77,10 @@ A   = @(x) A_neg_binom*x;
 % set maximum number of iterations, tol, and when to print to
 % screen
 maxiter = 1000;
-%maxiter = 500;
 tolerance = 1e-8;
-%tolerance = 1e-4;
 verbose = 100;
-%verbose = 30;
+
+
 % Simple initialization:
 % initialization of f to start with
 % AT(y) rescaled to a least-squares fit to the mean intensity
