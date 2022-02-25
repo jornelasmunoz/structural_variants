@@ -106,7 +106,7 @@ def generate_diploid_data(params, prnt=True, seed=None, filepath=None):
         d['A_y%s'%letter]   = (params['lambda_%s'%letter] - params['erreps'])*sparse.eye(params['n'])
         d['mu_%s'%letter]  = np.matmul((d['A_z%s'%letter]+d['A_y%s'%letter]).toarray(), d['f_%s'%letter]) + params['erreps']
         d['var_%s'%letter] = d['mu_%s'%letter] +(1/params['r'])*(d['mu_%s'%letter]**2)
-        d['s_%s'%letter]   = np.random.negative_binomial(d['mu_%s'%letter]/(d['var_%s'%letter]-d['mu_%s'%letter]),d['mu_%s'%letter]/d['var_%s'%letter])
+        d['s_%s'%letter]   = np.random.negative_binomial(d['mu_%s'%letter]**2/(d['var_%s'%letter]-d['mu_%s'%letter]),d['mu_%s'%letter]/d['var_%s'%letter])
 
     data = {**d, **params}
     if prnt:
@@ -121,7 +121,7 @@ def generate_diploid_data(params, prnt=True, seed=None, filepath=None):
         print('Saving data to:\t %s'%filepath)
     return data
 
-def generate_haploid_data(params):
+def generate_haploid_data(params,seed=None, prnt=True):
     '''
     Generate simulated data for a one parent, one child Structural Variant analysis
     Args: A dictionary containing the following parameters as keys
@@ -145,14 +145,25 @@ def generate_haploid_data(params):
         y_i: nx1 indicator vector of heterogeneous structural variants
         
     '''
-    q = np.random.permutation(params['n'])
+    np.random.seed(seed=seed)
+    #q = np.random.permutation(params['n'])
+    # this q was used by Andrew's 100n 20pctNovel signals
+    q = np.array([ 99,  32,  40,  22,  34,  92,  91,  35,   6,  55,   3,  96,  68,
+        16,  69,  11,  54,  30,  45,  77,  60,  74,  78,  72,  62,  70,
+        51,  33,   7,  86,  38, 100,  58,  76,  81,  89,  42,  28,  17,
+        41,  47,  98,  80,  14,  46,  56,  63,  93,   8,  67,  84,  90,
+        97,  83,  59,  79,   5,  48,  53,  29,  21,  25,  52,  37,  64,
+        31,  49,  27,  61,  88,  50,  87,  26,  43,  94,  19,  44,  15,
+        73,   1,  36,  82,  71,  23,  65,   2,   4,  18,  85,  75,  24,
+        95,  39,  13,   9,  66,  20,  57,  10,  12])
     #print(q)
-    startVal = int(params['k']*params['pctNovel']); #print(startVal)
-    endVal = int(startVal +params['k']) ; #print(endVal)
+    params['q'] = q
+    startVal = int(params['k']*params['pctNovel']); print(startVal)
+    endVal = int(startVal +params['k']) ; print(endVal)
 
-    f_p, f_c, f_h, f_n = np.zeros((params['n'],1), dtype=np.int8),np.zeros((params['n'],1), dtype=np.int8), np.zeros((params['n'],1), dtype=np.int8), np.zeros((params['n'],1), dtype=np.int8)
+    f_p, f_c, f_h, f_n = np.zeros((params['n'],1)),np.zeros((params['n'],1)), np.zeros((params['n'],1)), np.zeros((params['n'],1))
     f_p[q[: params['k']]], f_c[q[startVal:endVal]] = 1,1
-    f_h[q[startVal:params['k']+1]], f_n[q[params['k']+1:endVal]] = 1,1
+    f_h[q[startVal:params['k']]], f_n[q[params['k']+1:endVal+1]] = 1,1
     
     
     d = {}
@@ -162,7 +173,13 @@ def generate_haploid_data(params):
         d['A_%s'%letter]   = (params["lambda_%s"%letter] - params['erreps'])*sparse.eye(params['n'])
         d['mu_%s'%letter]  = np.matmul(d['A_%s'%letter].toarray(), d['f_%s'%letter]) + params['erreps']
         d['var_%s'%letter] = d['mu_%s'%letter] +(1/params['r'])*(d['mu_%s'%letter]**2)
-        d['s_%s'%letter]   = np.random.negative_binomial(d['mu_%s'%letter]/(d['var_%s'%letter]-d['mu_%s'%letter]),d['mu_%s'%letter]/d['var_%s'%letter])
+        d['s_%s'%letter]   = np.random.negative_binomial(d['mu_%s'%letter]**2/(d['var_%s'%letter]-d['mu_%s'%letter]),d['mu_%s'%letter]/d['var_%s'%letter])
     
-    
-    return d
+    data = {**d, **params}
+    if prnt:
+        print('Done!')
+        print()
+        print('Using parameters:')
+        for key, val in params.items():
+            print('\t', key, ': ', val) 
+    return data

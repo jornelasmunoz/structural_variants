@@ -28,19 +28,19 @@ for i = 1:length(thresh)
     F_n = 0;   
     
     for j = 1:n
-        
-    if f_true(j)==1 && f_thresh(j)==1 %&& fhatSPIRAL_uc(j)~=0
-        T_p = T_p + 1;
-        
-    elseif f_true(j)==0 && f_thresh(j)==1 %&&fhatSPIRAL_uc(j)~=0
-        F_p = F_p + 1;
-        
-    elseif  f_true(j)==0 && f_thresh(j)==0 %&& fhatSPIRAL_uc(j)==0
-        T_n = T_n + 1;   
-        
-    elseif f_true(j)==1 && f_thresh(j)==0 %&& fhatSPIRAL_uc(j)==0 
-        F_n = F_n + 1;    
-    end
+        % True positives
+        if f_true(j)==1 && f_thresh(j)==1 %&& fhatSPIRAL_uc(j)~=0
+            T_p = T_p + 1;
+        % False positives    
+        elseif f_true(j)==0 && f_thresh(j)==1 %&&fhatSPIRAL_uc(j)~=0
+            F_p = F_p + 1;
+        % True negatives    
+        elseif  f_true(j)==0 && f_thresh(j)==0 %&& fhatSPIRAL_uc(j)==0
+            T_n = T_n + 1;   
+        % False negatives     
+        elseif f_true(j)==1 && f_thresh(j)==0 %&& fhatSPIRAL_uc(j)==0 
+            F_n = F_n + 1;    
+        end
     
     end
     

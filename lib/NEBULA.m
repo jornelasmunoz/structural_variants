@@ -126,7 +126,11 @@ mu = 0;
 % specific to SV diploid model with novel variants
 % % for diploid with novel, this assumes the order of f is  
     % [zP, zH, zN, yP, yH, yN] and we weigh the novel variants more
-delta = [tau(1), tau(1), tau(2), tau(1),tau(1),tau(2) ];
+if subvectors == 6
+    delta = [tau(1), tau(1), tau(2), tau(1),tau(1),tau(2) ];
+elseif subvectors == 3
+    delta = [tau(1), tau(1), tau(2)];
+end
 % Add a path to the denoising methods folder
 nebula_dir = which('NEBULA');
 [nebula_dir, dummy] = fileparts(nebula_dir);
@@ -146,7 +150,7 @@ W = [];
 WT = [];
 subminiter = 1;
 submaxiter = 50;
-substopcriterion = 3;
+substopcriterion = 0;
 subtolerance = 1e-5;
 % Don't forget convergence criterion
 
@@ -405,7 +409,7 @@ switch lower(penalty)
             else % WT was provided
             if isa(WT, 'function_handle') % W and WT are function calls
                 try dummy = y + A(WT(W(AT(y))));
-                catch exception 
+                catch exception;
                     error('Size incompatability between ''W'' and ''WT''.')
                 end
             else % W is a function call, WT is a matrix        
@@ -859,8 +863,14 @@ function subsolution = computesubsolution(step,tau,alpha,penalty,subvectors,delt
         %     % APL: subsolution(2*n+1:3*n) = step(2*n+1:3*n) - alpha.*grad(2*n+1:3*n) +tau(1);
            
             % Projection onto feasible region
-            
-            subsolution = diploid_novel_projection(subsolution, subvectors, 6);
+            if subvectors == 6
+                subsolution = diploid_novel_projection(subsolution, subvectors, 6);
+            elseif subvectors == 3
+                subsolution = Novel_const(subsolution);
+            else
+                fprintf('Method can only accept 3 and 6 subvectors within f_vec for now')
+
+            end
             
             
         case 'onb'

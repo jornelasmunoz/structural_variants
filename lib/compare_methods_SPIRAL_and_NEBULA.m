@@ -5,9 +5,9 @@
 
 % This code was adapted from Melissa Spence and Mario Banuelos's SV work
 
-clc;
-clear;
-close all
+% clc;
+% clear;
+% close all
 
 % =========================================================================
 % =         Preparation of data variables: Simulated Data
@@ -17,7 +17,7 @@ close all
 addpath([genpath('/Users/jocelynornelasmunoz/Desktop/Research/structural_variants/'), ...
          genpath('/Users/jocelynornelas/iCloud Drive (Archive)/Desktop/UC Merced/Research/structural_variants/') ])
 
-filename = 'data/20pctNovel_10k_100n.mat'; load(filename)
+filename = 'data/haploid_5pctNovel_500k_100000n.mat'; load(filename)
 
 
 
@@ -55,7 +55,7 @@ f_init = (sum(s_obs)*numel(AT(s_obs)))/(sum(AT(s_obs))...
 
 % Define parameters tau and gamma 
 tauvals= [1e-6];
-gamma= 10-4;
+gamma= 10^-4;
 
 for i=1:length(tauvals)
      t= tauvals(i);

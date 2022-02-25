@@ -8,9 +8,9 @@
 %This code uses Poisson Based SPIRAL to compare Poisson Data and Negative
 %Binomial Data
 
-% clc;
-% clear;
-% close all
+clc;
+clear;
+close all
 
 % =========================================================================
 % =         Comparison of methods for the dataset: Simulated Data
@@ -18,8 +18,11 @@
 
 % Load Simulated Data
 % --------------------------------------------------------
-% filename1 = 'neg_binom_nov_p4_c4_5perNov.mat';
-% load(filename1)
+addpath([genpath('/Users/jocelynornelasmunoz/Desktop/Research/structural_variants/'), ...
+         genpath('/Users/jocelynornelas/iCloud Drive (Archive)/Desktop/UC Merced/Research/structural_variants/') ])
+
+filename1 = 'lib/old/neg_binom_nov_p4_c4_5perNov.mat';
+ load(filename1)
 
 %filename = '/Users/jocelynornelas/iCloud Drive (Archive)/Desktop/UC Merced/Research/structural_variants/data/simulated/4p_4c_coverage/0.02pctNovel.mat';
 %load(filename)
