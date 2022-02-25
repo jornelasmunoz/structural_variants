@@ -21,51 +21,37 @@
 addpath([genpath('/Users/jocelynornelasmunoz/Desktop/Research/structural_variants/'), ...
          genpath('/Users/jocelynornelas/iCloud Drive (Archive)/Desktop/UC Merced/Research/structural_variants/') ])
 
-filename1 = 'data/haploid_20pctNovel_10k_100n.mat';
-load(filename1)
+%filename = 'data/haploid_20pctNovel_10k_100n.mat';
+filename = 'data/haploid_20pctNovel_10k_100n_reproducedAPL.mat'; %reproduced data
+filename = 
+load(filename)
 
 
-%increment=1;
-% use to loop
-%tau_range = logspace(-2,2,5);
-%gam=logspace(0,1,5);
-%gam=[5 10 15 20 30];
-%tau*pen(f)= tau(onenorm(f_inh) + onenorm(f_p) + gam*onenorm(f_c_nov))
-tauvals= [1];
+% Define tauvals to be used in loop
+tauvals= 1;
 for i=1:length(tauvals)
     
  t= tauvals(i);
  g= 10;
  tau=[t; t*g];
 
-%gamma= 5;
-%Tau=20;
-%tau=[Tau,Tau*gamma];
-
-%Use if looping tau
-%Tau_Area = zeros((length(tau_range)*length(gam)),5);
-%Tau_Area = zeros(1,5);
-
-%             for i= 1:length(tau_range)
-%                   %tau_n=gam*tau_range(i);
-%                   tau_n=0.001;
-%               for j= 1:length(gam)
-%                       tau=[tau_range(i), tau_n(j)];
-% %
 % tau(1) is for f_c and f_p
-% tau(2) is for f_n (novel in child). Generally tau(1) < tau(2).
+% tau(2) is for f_n (novel in child). Generally tau(1) << tau(2).
 
 % =====================================================================
 % =    Set up for Novel Method reconstruction    =
 % =====================================================================
-f_c_inh_neg_binom = double(f_h);
-f_c_nov_neg_binom = double(f_n); 
-f_p_neg_binom = double(f_p);
-y_c_neg_binom = double(s_c); 
-y_p_neg_binom = double(s_p);
-A_c_neg_binom = double(A_c);
-A_p_neg_binom = double(A_p);
-
+if contains(filename, 'neg_binom')
+    continue
+else    
+    f_c_inh_neg_binom = double(f_h);
+    f_c_nov_neg_binom = double(f_n); 
+    f_p_neg_binom = double(f_p);
+    y_c_neg_binom = double(s_c); 
+    y_p_neg_binom = double(s_p);
+    A_c_neg_binom = double(A_c);
+    A_p_neg_binom = double(A_p);
+end
 
 
 % define signals
