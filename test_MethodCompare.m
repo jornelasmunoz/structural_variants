@@ -43,7 +43,7 @@ for i=1:length(tauvals)
 % =    Set up for Novel Method reconstruction    =
 % =====================================================================
 if contains(filename, 'neg_binom')
-    continue
+    fprintf('Using Andrew"s data')
 else    
     f_c_inh_neg_binom = double(f_h);
     f_c_nov_neg_binom = double(f_n); 
