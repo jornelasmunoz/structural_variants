@@ -17,15 +17,25 @@ close all
 addpath([genpath('/Users/jocelynornelasmunoz/Desktop/Research/structural_variants/'), ...
          genpath('/Users/jocelynornelas/iCloud Drive (Archive)/Desktop/UC Merced/Research/structural_variants/') ])
 
-filename = 'data/haploid_20pctNovel_10k_100n.mat'; load(filename)
+%filename = 'data/haploid_20pctNovel_10k_100n.mat';
+filename = 'data/haploid_20pctNovel_10k_100n_reproducedAPL.mat'; %reproduced data
+%filename = 'lib/old/neg_binom_nov_p4_c4_5perNov.mat'; %Andrew's 5%nov 10^6n
+%filename = 'lib/old/neg_binom_nov_p4_c4_20perNov.mat'; %Andrew's 20%nov
+load(filename)
 
-% f_p = f_p_neg_binom;
-% f_h = f_c_inh_neg_binom;
-% f_n = f_c_nov_neg_binom;
-% s_p = y_p_neg_binom;
-% s_c = y_c_neg_binom;
-% A_c = A_c_neg_binom;
-% A_p = A_p_neg_binom;
+if contains(filename, 'neg_binom')
+    fprintf('Using Andrews data \n')
+    f_p = f_p_neg_binom;
+    f_h = f_c_inh_neg_binom;
+    f_n = f_c_nov_neg_binom;
+    s_p = y_p_neg_binom;
+    s_c = y_c_neg_binom;
+    A_c = A_c_neg_binom;
+    A_p = A_p_neg_binom;
+else    
+    fprintf('\n')
+end
+
 
 % Define true signal f, observed signal s
 f_true = double([f_p; f_h; f_n]);
@@ -133,30 +143,35 @@ for i=1:length(tauvals)
 %     fhat_NEBULA_n = 2*fhat_NEBULA(2*n+1:3*n)+ fhat_NEBULA(5*n+1:6*n);
 %     fhat_NEBULA_c = fhat_NEBULA_h + fhat_NEBULA_n;
 %     
-    [X_n,Y_n,T_n,AUC_n] = perfcurve(f_true,fhat_NEBULA, 1); 
-    [X_s,Y_s,T_s,AUC_s] = perfcurve(f_true,fhat_SPIRAL, 1);
-    plot(X_n,Y_n, '-r', 'LineWidth',2); hold on
-    plot(X_s, Y_s, '--b', 'LineWidth',1.5)
-    legend(strcat('NEBULA = ', num2str(AUC_n)), strcat('SPIRAL = ', num2str(AUC_s)))
+
     %ROC_curve
     %save_to_JSON
-    figure
-    fhat_NEBULA_bin = fhat_NEBULA > 0.5;
-    C = confusionmat(f_true, double(fhat_NEBULA_bin), 'Order', [1, 0]);
-    cm = confusionchart(C);
-    cm.Title = 'Structural Variant Confusion Matrix using NEBULA';
-    cm.RowSummary = 'row-normalized';
-    cm.ColumnSummary = 'column-normalized';
-    cm.NormalizedValues;
-    figure
-    fhat_SPIRAL_bin = fhat_SPIRAL > 0.5;
-    C = confusionmat(f_true, double(fhat_SPIRAL_bin), 'Order', [1, 0]);
-    cm = confusionchart(C);
-    cm.Title = 'Structural Variant Confusion Matrix using SPIRAL';
-    cm.RowSummary = 'row-normalized';
-    cm.ColumnSummary = 'column-normalized';
-    cm.NormalizedValues;
-
+%     figure
+%     fhat_NEBULA_bin = fhat_NEBULA > 0.5;
+%     C = confusionmat(f_true, double(fhat_NEBULA_bin), 'Order', [1, 0]);
+%     cm = confusionchart(C);
+%     cm.Title = 'Structural Variant Confusion Matrix using NEBULA';
+%     cm.RowSummary = 'row-normalized';
+%     cm.ColumnSummary = 'column-normalized';
+%     cm.NormalizedValues;
+%     figure
+%     fhat_SPIRAL_bin = fhat_SPIRAL > 0.5;
+%     C = confusionmat(f_true, double(fhat_SPIRAL_bin), 'Order', [1, 0]);
+%     cm = confusionchart(C);
+%     cm.Title = 'Structural Variant Confusion Matrix using SPIRAL';
+%     cm.RowSummary = 'row-normalized';
+%     cm.ColumnSummary = 'column-normalized';
+%     cm.NormalizedValues;
+% overall plot
+figure
+[X_n,Y_n,T_n,AUC_n] = perfcurve(f_true,fhat_NEBULA, 1); 
+[X_s,Y_s,T_s,AUC_s] = perfcurve(f_true,fhat_SPIRAL, 1);
+plot(X_n,Y_n, '-r', 'LineWidth',2); hold on
+plot(X_s, Y_s, '--b', 'LineWidth',1.5)
+legend(strcat('NEBULA = ', num2str(AUC_n)), strcat('SPIRAL  = ', num2str(AUC_s)), 'FontSize',12)
+xlabel('False Positive Rate','FontSize',16); ylabel('True Positive Rate','FontSize',16);
+title({'ROC Curves for total reconstruction',['\tau = ' num2str(tau(1)),...
+    ' \gamma = ' num2str(tau(2))]},'FontSize',16)
     %calculate precision and recall
     % look into why ROC curve is not good for imbalanced data
 end
