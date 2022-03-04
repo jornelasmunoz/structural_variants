@@ -18,11 +18,12 @@ addpath([genpath('/Users/jocelynornelasmunoz/Desktop/Research/structural_variant
          genpath('/Users/jocelynornelas/iCloud Drive (Archive)/Desktop/UC Merced/Research/structural_variants/') ])
 
 %filename = 'data/haploid_20pctNovel_10k_100n.mat';
-filename = 'data/haploid_20pctNovel_10k_100n_reproducedAPL.mat'; %reproduced data
+%filename = 'data/haploid_20pctNovel_10k_100n_reproducedAPL.mat'; %reproduced data
 %filename = 'lib/old/neg_binom_nov_p4_c4_5perNov.mat'; %Andrew's 5%nov 10^6n
-%filename = 'lib/old/neg_binom_nov_p4_c4_20perNov.mat'; %Andrew's 20%nov
+filename = 'lib/old/neg_binom_nov_p4_c4_20perNov.mat'; %Andrew's 20%nov
 load(filename)
 
+kind = 'haploid';
 if contains(filename, 'neg_binom')
     fprintf('Using Andrews data \n')
     f_p = f_p_neg_binom;
@@ -38,27 +39,45 @@ end
 
 
 % Define true signal f, observed signal s
-f_true = double([f_p; f_h; f_n]);
 s_obs = double([s_p; s_c]);
-subvectors = 3;
-N = length(f_true);
-n = N/subvectors; 
+if lower(kind) == 'haploid'
+    f_true = double([f_p; f_h; f_n]);
+    subvectors = 3;
+    N = length(f_true);
+    n = N/subvectors; 
+    
+    % Set up diagonal block matrix A (coverage matrix)
+    A = sparse(2*n, 3*n);
+    A(1:n,1:n) = A_p;
+    A(n+1:2*n,n+1:2*n) = A_c;
+    A(n+1:2*n, 2*n+1:3*n) = A_c;
+    B = A;
+elseif lower(kind) == 'diploid'
+    f_true = double([z_p; z_h; z_n; y_p; y_h; y_n]);
+    subvectors = 6;
+    N = length(f_true);
+    n = N/subvectors; 
+    
+    % Set up diagonal block matrix A (coverage matrix)
+    A = sparse(2*n, 6*n);
+    A(1:n,1:n) = A_zp;
+    A(1:n, 3*n+1:4*n) = A_yp;
+    A(n+1:2*n, n+1:2*n) = A_zc;
+    A(n+1:2*n, 2*n+1:3*n) = A_zc;
+    A(n+1:2*n, 4*n+1:5*n) = A_yc;
+    A(n+1:2*n, 5*n+1:6*n) = A_yc;
+    B = A;
+end
 
-% Set up diagonal block matrix A (coverage matrix)
-A = sparse(2*n, 3*n);
-A(1:n,1:n) = A_p;
-A(n+1:2*n,n+1:2*n) = A_c;
-A(n+1:2*n, 2*n+1:3*n) = A_c;
-B = A;
 
 % Set up function handles for computing A and A^T
 AT  = @(x)A'*x;
 A   = @(x)A*x;
 
 % set maximum number of iterations, tol, and when to print to screen
-maxiter = 1000;
+maxiter = 5;
 tolerance = 1e-8;
-verbose = 10;
+verbose = 1;
 
 
 % Simple initialization:
@@ -83,7 +102,7 @@ for i=1:length(tauvals)
     % =====================================================================
 
     % Run SPIRAL algorithm
-    [fhat_SPIRAL, iterations_SPIRAL, objective_SPIRAL,...
+    [fhatSPIRAL, iterations_SPIRAL, objective_SPIRAL,...
     reconerror_SPIRAL, cputime_SPIRAL] ...
         = NEBULA(s_obs,A,tau,'poisson',subvectors,...
         'maxiter',maxiter,...
@@ -105,18 +124,18 @@ for i=1:length(tauvals)
         'verbose',verbose);
 
 %     % Separate reconstruction into each signal
-%     fhat_SPIRAL_p = 2*fhat_SPIRAL(1:n)      + fhat_SPIRAL(3*n+1:4*n);
-%     fhat_SPIRAL_h = 2*fhat_SPIRAL(n+1:2*n)  + fhat_SPIRAL(4*n+1:5*n);
-%     fhat_SPIRAL_n = 2*fhat_SPIRAL(2*n+1:3*n)+ fhat_SPIRAL(5*n+1:6*n);
-%     fhat_SPIRAL_c = fhat_SPIRAL_h + fhat_SPIRAL_n;
+%     fhatSPIRAL_p = 2*fhatSPIRAL(1:n)      + fhatSPIRAL(3*n+1:4*n);
+%     fhatSPIRAL_h = 2*fhatSPIRAL(n+1:2*n)  + fhatSPIRAL(4*n+1:5*n);
+%     fhatSPIRAL_n = 2*fhatSPIRAL(2*n+1:3*n)+ fhatSPIRAL(5*n+1:6*n);
+%     fhatSPIRAL_c = fhat_SPIRAL_h + fhat_SPIRAL_n;
 
-    [tpr_SPIRAL,fpr_SPIRAL,thresholds_SPIRAL] = roc(f_true,fhat_SPIRAL);
+    [tpr_SPIRAL,fpr_SPIRAL,thresholds_SPIRAL] = roc(f_true,fhatSPIRAL);
     % =====================================================================
     % =                  NEBULA Method reconstruction                     =
     % =====================================================================
 
     % Run NEBULA algorithm
-    [fhat_NEBULA, iterations_NEBULA, objective_NEBULA,...
+    [fhatNEBULA, iterations_NEBULA, objective_NEBULA,...
     reconerror_NEBULA, cputime_NEBULA] ...
         = NEBULA(s_obs,A,tau,'negative binomial',subvectors,...
         'maxiter',maxiter,...
@@ -137,11 +156,11 @@ for i=1:length(tauvals)
         'truth',f_true,...
         'verbose',verbose);
     
-%     % Separate reconstruction into each signal
-%     fhat_NEBULA_p = 2*fhat_NEBULA(1:n)      + fhat_NEBULA(3*n+1:4*n);
-%     fhat_NEBULA_h = 2*fhat_NEBULA(n+1:2*n)  + fhat_NEBULA(4*n+1:5*n);
-%     fhat_NEBULA_n = 2*fhat_NEBULA(2*n+1:3*n)+ fhat_NEBULA(5*n+1:6*n);
-%     fhat_NEBULA_c = fhat_NEBULA_h + fhat_NEBULA_n;
+    % Separate reconstruction into each signal
+%     fhatNEBULA_p = 2*fhatNEBULA(1:n)      + fhatNEBULA(3*n+1:4*n);
+%     fhatNEBULA_h = 2*fhatNEBULA(n+1:2*n)  + fhatNEBULA(4*n+1:5*n);
+%     fhatNEBULA_n = 2*fhatNEBULA(2*n+1:3*n)+ fhatNEBULA(5*n+1:6*n);
+%     fhatNEBULA_c = fhat_NEBULA_h + fhat_NEBULA_n;
 %     
 
     %ROC_curve
@@ -164,8 +183,8 @@ for i=1:length(tauvals)
 %     cm.NormalizedValues;
 % overall plot
 figure
-[X_n,Y_n,T_n,AUC_n] = perfcurve(f_true,fhat_NEBULA, 1); 
-[X_s,Y_s,T_s,AUC_s] = perfcurve(f_true,fhat_SPIRAL, 1);
+[X_n,Y_n,T_n,AUC_n] = perfcurve(f_true,fhatNEBULA, 1); 
+[X_s,Y_s,T_s,AUC_s] = perfcurve(f_true,fhatSPIRAL, 1);
 plot(X_n,Y_n, '-r', 'LineWidth',2); hold on
 plot(X_s, Y_s, '--b', 'LineWidth',1.5)
 legend(strcat('NEBULA = ', num2str(AUC_n)), strcat('SPIRAL  = ', num2str(AUC_s)), 'FontSize',12)

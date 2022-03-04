@@ -23,7 +23,7 @@ addpath([genpath('/Users/jocelynornelasmunoz/Desktop/Research/structural_variant
 
 %filename = 'data/haploid_20pctNovel_10k_100n.mat';
 %filename = 'data/haploid_20pctNovel_10k_100n_reproducedAPL.mat'; %reproduced data
-%filename = 'lib/old/neg_binom_nov_p4_c4_5perNov.mat'; %Andrew's 5%nov 10^6n
+filename = 'lib/old/neg_binom_nov_p4_c4_5perNov.mat'; %Andrew's 5%nov 10^6n
 %filename = 'lib/old/neg_binom_nov_p4_c4_20perNov.mat'; %Andrew's 20%nov
 load(filename)
 
@@ -43,7 +43,7 @@ for i=1:length(tauvals)
 % =    Set up for Novel Method reconstruction    =
 % =====================================================================
 if contains(filename, 'neg_binom')
-    fprintf('Using Andrew"s data \n')
+    fprintf('Using Andrews data \n')
 else    
     f_c_inh_neg_binom = double(f_h);
     f_c_nov_neg_binom = double(f_n); 
@@ -76,9 +76,9 @@ A   = @(x) A_neg_binom*x;
 
 % set maximum number of iterations, tol, and when to print to
 % screen
-maxiter = 1000;
+maxiter = 5;
 tolerance = 1e-8;
-verbose = 100;
+verbose = 1;
 
 
 % Simple initialization:
