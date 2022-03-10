@@ -617,6 +617,8 @@ while (iter <= miniter) || ((iter <= maxiter) && not(converged))
                     end
                     acceptalpha = alpha;  % Keep value for displaying
                     alpha = acceptmult*alpha;
+                    fprintf('acceptmult is %12.4f \nalpha is %12.4f \n', acceptmult, alpha)
+
                 end
             else 
                 % just take bb setp, no enforcing monotonicity.
