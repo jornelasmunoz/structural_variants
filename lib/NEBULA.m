@@ -812,13 +812,13 @@ switch lower(penalty)
         n = length(x)/subvectors;            %any line that does /3 needs to be changed
         % for diploid with novel, this assumes the order of f is  
         % zP, zH, zN, yP, yH, yN and we weigh the novel variants more
-        % for i=0:subvectors-1
-        %     objective = objective + sum(abs(reg_params_all(i+1).*x(i*n +1: (i+1)*n)));
-        % end
-        objective = objective + sum(abs(tau(1).*x(1:n))); % use tau(1) for child inherited variants
-        objective = objective + sum(abs(tau(2).*x(n+1:2*n))); % use tau(2) for child novel variants
-        objective = objective + sum(abs(tau(1).*x(2*n+1:3*n)));
-        % objective = objective + sum(abs(tau(:).*x(:)));
+        for i=0:subvectors-1
+            objective = objective + sum(abs(reg_params_all(i+1).*x(i*n +1: (i+1)*n)));
+        end
+        % objective = objective + sum(abs(tau(1).*x(1:n))); % use tau(1) for child inherited variants
+        % objective = objective + sum(abs(tau(2).*x(n+1:2*n))); % use tau(2) for child novel variants
+        % objective = objective + sum(abs(tau(1).*x(2*n+1:3*n)));
+        % % objective = objective + sum(abs(tau(:).*x(:)));
 	% the following cases must be changed if the penalty changes
     case 'onb' 
     	WT = varargin{1};
