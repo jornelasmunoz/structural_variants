@@ -24,7 +24,7 @@ addpath([genpath('/Users/jocelynornelasmunoz/Desktop/Research/structural_variant
 %filename = 'data/haploid_20pctNovel_10k_100n.mat';
 %filename = 'data/haploid_20pctNovel_10k_100n_reproducedAPL.mat'; %reproduced data
 %filename = 'lib/old/neg_binom_nov_p4_c4_5perNov.mat'; %Andrew's 5%nov 10^6n
-%filename = 'lib/old/neg_binom_nov_p4_c4_20perNov.mat'; %Andrew's 20%nov
+filename = 'lib/old/neg_binom_nov_p4_c4_20perNov.mat'; %Andrew's 20%nov
 load(filename)
 
 
@@ -43,7 +43,7 @@ for i=1:length(tauvals)
 % =    Set up for Novel Method reconstruction    =
 % =====================================================================
 if contains(filename, 'neg_binom')
-    fprintf('Using Andrew"s data \n')
+    fprintf('Using Andrews data \n')
 else    
     f_c_inh_neg_binom = double(f_h);
     f_c_nov_neg_binom = double(f_n); 
@@ -76,9 +76,9 @@ A   = @(x) A_neg_binom*x;
 
 % set maximum number of iterations, tol, and when to print to
 % screen
-maxiter = 1000;
+maxiter = 5;
 tolerance = 1e-8;
-verbose = 100;
+verbose = 1;
 
 
 % Simple initialization:
@@ -237,75 +237,75 @@ Area_nov_c_neg_binom_SP = trapz(FPRv_c_neg_binom_SP,TPRv_c_neg_binom_SP);
 AreavecSPNB=[Area_nov_cp_neg_binom_SPNB; Area_nov_p_neg_binom_SPNB; Area_nov_c_neg_binom_SPNB];
 AreavecSP=[Area_nov_cp_neg_binom_SP; Area_nov_p_neg_binom_SP; Area_nov_c_neg_binom_SP];
 
-%Child and Parent Plot
-figure
-plot(FPRv_cp_neg_binom_SPNB,TPRv_cp_neg_binom_SPNB,'r-.', 'LineWidth',3);
-hold on
-plot(FPRv_cp_neg_binom_SP,TPRv_cp_neg_binom_SP,'b--.', 'LineWidth',3);
-xlabel('False Positive Rate','FontSize',16);
-ylabel('True Positive Rate','FontSize',16);
-title({'ROC Curves for C1 Signal',['tau = ' num2str(tau(1)),...
-    '  tau_n = ' num2str(tau(2))],['Reconstructed from Child and Parent']},'FontSize',16)
-%legend1=legend(['Novel Method Negative Binomial SPIRAL AUC=' num2str(AreavecSPNB(1))],['Novel Method Poisson SPIRAL AUC=' num2str(AreavecSP(1))]);
-%legend1=legend( 'Novel Method Negative Binomial SPIRAL','Novel Method Poisson SPIRAL');
-legend1=legend('NEBULA','SPIRAL');
-set(legend1,...
-    'Location','southeast',...
-    'FontSize',14);
-% set(legend2,...
-%     'Location','east',...
-%     'FontSize',14);
-set(gca,'fontsize',14);
-hold off
-
-
-
-
-
-figure
-%Parent Plot
-plot(FPRv_p_neg_binom_SPNB,TPRv_p_neg_binom_SPNB,'r-.', 'LineWidth',2);
-hold on
-plot(FPRv_p_neg_binom_SP,TPRv_p_neg_binom_SP,'b--.', 'LineWidth',2);
-xlabel('False Positive Rate','FontSize',16);
-ylabel('True Positive Rate','FontSize',16);
-title({'ROC Curves for C1 Signal',['tau = ' num2str(tau(1)),...
-    '  tau_n = ' num2str(tau(2))],['Reconstructed from Parent']},'FontSize',16)
-%legend1=legend(['Novel Method Negative Binomial SPIRAL AUC=' num2str(AreavecSPNB(2))],['Novel Method Poisson SPIRAL AUC=' num2str(AreavecSP(2))]);
-%legend1=legend( 'Novel Method Negative Binomial SPIRAL','Novel Method Poisson SPIRAL');
-legend2=legend(['AUC=' num2str(AreavecSPNB(2))],['AUC=' num2str(AreavecSP(2))]);
-%legend1=legend('NEBULA','SPIRAL');
-%set(legend1,...
-%    'Location','southeast',...
-%    'FontSize',14);
-set(legend2,...
-    'Location','east',...
-    'FontSize',14);
-set(gca,'fontsize',14);
-hold off
-
-
-
-figure
-%Child Plot
-plot(FPRv_c_neg_binom_SPNB,TPRv_c_neg_binom_SPNB,'r-.', 'LineWidth',3);
+% %Child and Parent Plot
+% figure
+% plot(FPRv_cp_neg_binom_SPNB,TPRv_cp_neg_binom_SPNB,'r-.', 'LineWidth',3);
 % hold on
-% plot(FPRv_c_neg_binom_SP,TPRv_c_neg_binom_SP,'b--.', 'LineWidth',3);
-xlabel('False Positive Rate','FontSize',16);
-ylabel('True Positive Rate','FontSize',16);
-%title({'ROC Curves for C1 Signal',['tau = ' num2str(tau(1)),...
-    %'  tau_n = ' num2str(tau(2))],['Reconstructed from Child']},'FontSize',16)
-%legend1=legend(['Novel Method Negative Binomial SPIRAL AUC=' num2str(AreavecSPNB(3))],['Novel Method Poisson SPIRAL AUC=' num2str(AreavecSP(3))]);
-%legend2=legend(['AUC=' num2str(AreavecSPNB(3))],['AUC=' num2str(AreavecSP(3))]);
-%legend1=legend('NEBULA','SPIRAL');
+% plot(FPRv_cp_neg_binom_SP,TPRv_cp_neg_binom_SP,'b--.', 'LineWidth',3);
+% xlabel('False Positive Rate','FontSize',16);
+% ylabel('True Positive Rate','FontSize',16);
+% title({'ROC Curves for C1 Signal',['tau = ' num2str(tau(1)),...
+%     '  tau_n = ' num2str(tau(2))],['Reconstructed from Child and Parent']},'FontSize',16)
+% %legend1=legend(['Novel Method Negative Binomial SPIRAL AUC=' num2str(AreavecSPNB(1))],['Novel Method Poisson SPIRAL AUC=' num2str(AreavecSP(1))]);
+% %legend1=legend( 'Novel Method Negative Binomial SPIRAL','Novel Method Poisson SPIRAL');
+% legend1=legend('NEBULA','SPIRAL');
 % set(legend1,...
-% 'Location','southeast',...
+%     'Location','southeast',...
 %     'FontSize',14);
+% % set(legend2,...
+% %     'Location','east',...
+% %     'FontSize',14);
+% set(gca,'fontsize',14);
+% hold off
+% 
+% 
+% 
+% 
+% 
+% figure
+% %Parent Plot
+% plot(FPRv_p_neg_binom_SPNB,TPRv_p_neg_binom_SPNB,'r-.', 'LineWidth',2);
+% hold on
+% plot(FPRv_p_neg_binom_SP,TPRv_p_neg_binom_SP,'b--.', 'LineWidth',2);
+% xlabel('False Positive Rate','FontSize',16);
+% ylabel('True Positive Rate','FontSize',16);
+% title({'ROC Curves for C1 Signal',['tau = ' num2str(tau(1)),...
+%     '  tau_n = ' num2str(tau(2))],['Reconstructed from Parent']},'FontSize',16)
+% %legend1=legend(['Novel Method Negative Binomial SPIRAL AUC=' num2str(AreavecSPNB(2))],['Novel Method Poisson SPIRAL AUC=' num2str(AreavecSP(2))]);
+% %legend1=legend( 'Novel Method Negative Binomial SPIRAL','Novel Method Poisson SPIRAL');
+% legend2=legend(['AUC=' num2str(AreavecSPNB(2))],['AUC=' num2str(AreavecSP(2))]);
+% %legend1=legend('NEBULA','SPIRAL');
+% %set(legend1,...
+% %    'Location','southeast',...
+% %    'FontSize',14);
 % set(legend2,...
 %     'Location','east',...
 %     'FontSize',14);
-set(gca,'fontsize',14);
-hold off
+% set(gca,'fontsize',14);
+% hold off
+% 
+% 
+% 
+% figure
+% %Child Plot
+% plot(FPRv_c_neg_binom_SPNB,TPRv_c_neg_binom_SPNB,'r-.', 'LineWidth',3);
+% % hold on
+% % plot(FPRv_c_neg_binom_SP,TPRv_c_neg_binom_SP,'b--.', 'LineWidth',3);
+% xlabel('False Positive Rate','FontSize',16);
+% ylabel('True Positive Rate','FontSize',16);
+% %title({'ROC Curves for C1 Signal',['tau = ' num2str(tau(1)),...
+%     %'  tau_n = ' num2str(tau(2))],['Reconstructed from Child']},'FontSize',16)
+% %legend1=legend(['Novel Method Negative Binomial SPIRAL AUC=' num2str(AreavecSPNB(3))],['Novel Method Poisson SPIRAL AUC=' num2str(AreavecSP(3))]);
+% %legend2=legend(['AUC=' num2str(AreavecSPNB(3))],['AUC=' num2str(AreavecSP(3))]);
+% %legend1=legend('NEBULA','SPIRAL');
+% % set(legend1,...
+% % 'Location','southeast',...
+% %     'FontSize',14);
+% % set(legend2,...
+% %     'Location','east',...
+% %     'FontSize',14);
+% set(gca,'fontsize',14);
+% hold off
 
 %------------------Jocelyn edits -----------
 

@@ -237,17 +237,17 @@ if (round(verbose) ~= verbose) || (verbose < 0)
         'integer.  The setting ''VERBOSE'' = ',num2str(verbose),' is invalid.']);
 end
 % LOGEPSILON:  Needs to be nonnegative, usually small but that's relative.
-if logepsilon < 0;
+if logepsilon < 0
     error(['The parameter ''LOGEPSILON'' is required to be nonnegative.  ',...
         'The setting ''LOGEPSILON'' = ',num2str(tolerance),' is invalid.'])
 end
 % TOLERANCE:  Needs to be nonnegative, usually small but that's relative.
-if tolerance < 0;
+if tolerance < 0
     error(['The parameter ''TOLERANCE'' is required to be nonnegative.  ',...
         'The setting ''TOLERANCE'' = ',num2str(tolerance),' is invalid.'])
 end
 % SUBTOLERANCE:  Needs to be nonnegative, usually small but that's relative.
-if subtolerance < 0;
+if subtolerance < 0
     error(['The parameter ''SUBTOLERANCE'' is required to be nonnegative.  ',...
         'The setting ''SUBTOLERANCE'' = ',num2str(subtolerance),' is invalid.'])
 end
@@ -277,7 +277,7 @@ if isa(A, 'function_handle') % A is a function call, so AT is required
     else % AT was provided
         if isa(AT, 'function_handle') % A and AT are function calls
             try dummy = y + A(AT(y));
-            catch exception; 
+            catch exception
                 error('Size incompatability between ''A'' and ''AT''.')
             end
         else % A is a function call, AT is a matrix        
@@ -477,7 +477,7 @@ end
 
 % check that initialization is a scalar or a vector
 % set initialization
-if isempty(initialization);
+if isempty(initialization)
     xinit = AT(y);
 else
     xinit = initialization;
@@ -612,7 +612,7 @@ while (iter <= miniter) || ((iter <= maxiter) && not(converged))
                         
                     if ( objective(iter+1) <= (maxpastobjective ...
                             - acceptdecrease*alpha/2*normsqdx) ) ...
-                            || (alpha >= acceptalphamax);
+                            || (alpha >= acceptalphamax)
                         accept = 1;
                     end
                     acceptalpha = alpha;  % Keep value for displaying
@@ -686,7 +686,6 @@ while (iter <= miniter) || ((iter <= maxiter) && not(converged))
     switch alphamethod
         case 0 % do nothing, constant alpha
         case 1 % bb method
-            %Adx is overwritten at top of iteration, so this is an ok reuse
             % Adx is overwritten at top of iteration, so this is an ok reuse
             switch lower(noisetype)
                 case 'poisson'

@@ -612,7 +612,7 @@ while (iter <= miniter) || ((iter <= maxiter) && not(converged))
                         
                     if ( objective(iter+1) <= (maxpastobjective ...
                             - acceptdecrease*alpha/2*normsqdx) ) ...
-                            || (alpha >= acceptalphamax);
+                            || (alpha >= acceptalphamax)
                         accept = 1;
                     end
                     acceptalpha = alpha;  % Keep value for displaying
@@ -740,7 +740,7 @@ if (verbose > 0)
         '=   Noisetype: %-8s         Penalty: %-9s      =\n',...
         '=   Tau:       %-10.5e      Iter:    %-5d          =\n'],...
         thetime(4),thetime(5),thetime(2),thetime(3),thetime(1),...
-        noisetype,penalty,tau,iter)      
+        noisetype,penalty,tau(1),iter)      
     fprintf('=========================================================\n');
 end
 

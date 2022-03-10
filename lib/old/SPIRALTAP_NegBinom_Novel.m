@@ -625,7 +625,7 @@ while (iter <= miniter) || ((iter <= maxiter) && not(converged))
                         
                     if ( objective(iter+1) <= (maxpastobjective ...
                             - acceptdecrease*alpha/2*normsqdx) ) ...
-                            || (alpha >= acceptalphamax);
+                            || (alpha >= acceptalphamax)
                         accept = 1;
                     end
                     acceptalpha = alpha;  % Keep value for displaying
@@ -759,7 +759,7 @@ if (verbose > 0)
         '=   Noisetype: %-8s         Penalty: %-9s      =\n',...
         '=   Tau:       %-10.5e      Iter:    %-5d          =\n'],...
         thetime(4),thetime(5),thetime(2),thetime(3),thetime(1),...
-        noisetype,penalty,tau,iter)      
+        noisetype,penalty,tau(1),iter)      
     fprintf('=========================================================\n');
 end
 
@@ -786,8 +786,8 @@ function grad = computegrad(y,Ax,AT,noisetype,logepsilon)
 %         case 'poisson'
 %             grad = AT(1 - (y./(Ax + logepsilon)));
         case 'negative binomial'
-            r=1;
-            grad= AT((y + r)./(r+ Ax + logepsilon)) - AT(y./(Ax + logepsilon)); 
+            r = 1;
+            grad = AT((y + r)./(r+ Ax + logepsilon)) - AT(y./(Ax + logepsilon)); 
             %grad= ((y+r)./(r+ Ax + logepsilon)).*AT(1) + (y./(Ax+logepsilon)).*AT(1);
         case 'gaussian'
             grad = AT(Ax - y);

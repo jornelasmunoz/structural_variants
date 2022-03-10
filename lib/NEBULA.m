@@ -108,7 +108,7 @@
 % === This code was edited by Andrew P Lazar in 2020 and later further modified by Jocelyn Ornelas in 2021
 %     We add an extension of SPIRALTAP to incorporate Negative Binomial noise
 
-function [x, varargout] = NEBULA(y, A, tau, noisetype, subvectors, varargin)
+function [x, varargout] = NEBULA(y, A, tau,reg_params_all, noisetype, subvectors, varargin)
 % ==== Set default/initial parameter values ====
 % ---- All Methods ----
 verbose = 0;
@@ -126,10 +126,10 @@ mu = 0;
 % specific to SV diploid model with novel variants
 % % for diploid with novel, this assumes the order of f is  
     % [zP, zH, zN, yP, yH, yN] and we weigh the novel variants more
-if subvectors == 6
-    delta = [tau(1), tau(1), tau(2), tau(1),tau(1),tau(2) ];
-elseif subvectors == 3
-    delta = [tau(1), tau(1), tau(2)];
+if subvectors == 6 && length(reg_params_all) ~= 6
+    fprintf('Number of subvectors = %i and regularization = %i parameters do not match\n', subvectors,length(reg_params_all))
+elseif subvectors == 3 && length(reg_params_all) ~= 3
+    fprintf('Number of subvectors = %i and regularization = %i parameters do not match\n', subvectors,length(reg_params_all))
 end
 % Add a path to the denoising methods folder
 nebula_dir = which('NEBULA');
@@ -383,7 +383,7 @@ switch lower(noisetype)
         % Ensure that recentering is not set
         if recenter
             todo
-        end      
+        end   
     case 'gaussian'
         
 end
@@ -546,7 +546,7 @@ if savecputime
 end
 if saveobjective
     objective = zeros(maxiter+1,1);
-    objective(iter) = computeobjective(x,y,Ax,tau,noisetype,subvectors,delta,logepsilon,penalty,WT);
+    objective(iter) = computeobjective(x,y,Ax,tau,noisetype,subvectors,reg_params_all,logepsilon,penalty,WT);
 end
 if savereconerror
     reconerror = zeros(maxiter+1,1);
@@ -571,11 +571,11 @@ end
 
 if (verbose > 0)
     thetime = fix(clock);
-    fprintf(['===============================================================\n',...
-        '= Beginning NEBULA Reconstruction    @ %2d:%2d %02d/%02d/%4d       =\n',...
-        '=   Noisetype: %-8s         Penalty: %-9s   =\n',...
-        '=   Tau Vals:   %-10.2e, %-10.2e      Maxiter: %-5d  =\n',...
-        '===============================================================\n'],...
+    fprintf(['=========================================================\n',...
+        '= Beginning NEBULA Reconstruction    @ %2d:%2d %02d/%02d/%4d =\n',...
+        '=   Noisetype: %-8s         Penalty: %-9s      =\n',...
+        '=   Tau Vals:   %-10.2e, %-10.2e      Maxiter: %-5d          =\n',...
+        '=========================================================\n'],...
         thetime(4),thetime(5),thetime(2),thetime(3),thetime(1),...
         noisetype,penalty,tau(1), tau(2),maxiter)     %tau needs to be a vector of two elements  
 end
@@ -592,7 +592,7 @@ while (iter <= miniter) || ((iter <= maxiter) && not(converged))
             % If convergence criteria requires it, compute dx or dobjective
             dx = xprevious;
             step = xprevious - grad./alpha; 
-            x = computesubsolution(step,tau,alpha,penalty,subvectors,delta,mu,...
+            x = computesubsolution(step,tau,alpha,penalty,subvectors,reg_params_all,mu,...
                 W,WT,subminiter,submaxiter,substopcriterion,...
                 subtolerance);
             dx = x - dx;
@@ -610,7 +610,7 @@ while (iter <= miniter) || ((iter <= maxiter) && not(converged))
                     %     denoising subproblem ----
                     dx = xprevious;
                     step = xprevious - grad./alpha;                  
-                    x = computesubsolution(step,tau,alpha,penalty,subvectors,delta,mu,...
+                    x = computesubsolution(step,tau,alpha,penalty,subvectors,reg_params_all,mu,...
                         W,WT,subminiter,submaxiter,substopcriterion,...
                         subtolerance);
                     dx = x - dx;
@@ -621,7 +621,7 @@ while (iter <= miniter) || ((iter <= maxiter) && not(converged))
                     
                     % --- Compute the resulting objective 
                     objective(iter + 1) = computeobjective(x,y,Ax,tau,...
-                    noisetype,subvectors,delta,logepsilon,penalty,WT);
+                    noisetype,subvectors,reg_params_all,logepsilon,penalty,WT);
                         
                     if ( objective(iter+1) <= (maxpastobjective ...
                             - acceptdecrease*alpha/2*normsqdx) ) ...
@@ -635,7 +635,7 @@ while (iter <= miniter) || ((iter <= maxiter) && not(converged))
                 % just take bb setp, no enforcing monotonicity.
                 dx = xprevious;
                 step = xprevious - grad./alpha; 
-                x = computesubsolution(step,tau,alpha,penalty,subvectors,delta,mu,...
+                x = computesubsolution(step,tau,alpha,penalty,subvectors,reg_params_all,mu,...
                     W,WT,subminiter,submaxiter,substopcriterion,...
                     subtolerance);
                 dx = x - dx;
@@ -645,7 +645,7 @@ while (iter <= miniter) || ((iter <= maxiter) && not(converged))
                 normsqdx = sum( dx(:).^2 );
                 if saveobjective
                     objective(iter + 1) = computeobjective(x,y,Ax,tau,...
-                    noisetype,subvectors,delta,logepsilon,penalty,WT);
+                    noisetype,subvectors,reg_params_all,logepsilon,penalty,WT);
                 end
                     
             end
@@ -779,7 +779,9 @@ function grad = computegrad(y,Ax,AT,noisetype,logepsilon)
         case 'poisson'
             grad = AT(1 - (y./(Ax + logepsilon)));
         case 'negative binomial'
-            grad= AT((y + 1)./(1+ Ax + logepsilon)) - AT(y./(Ax + logepsilon)); 
+            r = 1;
+            grad = AT((y + r)./(r+ Ax + logepsilon)) - AT(y./(Ax + logepsilon)); 
+            %grad = AT((y + 1)./(1 + Ax + logepsilon)) - AT(y./(Ax + logepsilon)); 
         case 'gaussian'
             grad = AT(Ax - y);
     end
@@ -788,7 +790,7 @@ end
 % ==========================
 % = Objective Computation: =
 % ==========================
-function objective = computeobjective(x,y,Ax,tau,noisetype,subvectors,delta,logepsilon,...
+function objective = computeobjective(x,y,Ax,tau,noisetype,subvectors,reg_params_all,logepsilon,...
     penalty,varargin)
 % Perhaps change to varargin 
 % 1) Compute log-likelihood:
@@ -810,9 +812,12 @@ switch lower(penalty)
         n = length(x)/subvectors;            %any line that does /3 needs to be changed
         % for diploid with novel, this assumes the order of f is  
         % zP, zH, zN, yP, yH, yN and we weigh the novel variants more
-        for i=0:subvectors-1
-            objective = objective + sum(abs(delta(i+1).*x(i*n +1: (i+1)*n)));
-        end
+        % for i=0:subvectors-1
+        %     objective = objective + sum(abs(reg_params_all(i+1).*x(i*n +1: (i+1)*n)));
+        % end
+        objective = objective + sum(abs(tau(1).*x(1:n))); % use tau(1) for child inherited variants
+        objective = objective + sum(abs(tau(2).*x(n+1:2*n))); % use tau(2) for child novel variants
+        objective = objective + sum(abs(tau(1).*x(2*n+1:3*n)));
         % objective = objective + sum(abs(tau(:).*x(:)));
 	% the following cases must be changed if the penalty changes
     case 'onb' 
@@ -828,10 +833,10 @@ switch lower(penalty)
 end
 end
 
-% ===================================== %
-% = Denoising Subproblem Computation: = % Need to understand this whole section
-% ===================================== %
-function subsolution = computesubsolution(step,tau,alpha,penalty,subvectors,delta,mu,varargin)
+% ===================================== 
+% = Denoising Subproblem Computation: = 
+% ===================================== 
+function subsolution = computesubsolution(step,tau,alpha,penalty,subvectors,reg_params_all,mu,varargin)
 %APL: Now adding the input grad which is the gradient
     switch lower(penalty)
         case 'canonical'
@@ -841,7 +846,7 @@ function subsolution = computesubsolution(step,tau,alpha,penalty,subvectors,delt
             
             subsolution = step;
             for i=0:subvectors-1
-                subsolution(i*n +1: (i+1)*n) = step(i*n +1: (i+1)*n) - delta(i+1)./alpha;
+                subsolution(i*n +1: (i+1)*n) = step(i*n +1: (i+1)*n) - reg_params_all(i+1)./alpha;
             end
         %     subsolution(1:n) = step(1:n) - tau(1)./alpha; % child
         %     %APL: trying to mimic what is in the negative binomial paper
