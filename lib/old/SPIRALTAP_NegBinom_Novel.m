@@ -227,7 +227,7 @@ end
 % NOISETYPE:  For now only two options are available 'Poisson' and 'Gaussian'.
 if sum( strcmpi(noisetype,{'poisson','gaussian','negative binomial'})) == 0
     error(['Invalid setting ''NOISETYPE'' = ''',num2str(noisetype),'''.  ',...
-        'The parameter ''NOISETYPE'' may only be ''Gaussian'' or ''Poisson''or' 'Negative Binomial''.'])
+        'The parameter ''NOISETYPE'' may only be ''Gaussian'', ''Poisson''or' 'Negative Binomial''.'])
 end
 % PENALTY:  The implemented penalty options are 'Canonical, 'ONB', 'RDP', 
 % 'RDP-TI','TV'.
@@ -242,17 +242,17 @@ if (round(verbose) ~= verbose) || (verbose < 0)
         'integer.  The setting ''VERBOSE'' = ',num2str(verbose),' is invalid.']);
 end
 % LOGEPSILON:  Needs to be nonnegative, usually small but that's relative.
-if logepsilon < 0;
+if logepsilon < 0
     error(['The parameter ''LOGEPSILON'' is required to be nonnegative.  ',...
         'The setting ''LOGEPSILON'' = ',num2str(tolerance),' is invalid.'])
 end
 % TOLERANCE:  Needs to be nonnegative, usually small but that's relative.
-if tolerance < 0;
+if tolerance < 0
     error(['The parameter ''TOLERANCE'' is required to be nonnegative.  ',...
         'The setting ''TOLERANCE'' = ',num2str(tolerance),' is invalid.'])
 end
 % SUBTOLERANCE:  Needs to be nonnegative, usually small but that's relative.
-if subtolerance < 0;
+if subtolerance < 0
     error(['The parameter ''SUBTOLERANCE'' is required to be nonnegative.  ',...
         'The setting ''SUBTOLERANCE'' = ',num2str(subtolerance),' is invalid.'])
 end
@@ -282,7 +282,7 @@ if isa(A, 'function_handle') % A is a function call, so AT is required
     else % AT was provided
         if isa(AT, 'function_handle') % A and AT are function calls
             try dummy = y + A(AT(y));
-            catch exception; 
+            catch exception
                 error('Size incompatability between ''A'' and ''AT''.')
             end
         else % A is a function call, AT is a matrix        
@@ -379,7 +379,6 @@ switch lower(noisetype)
         if recenter
             todo
         end
-       
     case 'gaussian'
         
 end
@@ -486,7 +485,7 @@ end
 
 % check that initialization is a scalar or a vector
 % set initialization
-if isempty(initialization);
+if isempty(initialization)
     xinit = AT(y);
 else
     xinit = initialization;
@@ -585,6 +584,7 @@ while (iter <= miniter) || ((iter <= maxiter) && not(converged))
     % ---- Compute the next iterate based on the method of computing alpha ----
     switch alphamethod
         case 0 % Constant alpha throughout all iterations.
+            disp('Alphamethod being used is 0')
             % If convergence criteria requires it, compute dx or dobjective
             dx = xprevious;
             %APL: (old stuff) step = xprevious - grad./alpha;
@@ -627,8 +627,15 @@ while (iter <= miniter) || ((iter <= maxiter) && not(converged))
                             - acceptdecrease*alpha/2*normsqdx) ) ...
                             || (alpha >= acceptalphamax)
                         accept = 1;
+                        fprintf('(maxpastobjective - acceptdecrease*alpha/2*normsqdx) %12.4f \n', (maxpastobjective- acceptdecrease*alpha/2*normsqdx))
+                        fprintf('normsqdx %12.4f \n', normsqdx)
+                        fprintf('acceptdecrease %12.4f \n', acceptdecrease)
+                        fprintf('alpha %12.4f \n', alpha)
+                        fprintf('acceptalphamax %12.4f \n', acceptalphamax)
+                        fprintf('objective(iter+1) %12.4f \n', objective(iter+1))
                     end
                     acceptalpha = alpha;  % Keep value for displaying
+                    %fprintf('acceptmult is %12.4f \nalpha is %12.4f \n', acceptmult, alpha)
                     alpha = acceptmult*alpha;
                 end
             else 
