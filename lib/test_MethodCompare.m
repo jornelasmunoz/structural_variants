@@ -23,8 +23,8 @@ addpath([genpath('/Users/jocelynornelasmunoz/Desktop/Research/structural_variant
 
 %filename = 'data/haploid_20pctNovel_10k_100n.mat';
 %filename = 'data/haploid_20pctNovel_10k_100n_reproducedAPL.mat'; %reproduced data
-%filename = 'lib/old/neg_binom_nov_p4_c4_5perNov.mat'; %Andrew's 5%nov 10^6n
-filename = 'lib/old/neg_binom_nov_p4_c4_20perNov.mat'; %Andrew's 20%nov
+filename = 'lib/old/neg_binom_nov_p4_c4_5perNov.mat'; %Andrew's 5%nov 10^6n
+%filename = 'lib/old/neg_binom_nov_p4_c4_20perNov.mat'; %Andrew's 20%nov
 %filename = 'lib/old/dummy_data.mat';
 load(filename)
 
@@ -79,7 +79,7 @@ A   = @(x) A_neg_binom*x;
 % screen
 maxiter = 1000;
 tolerance = 1e-8;
-verbose = 1;
+verbose = 10;
 
 
 % Simple initialization:
@@ -316,7 +316,7 @@ figure
 [X_s,Y_s,T_s,AUC_s] = perfcurve(f_neg_binom,fhatSPIRAL_1p1c_nov_neg_binom_SP, 1);
 plot(X_n,Y_n, '-r', 'LineWidth',2); hold on
 plot(X_s, Y_s, '--b', 'LineWidth',1.5)
-legend(strcat('NEBULA = ', num2str(AUC_n)), strcat('SPIRAL  = ', num2str(AUC_s)), 'FontSize',12)
+legend(strcat('NEBULA = ', num2str(AUC_n)), strcat('SPIRAL  = ', num2str(AUC_s)), 'FontSize',14, 'Location', 'southeast')
 xlabel('False Positive Rate','FontSize',16); ylabel('True Positive Rate','FontSize',16);
 title({'ROC Curves for total reconstruction',['\tau = ' num2str(tau(1)),...
     ' \gamma = ' num2str(tau(2))]},'FontSize',16)

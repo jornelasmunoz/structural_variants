@@ -17,8 +17,8 @@ close all
 addpath([genpath('/Users/jocelynornelasmunoz/Desktop/Research/structural_variants/'), ...
          genpath('/Users/jocelynornelas/iCloud Drive (Archive)/Desktop/UC Merced/Research/structural_variants/') ])
 
-filename = 'data/dip_20pctNovel_10k_100n.mat'; 
-%filename = 'data/diploid_5pctNovel_50k_10000n.mat'; 
+%filename = 'data/dip_20pctNovel_10k_100n.mat'; 
+filename = 'data/diploid_5pctNovel_50k_10000n.mat'; 
 %filename = 'data/haploid_20pctNovel_10k_100n.mat';
 %filename = 'data/haploid_20pctNovel_10k_100n_reproducedAPL.mat'; %reproduced data
 %filename = 'lib/old/neg_binom_nov_p4_c4_5perNov.mat'; %Andrew's 5%nov 10^6n
@@ -201,7 +201,7 @@ f_init = (sum(sum(s_obs)).*numel(AT(s_obs)))...
     [X_s,Y_s,T_s,AUC_s] = perfcurve(f_true,fhatSPIRAL, 1);
     plot(X_n,Y_n, '-r', 'LineWidth',2); hold on
     plot(X_s, Y_s, '--b', 'LineWidth',1.5)
-    legend(strcat('NEBULA = ', num2str(AUC_n)), strcat('SPIRAL  = ', num2str(AUC_s)), 'FontSize',12)
+    legend(strcat('NEBULA = ', num2str(AUC_n)), strcat('SPIRAL  = ', num2str(AUC_s)), 'FontSize',14, 'Location', 'southeast');
     xlabel('False Positive Rate','FontSize',16); ylabel('True Positive Rate','FontSize',16);
     title({'ROC Curves for total reconstruction',['\tau = ' num2str(reg_params(1)),...
         ' \gamma = ' num2str(reg_params(2))]},'FontSize',16)
@@ -212,7 +212,7 @@ f_init = (sum(sum(s_obs)).*numel(AT(s_obs)))...
     [X_s,Y_s,T_s,AUC_s] = perfcurve(f_p,fhatSPIRAL_p, 1);
     plot(X_n,Y_n, '-r', 'LineWidth',2); hold on
     plot(X_s, Y_s, '--b', 'LineWidth',1.5)
-    legend(strcat('NEBULA = ', num2str(AUC_n)), strcat('SPIRAL  = ', num2str(AUC_s)), 'FontSize',12)
+    legend(strcat('NEBULA = ', num2str(AUC_n)), strcat('SPIRAL  = ', num2str(AUC_s)), 'FontSize',14, 'Location', 'southeast');
     xlabel('False Positive Rate','FontSize',16); ylabel('True Positive Rate','FontSize',16);
     title({'ROC Curves for parent reconstruction',['\tau = ' num2str(reg_params(1)),...
         ' \gamma = ' num2str(reg_params(2))]},'FontSize',16)
@@ -223,7 +223,7 @@ f_init = (sum(sum(s_obs)).*numel(AT(s_obs)))...
     [X_s,Y_s,T_s,AUC_s] = perfcurve(f_c,fhatSPIRAL_c, 1);
     plot(X_n,Y_n, '-r', 'LineWidth',2); hold on
     plot(X_s, Y_s, '--b', 'LineWidth',1.5)
-    legend(strcat('NEBULA = ', num2str(AUC_n)), strcat('SPIRAL  = ', num2str(AUC_s)), 'FontSize',12)
+    legend(strcat('NEBULA = ', num2str(AUC_n)), strcat('SPIRAL  = ', num2str(AUC_s)), 'FontSize',14, 'Location', 'southeast');
     xlabel('False Positive Rate','FontSize',16); ylabel('True Positive Rate','FontSize',16);
     title({'ROC Curves for child reconstruction',['\tau = ' num2str(reg_params(1)),...
         ' \gamma = ' num2str(reg_params(2))]},'FontSize',16)
