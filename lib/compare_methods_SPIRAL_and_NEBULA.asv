@@ -17,16 +17,16 @@ close all
 addpath([genpath('/Users/jocelynornelasmunoz/Desktop/Research/structural_variants/'), ...
          genpath('/Users/jocelynornelas/iCloud Drive (Archive)/Desktop/UC Merced/Research/structural_variants/') ])
 
-filename = 'data/dip_20pctNovel_10k_100n.mat'; 
+%filename = 'data/dip_20pctNovel_10k_100n.mat'; 
 %filename = 'data/diploid_5pctNovel_50k_10000n.mat'; 
 %filename = 'data/haploid_20pctNovel_10k_100n.mat';
 %filename = 'data/haploid_20pctNovel_10k_100n_reproducedAPL.mat'; %reproduced data
 %filename = 'lib/old/neg_binom_nov_p4_c4_5perNov.mat'; %Andrew's 5%nov 10^6n
 %filename = 'lib/old/neg_binom_nov_p4_c4_20perNov.mat'; %Andrew's 20%nov
-%filename = 'lib/old/dummy_data.mat';
+filename = 'lib/old/dummy_data.mat';
 load(filename)
 
-kind = 'diploid';
+kind = 'haploid';
 if contains(filename, 'neg_binom') || contains(filename, 'dummy')
     fprintf('Using Andrews data \n')
     kind = 'haploid';
@@ -51,19 +51,16 @@ reg_params =[tau; tau*gamma];
 s_obs = double([s_p; s_c]);
 if lower(kind) == 'haploid'
     s_obs = double([s_c; s_p]); %double([s_p; s_c]);
-    f_true = double([f_h; f_n; f_p]); %double([f_p; f_h; f_n]);
+    f_true = double([f_h; f_n; f_p]);
     subvectors = 3;
     N = length(f_true);
     n = N/subvectors; 
     
     % Set up diagonal block matrix A (coverage matrix)
     A = sparse(2*n, 3*n);
-    A(1:n,1:n) = A_c;
-    A(1:n,n+1:2*n) = A_c;
-    A(n+1:2*n, 2*n+1:3*n) = A_p;
-%     A(1:n,1:n) = A_p;
-%     A(n+1:2*n,n+1:2*n) = A_c;
-%     A(n+1:2*n, 2*n+1:3*n) = A_c;
+    A(1:n,1:n) = A_p;
+    A(n+1:2*n,n+1:2*n) = A_c;
+    A(n+1:2*n, 2*n+1:3*n) = A_c;
     B = A;
 
     %reg_params_all corresponds to the penalty for [f_p; f_h; f_n]
@@ -97,7 +94,7 @@ AT  = @(x)A'*x;
 A   = @(x)A*x;
 
 % set maximum number of iterations, tol, and when to print to screen
-maxiter = 1000;
+maxiter = 1;
 tolerance = 1e-8;
 verbose = 10;
 
@@ -195,38 +192,38 @@ f_init = (sum(sum(s_obs)).*numel(AT(s_obs)))...
 % %%    
 %     %ROC_curve
 %     %save_to_JSON
-    % overall plot
-    figure
-    [X_n,Y_n,T_n,AUC_n] = perfcurve(f_true,fhatNEBULA, 1); 
-    [X_s,Y_s,T_s,AUC_s] = perfcurve(f_true,fhatSPIRAL, 1);
-    plot(X_n,Y_n, '-r', 'LineWidth',2); hold on
-    plot(X_s, Y_s, '--b', 'LineWidth',1.5)
-    legend(strcat('NEBULA = ', num2str(AUC_n)), strcat('SPIRAL  = ', num2str(AUC_s)), 'FontSize',12)
-    xlabel('False Positive Rate','FontSize',16); ylabel('True Positive Rate','FontSize',16);
-    title({'ROC Curves for total reconstruction',['\tau = ' num2str(reg_params(1)),...
-        ' \gamma = ' num2str(reg_params(2))]},'FontSize',16)
-
-    %parent reconstruction
-    figure
-    [X_n,Y_n,T_n,AUC_n] = perfcurve(f_p,fhatNEBULA_p, 1); 
-    [X_s,Y_s,T_s,AUC_s] = perfcurve(f_p,fhatSPIRAL_p, 1);
-    plot(X_n,Y_n, '-r', 'LineWidth',2); hold on
-    plot(X_s, Y_s, '--b', 'LineWidth',1.5)
-    legend(strcat('NEBULA = ', num2str(AUC_n)), strcat('SPIRAL  = ', num2str(AUC_s)), 'FontSize',12)
-    xlabel('False Positive Rate','FontSize',16); ylabel('True Positive Rate','FontSize',16);
-    title({'ROC Curves for parent reconstruction',['\tau = ' num2str(reg_params(1)),...
-        ' \gamma = ' num2str(reg_params(2))]},'FontSize',16)
-
-     %child reconstruction
-    figure
-    [X_n,Y_n,T_n,AUC_n] = perfcurve(f_c,fhatNEBULA_c, 1); 
-    [X_s,Y_s,T_s,AUC_s] = perfcurve(f_c,fhatSPIRAL_c, 1);
-    plot(X_n,Y_n, '-r', 'LineWidth',2); hold on
-    plot(X_s, Y_s, '--b', 'LineWidth',1.5)
-    legend(strcat('NEBULA = ', num2str(AUC_n)), strcat('SPIRAL  = ', num2str(AUC_s)), 'FontSize',12)
-    xlabel('False Positive Rate','FontSize',16); ylabel('True Positive Rate','FontSize',16);
-    title({'ROC Curves for child reconstruction',['\tau = ' num2str(reg_params(1)),...
-        ' \gamma = ' num2str(reg_params(2))]},'FontSize',16)
+%     % overall plot
+%     figure
+%     [X_n,Y_n,T_n,AUC_n] = perfcurve(f_true,fhatNEBULA, 1); 
+%     [X_s,Y_s,T_s,AUC_s] = perfcurve(f_true,fhatSPIRAL, 1);
+%     plot(X_n,Y_n, '-r', 'LineWidth',2); hold on
+%     plot(X_s, Y_s, '--b', 'LineWidth',1.5)
+%     legend(strcat('NEBULA = ', num2str(AUC_n)), strcat('SPIRAL  = ', num2str(AUC_s)), 'FontSize',12)
+%     xlabel('False Positive Rate','FontSize',16); ylabel('True Positive Rate','FontSize',16);
+%     title({'ROC Curves for total reconstruction',['\tau = ' num2str(reg_params(1)),...
+%         ' \gamma = ' num2str(reg_params(2))]},'FontSize',16)
+% 
+%     %parent reconstruction
+%     figure
+%     [X_n,Y_n,T_n,AUC_n] = perfcurve(f_p,fhatNEBULA_p, 1); 
+%     [X_s,Y_s,T_s,AUC_s] = perfcurve(f_p,fhatSPIRAL_p, 1);
+%     plot(X_n,Y_n, '-r', 'LineWidth',2); hold on
+%     plot(X_s, Y_s, '--b', 'LineWidth',1.5)
+%     legend(strcat('NEBULA = ', num2str(AUC_n)), strcat('SPIRAL  = ', num2str(AUC_s)), 'FontSize',12)
+%     xlabel('False Positive Rate','FontSize',16); ylabel('True Positive Rate','FontSize',16);
+%     title({'ROC Curves for parent reconstruction',['\tau = ' num2str(reg_params(1)),...
+%         ' \gamma = ' num2str(reg_params(2))]},'FontSize',16)
+% 
+%      %child reconstruction
+%     figure
+%     [X_n,Y_n,T_n,AUC_n] = perfcurve(f_c,fhatNEBULA_c, 1); 
+%     [X_s,Y_s,T_s,AUC_s] = perfcurve(f_c,fhatSPIRAL_c, 1);
+%     plot(X_n,Y_n, '-r', 'LineWidth',2); hold on
+%     plot(X_s, Y_s, '--b', 'LineWidth',1.5)
+%     legend(strcat('NEBULA = ', num2str(AUC_n)), strcat('SPIRAL  = ', num2str(AUC_s)), 'FontSize',12)
+%     xlabel('False Positive Rate','FontSize',16); ylabel('True Positive Rate','FontSize',16);
+%     title({'ROC Curves for child reconstruction',['\tau = ' num2str(reg_params(1)),...
+%         ' \gamma = ' num2str(reg_params(2))]},'FontSize',16)
 % 
 % %     figure
 % %     fhat_NEBULA_bin = fhat_NEBULA > 0.5;

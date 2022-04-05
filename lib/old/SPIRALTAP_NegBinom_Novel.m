@@ -178,6 +178,8 @@ savecputime = 0;
 savesolutionpath = 0;
 
 % ---- Read in the input parameters ----
+disp(length(varargin))
+disp((rem(length(varargin),2)==1))
 if (rem(length(varargin),2)==1)
     error('Optional parameters should always go by pairs');
 else
@@ -584,7 +586,7 @@ while (iter <= miniter) || ((iter <= maxiter) && not(converged))
     % ---- Compute the next iterate based on the method of computing alpha ----
     switch alphamethod
         case 0 % Constant alpha throughout all iterations.
-            disp('Alphamethod being used is 0')
+            fprintf('Alphamethod being used is 0')
             % If convergence criteria requires it, compute dx or dobjective
             dx = xprevious;
             %APL: (old stuff) step = xprevious - grad./alpha;
@@ -596,9 +598,12 @@ while (iter <= miniter) || ((iter <= maxiter) && not(converged))
             Ax = A(x);            
             
         case 1 % Barzilai-Borwein choice of alpha
+            fprintf('Alphamethod being used is 1\n')
             if monotone 
+                fprintf('Alphamethod is using monotone\n')
                 % do acceptance criterion.
                 past = (max(iter-1-acceptpast,0):iter-1) + 1;
+                fprintf('past %12.4f \n', past)
                 maxpastobjective = max(objective(past));
                 accept = 0;
                 while (accept == 0)
@@ -606,9 +611,13 @@ while (iter <= miniter) || ((iter <= maxiter) && not(converged))
                     % --- Compute the step, and perform Gaussian 
                     %     denoising subproblem ----
                     dx = xprevious;
+                    %fprintf('dx %12.4f \n', dx)
                    %APL (old stuff) step = xprevious - grad./alpha;
                    %step = xprevious - grad.*alpha + tau(1);
                    step = xprevious - grad./alpha;
+                   %fprintf('step %12.4f \n', step) 
+                   %fprintf('grad %12.4f \n', grad)  
+                   %fprintf('alpha %12.4f \n', alpha) 
                    %step = xprevious - 0.01.*grad + tau(1);
                     x = computesubsolution(step,tau,alpha,penalty,mu,...
                         W,WT,subminiter,submaxiter,substopcriterion,...
@@ -635,7 +644,7 @@ while (iter <= miniter) || ((iter <= maxiter) && not(converged))
                         fprintf('objective(iter+1) %12.4f \n', objective(iter+1))
                     end
                     acceptalpha = alpha;  % Keep value for displaying
-                    %fprintf('acceptmult is %12.4f \nalpha is %12.4f \n', acceptmult, alpha)
+                    fprintf('acceptmult is %12.4f \nalpha is %12.4f \n', acceptmult, alpha)
                     alpha = acceptmult*alpha;
                 end
             else 

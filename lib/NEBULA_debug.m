@@ -37,7 +37,7 @@
 %                   such that A(x) = A*x where x has n total elements.  In 
 %                   this case one must also specify a function call AT() 
 %                   using the 'AT' option that computes matrix-vector 
-%                   products with the adjoint of A such that AT(x) = A'*x.      
+%                   products with the adjoint of A such that AT(x) = A'*x.    
 %
 %   tau             Regularization parameter that trades off the data fit
 %                   (negative log-likelihood) with the regularization.
@@ -108,7 +108,7 @@
 % === This code was edited by Andrew P Lazar in 2020 and later further modified by Jocelyn Ornelas in 2021
 %     We add an extension of SPIRALTAP to incorporate Negative Binomial noise
 
-function [x, varargout] = NEBULA(y, A, tau,reg_params_all, noisetype, subvectors, varargin)
+function [x, varargout] = NEBULA_debug(y, A, tau,reg_params_all, noisetype, subvectors, varargin)
 % ==== Set default/initial parameter values ====
 % ---- All Methods ----
 verbose = 0;
@@ -126,11 +126,11 @@ mu = 0;
 % specific to SV diploid model with novel variants
 % % for diploid with novel, this assumes the order of f is  
     % [zP, zH, zN, yP, yH, yN] and we weigh the novel variants more
-if subvectors == 6 & length(reg_params_all) ~= 6
-    fprintf('Number of subvectors = %i and regularization = %i parameters do not match\n', subvectors,length(reg_params_all))
-elseif subvectors == 3 & length(reg_params_all) ~= 3
-    fprintf('Number of subvectors = %i and regularization = %i parameters do not match\n', subvectors,length(reg_params_all))
-end
+    if subvectors == 6 & length(reg_params_all) ~= 6
+        fprintf('Number of subvectors = %i and regularization = %i parameters do not match\n', subvectors,length(reg_params_all))
+    elseif subvectors == 3 & length(reg_params_all) ~= 3
+        fprintf('Number of subvectors = %i and regularization = %i parameters do not match\n', subvectors,length(reg_params_all))
+    end
 % Add a path to the denoising methods folder
 nebula_dir = which('NEBULA');
 [nebula_dir, dummy] = fileparts(nebula_dir);
@@ -372,7 +372,7 @@ switch lower(noisetype)
         % Ensure that y is a vector of nonnegative counts
         if sum(round(y(:)) ~= y(:)) || (min(y(:)) < 0)
             error(['The data ''Y'' must contain nonnegative integer ',...
-                'counts when ''NOISETYPE'' =  ''Poisson'' or ''Negative Binomial'' ']);
+               'counts when ''NOISETYPE'' =  ''Poisson'' or ''Negative Binomial'' ']);
         end
         % Maybe in future could check to ensure A and AT contain nonnegative
         %   elements, but perhaps too computationally wasteful 
@@ -381,7 +381,7 @@ switch lower(noisetype)
         % Ensure that recentering is not set
         if recenter
             todo
-        end   
+        end
     case 'gaussian'
         
 end
@@ -405,40 +405,40 @@ switch lower(penalty)
                 error(['Parameter ''WT'' not specified.  Please provide a ',...
                     'method to compute W''*x matrix-vector products.'])
             else % WT was provided
-            if isa(WT, 'function_handle') % W and WT are function calls
-                try dummy = y + A(WT(W(AT(y))));
-                catch exception;
-                    error('Size incompatability between ''W'' and ''WT''.')
-                end
-            else % W is a function call, WT is a matrix        
-                try dummy = y + A(WT*W(AT(y)));
-                catch exception
-                    error('Size incompatability between ''W'' and ''WT''.')
-                end
-                WT = @(x) WT*x; % Define WT as a function call
+        if isa(WT, 'function_handle') % W and WT are function calls
+            try dummy = y + A(WT(W(AT(y))));
+            catch exception; 
+                error('Size incompatability between ''W'' and ''WT''.')
             end
+        else % W is a function call, WT is a matrix        
+            try dummy = y + A(WT*W(AT(y)));
+            catch exception
+                error('Size incompatability between ''W'' and ''WT''.')
             end
-        else
-            if isempty(WT) % W is a matrix, and WT not provided.
-                AT = @(x) W'*x; % Just define function calls.
-                A = @(x) W*x;
-            else % W is a matrix, and WT provided, we need to check
-                if isa(WT, 'function_handle') % W is a matrix, WT is a function call            
-                    try dummy = y + A(WT(W*AT(y)));
-                    catch exception
-                        error('Size incompatability between ''W'' and ''WT''.')
-                    end
-                    W = @(x) W*x; % Define W as a function call
-                else % W and WT are matrices
-                    try dummy = y + A(WT(W*(AT(y))));
-                    catch exception
-                        error('Size incompatability between ''W'' and ''WT''.')
-                    end
-                    WT = @(x) WT*x; % Define A and AT as function calls
-                    W = @(x) W*x;
-                end
-            end
+            WT = @(x) WT*x; % Define WT as a function call
         end
+    end
+else
+    if isempty(WT) % W is a matrix, and WT not provided.
+        AT = @(x) W'*x; % Just define function calls.
+        A = @(x) W*x;
+    else % W is a matrix, and WT provided, we need to check
+        if isa(WT, 'function_handle') % W is a matrix, WT is a function call            
+            try dummy = y + A(WT(W*AT(y)));
+            catch exception
+                error('Size incompatability between ''W'' and ''WT''.')
+            end
+            W = @(x) W*x; % Define W as a function call
+        else % W and WT are matrices
+            try dummy = y + A(WT(W*(AT(y))));
+            catch exception
+                error('Size incompatability between ''W'' and ''WT''.')
+            end
+            WT = @(x) WT*x; % Define A and AT as function calls
+            W = @(x) W*x;
+        end
+    end
+end
 
 	case 'rdp'
         %todo
@@ -575,7 +575,7 @@ if (verbose > 0)
         '=   Reg Vals:   %-10.3f, %-10.3f      Maxiter: %-5d          =\n',...
         '=========================================================\n'],...
         thetime(4),thetime(5),thetime(2),thetime(3),thetime(1),...
-        noisetype,penalty,unique(reg_params_all),maxiter)     
+        noisetype,penalty,unique(reg_params_all),maxiter)      
 end
 
 tic; % Start clock for calculating computation time.
@@ -596,7 +596,7 @@ while (iter <= miniter) || ((iter <= maxiter) && not(converged))
                 subtolerance);
             dx = x - dx;
             Ax = A(x);            
-               
+            
         case 1 % Barzilai-Borwein choice of alpha
             fprintf('Alphamethod being used is 1\n')
             if monotone 
@@ -612,14 +612,13 @@ while (iter <= miniter) || ((iter <= maxiter) && not(converged))
                     %     denoising subproblem ----
                     dx = xprevious;
                     %fprintf('dx %12.4f \n', dx)
-                    step = xprevious - grad./alpha; 
-                    %fprintf('step %12.4f \n', step)   
-                    %fprintf('grad %12.4f \n', grad)  
-                    %fprintf('alpha %12.4f \n', alpha)      
+                   step = xprevious - grad./alpha;
+                   %fprintf('step %12.4f \n', step) 
+                   %fprintf('grad %12.4f \n', grad)  
+                   %fprintf('alpha %12.4f \n', alpha) 
                     x = computesubsolution(step,alpha,penalty,subvectors,reg_params_all,mu,...
                         W,WT,subminiter,submaxiter,substopcriterion,...
                         subtolerance);
-                        fprintf('Size x = %10d, \nSize dx = %10d', size(x,1),size(dx,1))
                     dx = x - dx;
                     Adx = Axprevious;
                     Ax = A(x);
@@ -715,8 +714,8 @@ while (iter <= miniter) || ((iter <= maxiter) && not(converged))
         case 1 % bb method
             % Adx is overwritten at top of iteration, so this is an ok reuse
             switch lower(noisetype)
-                case {'poisson', 'negative binomial'}                                          % poisson and neg bin are the same... should they?
-                    Adx = Adx.*sqrty./(Ax + logepsilon); 
+            case {'poisson', 'negative binomial'}                                          % poisson and neg bin are the same... should they?
+                Adx = Adx.*sqrty./(Ax + logepsilon); 
                 case 'gaussian'
                     % No need to scale Adx
             end
@@ -822,15 +821,15 @@ end
 % 2) Compute Penalty:
 switch lower(penalty)
     case 'canonical' 
-        n = length(x)/subvectors;           
+        n = length(x)/subvectors; 
         for i=0:subvectors-1
             objective = objective + sum(abs(reg_params_all(i+1).*x(i*n +1: (i+1)*n)));
         end
-    case 'onb' 
+	case 'onb' 
     	WT = varargin{1};
         WTx = WT(x);
         objective = objective + sum(abs(tau(:).*WTx(:)));
-    case 'rdp'
+	case 'rdp'
         todo
     case 'rdp-ti'
         todo
@@ -839,9 +838,9 @@ switch lower(penalty)
 end
 end
 
-% ===================================== 
-% = Denoising Subproblem Computation: = 
-% ===================================== 
+% =====================================
+% = Denoising Subproblem Computation: =
+% =====================================
 function subsolution = computesubsolution(step,alpha,penalty,subvectors,reg_params_all,mu,varargin)
 %APL: Now adding the input grad which is the gradient
     switch lower(penalty)
@@ -853,16 +852,16 @@ function subsolution = computesubsolution(step,alpha,penalty,subvectors,reg_para
             for i=0:subvectors-1
                 subsolution(i*n +1: (i+1)*n) = step(i*n +1: (i+1)*n) - reg_params_all(i+1)./alpha;
             end
-       
-            % Projection onto feasible region
-            if subvectors == 6
-                subsolution = diploid_novel_projection(subsolution, subvectors, 6);
-            elseif subvectors == 3
-                subsolution = Novel_const(subsolution);
-            else
-                fprintf('Method can only accept 3 and 6 subvectors within f_vec for now')
 
-            end
+        % Projection onto feasible region
+        if subvectors == 6
+            subsolution = diploid_novel_projection(subsolution, subvectors, 6);
+        elseif subvectors == 3
+            subsolution = Novel_const(subsolution);
+        else
+            fprintf('Method can only accept 3 and 6 subvectors within f_vec for now')
+
+        end
             
             
         case 'onb'
@@ -874,8 +873,8 @@ function subsolution = computesubsolution(step,alpha,penalty,subvectors,reg_para
             substopcriterion    = varargin{5};
             subtolerance        = varargin{6};
                                    
-             subsolution = constrainedl2l1denoise(step,W,WT,tau./alpha,mu,...
-                subminiter,submaxiter,substopcriterion,subtolerance);
+            subsolution = constrainedl2l1denoise(step,W,WT,tau./alpha,mu,...
+            subminiter,submaxiter,substopcriterion,subtolerance);
         case 'rdp'
             subsolution = haarTVApprox2DNN_recentered(step,tau./alpha,-mu);
         case 'rdp-ti'

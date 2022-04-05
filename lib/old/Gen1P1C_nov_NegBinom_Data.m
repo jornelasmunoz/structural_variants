@@ -14,8 +14,8 @@ r=1;
 % create parent data
 
 % Initialize the size and number of nonzero elements in parent signals, f_p
-n = 10^2;
-k = 10; %number of SVs
+n = 3; %10^2;
+k = 1; %10; %number of SVs
 
 % Initialize lambda and epsilon values
 
@@ -24,7 +24,7 @@ lambda_p = 4;
 erreps = 0.01;
 
 % Change depending on appropriate loading data
-pctNovel = 0.2; % if pctNovel = 1, then child signal does not share any variants with the parent
+pctNovel = 1;%0.2; % if pctNovel = 1, then child signal does not share any variants with the parent
 
 
 
@@ -97,6 +97,6 @@ y_p_neg_binom = nbinrnd(mu_p.^2./(var_p - mu_p), mu_p./var_p);
 clear temp;
 
 % save data in format p1(lambda_p1)_p2(lambda_p2)_c(lambda_c)_percentsharedpar.mat
-datname = sprintf('neg_binom_nov_p%d_c%d_%dperNov',lambda_p,lambda_c,pctNovel*100);
+datname = sprintf('dummy_data');%sprintf('neg_binom_nov_p%d_c%d_%dperNov',lambda_p,lambda_c,pctNovel*100);
 
 save(datname)
