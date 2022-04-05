@@ -528,7 +528,6 @@ end
 % --- The below assumes that all parameters above are valid ---
 % Initialize Main Algorithm 
 x = xinit;
-fprintf('Size x = %5d', size(x,1))
 Ax = A(x);
 alpha = alphainit;
 Axprevious = Ax;
@@ -613,11 +612,9 @@ while (iter <= miniter) || ((iter <= maxiter) && not(converged))
                     dx = xprevious;
                   
                     step = xprevious - grad./alpha; 
-                    fprintf('Size step = %5d', size(step,1))
                     x = computesubsolution(step,alpha,penalty,subvectors,reg_params_all,mu,...
                         W,WT,subminiter,submaxiter,substopcriterion,...
                         subtolerance);
-                        fprintf('Size x = %10d, \nSize dx = %10d', size(x,1),size(dx,1))
                     dx = x - dx;
                     Adx = Axprevious;
                     Ax = A(x);
@@ -632,16 +629,12 @@ while (iter <= miniter) || ((iter <= maxiter) && not(converged))
                             - acceptdecrease*alpha/2*normsqdx) ) ...
                             || (alpha >= acceptalphamax)
                         accept = 1;
-                        % fprintf('(maxpastobjective - acceptdecrease*alpha/2*normsqdx) %12.4f \n', (maxpastobjective- acceptdecrease*alpha/2*normsqdx))
-                        % fprintf('normsqdx %12.4f \n', normsqdx)
-                        % fprintf('acceptdecrease %12.4f \n', acceptdecrease)
-                        % fprintf('alpha %12.4f \n', alpha)
-                        % fprintf('acceptalphamax %12.4f \n', acceptalphamax)
-                        % fprintf('objective(iter+1) %12.4f \n', objective(iter+1))
+
                     end
                     acceptalpha = alpha;  % Keep value for displaying
                     % fprintf('acceptmult is %12.4f \nalpha is %12.4f \n', acceptmult, alpha)
                     alpha = acceptmult*alpha;
+                    %fprintf('alpha = %5.5f \n', alpha)
                 end
             else 
                 % just take bb setp, no enforcing monotonicity.
@@ -844,15 +837,12 @@ function subsolution = computesubsolution(step,alpha,penalty,subvectors,reg_para
 %APL: Now adding the input grad which is the gradient
     switch lower(penalty)
         case 'canonical'
-            %%%subsolution = max(step - tau./alpha + mu, 0.0);
-            %subsolution = step - tau./alpha;
             n = length(step)/subvectors;
-            fprintf('Size step = %5d %5d \n', size(step))
-            
+            subsolution=step;
             for i=0:subvectors-1
                 subsolution(i*n +1: (i+1)*n) = step(i*n +1: (i+1)*n) - reg_params_all(i+1)./alpha;
             end
-            fprintf('Size subsol = %5d \n', size(subsolution,1))
+
             % Projection onto feasible region
             if subvectors == 6
                 subsolution = diploid_novel_projection(subsolution, subvectors, 6);

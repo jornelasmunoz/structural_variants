@@ -576,7 +576,7 @@ while (iter <= miniter) || ((iter <= maxiter) && not(converged))
     % ---- Compute the next iterate based on the method of computing alpha ----
     switch alphamethod
         case 0 % Constant alpha throughout all iterations.
-            fprintf('Alphamethod being used is 0\n')
+            %fprintf('Alphamethod being used is 0\n')
             % If convergence criteria requires it, compute dx or dobjective
             dx = xprevious;
             step = xprevious - grad./alpha;
@@ -587,12 +587,12 @@ while (iter <= miniter) || ((iter <= maxiter) && not(converged))
             Ax = A(x);            
             
         case 1 % Barzilai-Borwein choice of alpha
-            fprintf('Alphamethod being used is 1\n')
+            %fprintf('Alphamethod being used is 1\n')
             if monotone 
-                fprintf('Alphamethod is using monotone\n')
+                %fprintf('Alphamethod is using monotone\n')
                 % do acceptance criterion.
                 past = (max(iter-1-acceptpast,0):iter-1) + 1;
-                fprintf('past %12.4f \n', past)
+                %fprintf('past %12.4f \n', past)
                 maxpastobjective = max(objective(past));
                 accept = 0;
                 while (accept == 0)
@@ -628,15 +628,15 @@ while (iter <= miniter) || ((iter <= maxiter) && not(converged))
                             - acceptdecrease*alpha/2*normsqdx) ) ...
                             || (alpha >= acceptalphamax)
                         accept = 1;
-                        fprintf('(maxpastobjective - acceptdecrease*alpha/2*normsqdx) %12.4f \n', (maxpastobjective- acceptdecrease*alpha/2*normsqdx))
-                        fprintf('normsqdx %12.4f \n', normsqdx)
-                        fprintf('acceptdecrease %12.4f \n', acceptdecrease)
-                        fprintf('alpha %12.4f \n', alpha)
-                        fprintf('acceptalphamax %12.4f \n', acceptalphamax)
-                        fprintf('objective(iter+1) %12.4f \n', objective(iter+1))
+                        % fprintf('(maxpastobjective - acceptdecrease*alpha/2*normsqdx) %12.4f \n', (maxpastobjective- acceptdecrease*alpha/2*normsqdx))
+                        % fprintf('normsqdx %12.4f \n', normsqdx)
+                        % fprintf('acceptdecrease %12.4f \n', acceptdecrease)
+                        % fprintf('alpha %12.4f \n', alpha)
+                        % fprintf('acceptalphamax %12.4f \n', acceptalphamax)
+                        % fprintf('objective(iter+1) %12.4f \n', objective(iter+1))
                     end
                     acceptalpha = alpha;  % Keep value for displaying
-                    fprintf('acceptmult is %12.4f \nalpha is %12.4f \n', acceptmult, alpha)
+                    % fprintf('acceptmult is %12.4f \nalpha is %12.4f \n', acceptmult, alpha)
 
                     alpha = acceptmult*alpha;
                     %fprintf('acceptmult is %12.4f \nalpha is %12.4f \n', acceptmult, alpha)

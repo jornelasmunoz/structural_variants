@@ -314,14 +314,14 @@ subvectors = 3;
 % 
 % %------------------Jocelyn edits -----------
 % 
-% % % overall plot
-% % figure
-% % [X_n,Y_n,T_n,AUC_n] = perfcurve(f_neg_binom,fhatSPIRAL_1p1c_nov_neg_binom_SPNB, 1); 
-% % [X_s,Y_s,T_s,AUC_s] = perfcurve(f_neg_binom,fhatSPIRAL_1p1c_nov_neg_binom_SP, 1);
-% % plot(X_n,Y_n, '-r', 'LineWidth',2); hold on
-% % plot(X_s, Y_s, '--b', 'LineWidth',1.5)
-% % legend(strcat('NEBULA = ', num2str(AUC_n)), strcat('SPIRAL  = ', num2str(AUC_s)), 'FontSize',12)
-% % xlabel('False Positive Rate','FontSize',16); ylabel('True Positive Rate','FontSize',16);
-% % title({'ROC Curves for total reconstruction',['\tau = ' num2str(tau(1)),...
-% %     ' \gamma = ' num2str(tau(2))]},'FontSize',16)
+% overall plot
+figure
+[X_n,Y_n,T_n,AUC_n] = perfcurve(f_neg_binom,fhatSPIRAL_1p1c_nov_neg_binom_SPNB, 1); 
+[X_s,Y_s,T_s,AUC_s] = perfcurve(f_neg_binom,fhatSPIRAL_1p1c_nov_neg_binom_SP, 1);
+plot(X_n,Y_n, '-r', 'LineWidth',2); hold on
+plot(X_s, Y_s, '--b', 'LineWidth',1.5)
+legend(strcat('NEBULA = ', num2str(AUC_n)), strcat('SPIRAL  = ', num2str(AUC_s)), 'FontSize',12)
+xlabel('False Positive Rate','FontSize',16); ylabel('True Positive Rate','FontSize',16);
+title({'(Andrew code) ROC Curves for total reconstruction',['\tau = ' num2str(tau(1)),...
+    ' \gamma = ' num2str(tau(2))]},'FontSize',16)
 end
