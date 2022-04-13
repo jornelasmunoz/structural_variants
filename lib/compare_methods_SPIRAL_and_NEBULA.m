@@ -18,10 +18,10 @@ addpath([genpath('/Users/jocelynornelasmunoz/Desktop/Research/structural_variant
          genpath('/Users/jocelynornelas/iCloud Drive (Archive)/Desktop/UC Merced/Research/structural_variants/') ])
 % -------------------------  Load Simulated Data  -------------------------
 %filename = 'data/diploid_5pctNovel_5k_100n.mat'; 
-filename = 'data/diploid_5pctNovel_500k_100000n.mat';
+%filename = 'data/diploid_5pctNovel_500k_100000n.mat';
 %filename = 'data/diploid_5pctNovel_50k_10000n.mat'; 
 %filename = 'data/diploid_2pctNovel_10k_100n.mat';
-%filename = 'dummy_2pctNovel_2k_6n.mat';
+filename = 'dummy_2pctNovel_2k_6n.mat';
 
 %filename = 'data/haploid_5pctNovel_10k_100n.mat';
 %filename = 'data/haploid_20pctNovel_10k_100n_reproducedAPL.mat'; %reproduced data
@@ -137,7 +137,7 @@ miniter = 5;
 maxiter = 1000;
 tolerance = 1e-8;
 verbose = 1;
-stopcriterion = 4; 
+stopcriterion = 3; 
     % 3: Relative changes in iterate
     % 4: relative changes in objective
 
@@ -266,23 +266,25 @@ f_init = (sum(sum(s_obs)).*numel(AT(s_obs)))...
     xlabel('False Positive Rate','FontSize',16); ylabel('True Positive Rate','FontSize',16);
     title({'ROC Curves for child reconstruction',['\tau = ' num2str(reg_params(1)),...
         ' \gamma = ' num2str(reg_params(2))]},'FontSize',16)
-% % Confusion Matrix
-% % Not well labelled ATM, so may be hard to understand
-%     figure
-%     fhatNEBULA_bin = fhatNEBULA > 0.5;
-%     C = confusionmat(f_true, double(fhatNEBULA_bin), 'Order', [1, 0]);
-%     cm = confusionchart(C);
-%     cm.Title = 'Structural Variant Confusion Matrix using NEBULA';
-%     cm.RowSummary = 'row-normalized';
-%     cm.ColumnSummary = 'column-normalized';
-%     cm.NormalizedValues;
-%     figure
-%     fhatSPIRAL_bin = fhatSPIRAL > 0.5;
-%     C = confusionmat(f_true, double(fhatSPIRAL_bin), 'Order', [1, 0]);
-%     cm = confusionchart(C);
-%     cm.Title = 'Structural Variant Confusion Matrix using SPIRAL';
-%     cm.RowSummary = 'row-normalized';
-%     cm.ColumnSummary = 'column-normalized';
-%     cm.NormalizedValues;
+% Confusion Matrix
+% Not well labelled ATM, so may be hard to understand
+    figure
+    subplot(1,2,1)
+    threshold = 0.5;
+    fhatNEBULA_bin = fhatNEBULA > threshold;
+    C = confusionmat(f_true, double(fhatNEBULA_bin), 'Order', [1, 0]);
+    cm = confusionchart(C);
+    cm.Title = 'Structural Variant Confusion Matrix using NEBULA';
+    cm.RowSummary = 'row-normalized';
+    cm.ColumnSummary = 'column-normalized';
+    cm.NormalizedValues;
+    subplot(1,2,2)
+    fhatSPIRAL_bin = fhatSPIRAL > threshold;
+    C = confusionmat(f_true, double(fhatSPIRAL_bin), 'Order', [1, 0]);
+    cm = confusionchart(C);
+    cm.Title = 'Structural Variant Confusion Matrix using SPIRAL';
+    cm.RowSummary = 'row-normalized';
+    cm.ColumnSummary = 'column-normalized';
+    cm.NormalizedValues;
 
 %end
