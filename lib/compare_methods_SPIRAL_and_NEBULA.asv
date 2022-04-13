@@ -52,8 +52,8 @@ end
 
 % ---------------------  Regularization parameters  -----------------------
 % Define parameters regularization parameters 
-tau_vals = [0.01, 0.1, 1, 10, 100, 1000];
-gamma_vals = [2, 10, 20, 100, 200, 500];
+tau_vals = [0.01, 0.1];%[0.01, 0.1, 1, 10, 100, 1000];
+gamma_vals = [2, 10]; %[2, 10, 20, 100, 200, 500];
 params_AUCs = zeros(length(tau_vals),length(gamma_vals), 8);
 plot_flag = 1; print = 0;
 if print == 1
@@ -257,14 +257,14 @@ tau = tau_vals(i);
             if plot_flag == 1
 
                 % overall plot
-                figure('Position', [500 500 1500 400])
+                figure('Position', [500 500 1500 ])
                 subplot(1,3,1);
                 plot(X_nt,Y_nt, '-r', 'LineWidth',2); hold on
                 plot(X_st, Y_st, '--b', 'LineWidth',1.5);
                 legend(strcat('NEBULA = ', num2str(AUC_nt)), strcat('SPIRAL  = ', num2str(AUC_st)), 'FontSize',14, 'Location', 'southeast');
                 xlabel('False Positive Rate','FontSize',16); ylabel('True Positive Rate','FontSize',16);
-                title({'ROC Curves for total reconstruction',['\tau = ' num2str(tau),...
-                    ' \gamma = ' num2str(gamma)]},'FontSize',16)
+                title({'ROC Curves for total reconstruction',['\tau = ' num2str(reg_params(1)),...
+                    ' \gamma = ' num2str(reg_params(2))]},'FontSize',16)
                 
                 
                 %parent reconstruction
@@ -273,8 +273,8 @@ tau = tau_vals(i);
                 plot(X_sp, Y_sp, '--b', 'LineWidth',1.5);
                 legend(strcat('NEBULA = ', num2str(AUC_np)), strcat('SPIRAL  = ', num2str(AUC_sp)), 'FontSize',14, 'Location', 'southeast');
                 xlabel('False Positive Rate','FontSize',16); ylabel('True Positive Rate','FontSize',16);
-                title({'ROC Curves for parent reconstruction',['\tau = ' num2str(tau),...
-                    ' \gamma = ' num2str(gamma)]},'FontSize',16)
+                title({'ROC Curves for parent reconstruction',['\tau = ' num2str(reg_params(1)),...
+                    ' \gamma = ' num2str(reg_params(2))]},'FontSize',16)
                 
                 %child reconstruction
                 subplot(1,3,3);
@@ -282,8 +282,8 @@ tau = tau_vals(i);
                 plot(X_sc, Y_sc, '--b', 'LineWidth',1.5);
                 legend(strcat('NEBULA = ', num2str(AUC_nc)), strcat('SPIRAL  = ', num2str(AUC_sc)), 'FontSize',14, 'Location', 'southeast');
                 xlabel('False Positive Rate','FontSize',16); ylabel('True Positive Rate','FontSize',16);
-                title({'ROC Curves for child reconstruction',['\tau = ' num2str(tau),...
-                    ' \gamma = ' num2str(gamma)]},'FontSize',16)
+                title({'ROC Curves for child reconstruction',['\tau = ' num2str(reg_params(1)),...
+                    ' \gamma = ' num2str(reg_params(2))]},'FontSize',16)
             else
                 %disp('The plotting flag is OFF')
             end
