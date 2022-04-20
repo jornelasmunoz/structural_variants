@@ -108,7 +108,7 @@
 % === This code was edited by Andrew P Lazar in 2020 and later further modified by Jocelyn Ornelas in 2021
 %     We add an extension of SPIRALTAP to incorporate Negative Binomial noise
 
-function [x, varargout] = NEBULA(y, A, tau,reg_params_all, noisetype, subvectors, varargin)
+function [x, varargout] = NEBULA(y, A, reg_params,reg_params_all, noisetype, subvectors, varargin)
 % ==== Set default/initial parameter values ====
 % ---- All Methods ----
 verbose = 0;
@@ -575,7 +575,7 @@ if (verbose > 0)
              '=   Reg Vals:   %-10.3f, %-10.3f      Maxiter: %-5d      \n',...
              '=================================================================\n'],...
             thetime(4),thetime(5),thetime(2),thetime(3),thetime(1),...
-            noisetype,penalty,unique(reg_params_all),maxiter)     
+            noisetype,penalty,unique(reg_params),maxiter)     
 end
 
 tic; % Start clock for calculating computation time.
@@ -757,7 +757,7 @@ if (verbose > 0)
         '=   Noisetype: %-17s         Penalty: %-9s  \n',...
         '=   Reg Vals:   %-10.2f, %-10.2f      Iter:  %-5d     \n'],...
         thetime(4),thetime(5),thetime(2),thetime(3),thetime(1),...
-        noisetype,penalty,unique(reg_params_all),iter)      
+        noisetype,penalty,unique(reg_params),iter)      
     fprintf('==============================================================\n');
 end
 
