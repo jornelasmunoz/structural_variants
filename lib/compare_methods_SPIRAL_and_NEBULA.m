@@ -18,8 +18,8 @@ addpath([genpath('/Users/jocelynornelasmunoz/Desktop/Research/structural_variant
          genpath('/Users/jocelynornelas/iCloud Drive (Archive)/Desktop/UC Merced/Research/structural_variants/') ])
 % -------------------------  Load Simulated Data  -------------------------
 %filename = 'data/diploid_5pctNovel_5k_100n.mat'; 
-%filename = 'data/diploid_5pctNovel_500k_100000n.mat';
-filename = 'data/diploid_5pctNovel_50k_10000n.mat'; 
+filename = 'data/diploid_5pctNovel_500k_100000n.mat';
+%filename = 'data/diploid_5pctNovel_50k_10000n.mat'; 
 %filename = 'data/diploid_2pctNovel_10k_100n.mat';
 %filename = 'dummy_2pctNovel_2k_6n.mat';
 
@@ -52,8 +52,8 @@ end
 
 % ---------------------  Regularization parameters  -----------------------
 % Define parameters regularization parameters 
-tau_vals = [0.01, 0.1, 1, 10, 100, 1000];
-gamma_vals = [2, 10, 20, 100, 200, 500];
+tau_vals = [0.01];%[0.01, 0.1, 1, 10, 100, 1000];
+gamma_vals = [2];%[2, 10, 20, 100, 200, 500];
 params_AUCs = zeros(length(tau_vals),length(gamma_vals), 8);
 plot_flag = 1; print = 0;
 if print == 1
