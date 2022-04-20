@@ -8,7 +8,7 @@
 clc;
 clear;
 close all
-
+format longg
 % =========================================================================
 % =         Preparation of data variables: Simulated Data
 % =========================================================================
@@ -17,6 +17,9 @@ close all
 addpath([genpath('/Users/jocelynornelasmunoz/Desktop/Research/structural_variants/'), ...
          genpath('/Users/jocelynornelas/iCloud Drive (Archive)/Desktop/UC Merced/Research/structural_variants/') ])
 % -------------------------  Load Simulated Data  -------------------------
+%filename = 'data/dummy_2pctNovel_2k_6n.mat';
+
+
 % Varying coverage datasets for n= 10^4
 filename = 'data/10000n_5k/2Lp_4Lc/diploid_2pctNovel_60pctSim.mat';
 % filename = 'data/10000n_5k/4Lp_2Lc/diploid_2pctNovel_60pctSim.mat';
@@ -74,8 +77,8 @@ end
 
 % ---------------------  Regularization parameters  -----------------------
 % Define parameters regularization parameters 
-tau_vals = [0.1];%[0.01, 0.1, 1, 10, 100, 1000];
-gamma_vals = [2];%[2, 10, 20, 100, 200, 500];
+tau_vals = [1];%[0.01, 0.1, 1, 10, 100, 1000];
+gamma_vals = [10];%[2, 10, 20, 100, 200, 500];
 params_AUCs = zeros(length(tau_vals),length(gamma_vals), 8);
 plot_flag = 1; print = 0;
 if print == 1
@@ -185,8 +188,7 @@ tau = tau_vals(i);
             ./(sum(sum(AT(s_obs))) .*sum(sum((AT(ones(size(s_obs)))))))...
             .*AT(s_obs);
         
-        
-        
+
         
         
         % =========================================================================
@@ -310,8 +312,29 @@ tau = tau_vals(i);
                 %disp('The plotting flag is OFF')
             end
         params_AUCs(i, j,:) = [tau, gamma, AUC_nt, AUC_st, AUC_np, AUC_sp, AUC_nc, AUC_sc]; 
+        fprintf(['-------------------------------------------------------\n',...
+         '        Sparsity for vectors (nonzero counts)          \n',...
+         '  NEBULA          SPIRAL          TRUTH        size\n',...
+         'fhat:%6d     fhat:%6d     f:   %6d     %d\n',...
+         'f_p: %6d     f_p: %6d     f_p: %6d     %d\n',...
+         'f_c: %6d     f_c: %6d     f_c: %6d     %d\n',...
+         'f_h: %6d     f_h: %6d     f_h: %6d     %d\n',...
+         'f_n: %6d     f_n: %6d     f_n: %6d     %d\n'],...
+         compute_sparsity(fhatNEBULA), compute_sparsity(fhatSPIRAL), compute_sparsity(f_true), numel(f_true),...
+         compute_sparsity(fhatNEBULA_p), compute_sparsity(fhatSPIRAL_p), compute_sparsity(f_p), numel(f_p),...
+         compute_sparsity(fhatNEBULA_c), compute_sparsity(fhatSPIRAL_c), compute_sparsity(f_c), numel(f_c),...
+         compute_sparsity(fhatNEBULA_h), compute_sparsity(fhatSPIRAL_h), compute_sparsity(f_h), numel(f_h),...
+         compute_sparsity(fhatNEBULA_n), compute_sparsity(fhatSPIRAL_n), compute_sparsity(f_n), numel(f_n))
+        
+
+        %save results
+        if ~exist(strcat('results',filename(5:length(filename)-4)), 'dir')
+            mkdir(strcat('results',filename(5:length(filename)-4)))
+        end
+        save_path = fprintf('%gtau_%ggamma_RESULTS.mat', tau, gamma);
+        save(save_path)
         if print == 1
-            fprintf(['= %-10.3f %-10.3f %-10.5f %-10.5f %-10.5f %-10.5f %-10.5f %-10.5f=\n'],...
+            fprintf('= %-10.3f %-10.3f %-10.5f %-10.5f %-10.5f %-10.5f %-10.5f %-10.5f=\n',...
                      tau, gamma, AUC_nt, AUC_st, AUC_np, AUC_sp, AUC_nc, AUC_sc)
         end
     end
@@ -320,20 +343,11 @@ end
 if print == 1
     fprintf(['=========================================================================================='])
 end
+format longg
 params_AUCs = reshape(params_AUCs, i*j,8);
-fprintf(['-----------------------------------------------\n',...
-         '            Sparsity for vectors              \n',...
-         '  NEBULA          SPIRAL      TRUTH       size\n',...
-         'fhat: %6d    fhat: %6d    f: %6d     %d\n',...
-         'f_p: %6d    f_p: %6d    f_p: %6d     %d\n',...
-         'f_c: %6d    f_c: %6d    f_c: %6d     %d\n',...
-         'f_h: %6d    f_h: %6d    f_h: %6d     %d\n',...
-         'f_n: %6d    f_n: %6d    f_n: %6d     %d\n'],...
-         compute_sparsity(fhatNEBULA), compute_sparsity(fhatSPIRAL), compute_sparsity(f_true), numel(f_true),...
-         compute_sparsity(fhatNEBULA_p), compute_sparsity(fhatSPIRAL_p), compute_sparsity(f_p), numel(f_p),...
-         compute_sparsity(fhatNEBULA_c), compute_sparsity(fhatSPIRAL_c), compute_sparsity(f_c), numel(f_c),...
-         compute_sparsity(fhatNEBULA_h), compute_sparsity(fhatSPIRAL_h), compute_sparsity(f_h), numel(f_h),...
-         compute_sparsity(fhatNEBULA_n), compute_sparsity(fhatSPIRAL_n), compute_sparsity(f_n), numel(f_n))
+
+
+
 % Confusion Matrix
 % % Not well labelled ATM, so may be hard to understand
 %     figure
