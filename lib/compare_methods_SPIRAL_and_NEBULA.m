@@ -17,37 +17,38 @@ format longg
 addpath([genpath('/Users/jocelynornelasmunoz/Desktop/Research/structural_variants/'), ...
          genpath('/Users/jocelynornelas/iCloud Drive (Archive)/Desktop/UC Merced/Research/structural_variants/') ])
 % -------------------------  Load Simulated Data  -------------------------
+
+
 %filename = 'data/dummy_2pctNovel_2k_6n.mat';
 
 
 % Varying coverage datasets for n= 10^4
-filename = 'data/10000n_5k/2Lp_4Lc/diploid_2pctNovel_60pctSim.mat';
-% filename = 'data/10000n_5k/4Lp_2Lc/diploid_2pctNovel_60pctSim.mat';
-% filename = 'data/10000n_5k/4Lp_4Lc/diploid_2pctNovel_60pctSim.mat';
-% filename = 'data/10000n_5k/4Lp_8Lc/diploid_2pctNovel_60pctSim.mat';
-% filename = 'data/10000n_5k/4Lp_16Lc/diploid_2pctNovel_60pctSim.mat';
-% filename = 'data/10000n_5k/8Lp_4Lc/diploid_2pctNovel_60pctSim.mat';
-% filename = 'data/10000n_5k/16Lp_4Lc/diploid_2pctNovel_60pctSim.mat';
-% 
+filenames = ["data/10000n_5k/2Lp_4Lc/diploid_2pctNovel_60pctSim.mat",...
+             "data/10000n_5k/4Lp_2Lc/diploid_2pctNovel_60pctSim.mat",...
+             "data/10000n_5k/4Lp_4Lc/diploid_2pctNovel_60pctSim.mat",...
+             "data/10000n_5k/4Lp_8Lc/diploid_2pctNovel_60pctSim.mat",...
+             "data/10000n_5k/4Lp_16Lc/diploid_2pctNovel_60pctSim.mat",...
+             "data/10000n_5k/8Lp_4Lc/diploid_2pctNovel_60pctSim.mat",...
+             "data/10000n_5k/16Lp_4Lc/diploid_2pctNovel_60pctSim.mat"];
 % % Varying coverage datasets for n= 10^5
-% filename = 'data/100000n_50k/2Lp_4Lc/diploid_2pctNovel_60pctSim.mat';
-% filename = 'data/100000n_50k/4Lp_2Lc/diploid_2pctNovel_60pctSim.mat';
-% filename = 'data/100000n_50k/4Lp_4Lc/diploid_2pctNovel_60pctSim.mat';
-% filename = 'data/100000n_50k/4Lp_8Lc/diploid_2pctNovel_60pctSim.mat';
-% filename = 'data/100000n_50k/4Lp_16Lc/diploid_2pctNovel_60pctSim.mat';
-% filename = 'data/100000n_50k/8Lp_4Lc/diploid_2pctNovel_60pctSim.mat';
-% filename = 'data/100000n_50k/16Lp_4Lc/diploid_2pctNovel_60pctSim.mat';
+%filenames = ["data/100000n_50k/2Lp_4Lc/diploid_2pctNovel_60pctSim.mat",...
+% "data/100000n_50k/4Lp_2Lc/diploid_2pctNovel_60pctSim.mat",...
+% "data/100000n_50k/4Lp_4Lc/diploid_2pctNovel_60pctSim.mat",...
+% "data/100000n_50k/4Lp_8Lc/diploid_2pctNovel_60pctSim.mat",...
+% "data/100000n_50k/4Lp_16Lc/diploid_2pctNovel_60pctSim.mat",...
+% "data/100000n_50k/8Lp_4Lc/diploid_2pctNovel_60pctSim.mat",...
+% "data/100000n_50k/16Lp_4Lc/diploid_2pctNovel_60pctSim.mat"]
 % 
 % % Varying percent novel 
-% filename = 'data/100000n_50k/4Lp_4Lc/diploid_4pctNovel_60pctSim.mat';
-% filename = 'data/100000n_50k/4Lp_4Lc/diploid_6pctNovel_60pctSim.mat';
-% filename = 'data/100000n_50k/4Lp_4Lc/diploid_8pctNovel_60pctSim.mat';
-% filename = 'data/100000n_50k/4Lp_4Lc/diploid_10pctNovel_60pctSim.mat';
+% filenames = ["data/100000n_50k/4Lp_4Lc/diploid_4pctNovel_60pctSim.mat",...
+% "data/100000n_50k/4Lp_4Lc/diploid_6pctNovel_60pctSim.mat",...
+% "data/100000n_50k/4Lp_4Lc/diploid_8pctNovel_60pctSim.mat",...
+% "data/100000n_50k/4Lp_4Lc/diploid_10pctNovel_60pctSim.mat"]
 % 
 % % Varying parent similarity
-% filename = 'data/100000n_50k/4Lp_4Lc/diploid_4pctNovel_50pctSim.mat';
-% filename = 'data/100000n_50k/4Lp_4Lc/diploid_4pctNovel_70pctSim.mat';
-% filename = 'data/100000n_50k/4Lp_4Lc/diploid_4pctNovel_80pctSim.mat';
+% filenames =                       ["data/100000n_50k/4Lp_4Lc/diploid_4pctNovel_50pctSim.mat",...
+% "data/100000n_50k/4Lp_4Lc/diploid_4pctNovel_70pctSim.mat",...
+% "data/100000n_50k/4Lp_4Lc/diploid_4pctNovel_80pctSim.mat]
 
 % Haploid data
 %filename = 'data/haploid_5pctNovel_10k_100n.mat';
@@ -55,6 +56,8 @@ filename = 'data/10000n_5k/2Lp_4Lc/diploid_2pctNovel_60pctSim.mat';
 %filename = 'lib/old/neg_binom_nov_p4_c4_5perNov.mat'; %Andrew's 5%nov 10^6n
 %filename = 'lib/old/neg_binom_nov_p4_c4_20perNov.mat'; %Andrew's 20%nov
 %filename = 'lib/old/dummy_data.mat';
+for file = 1:length(filenames)
+    filename = filenames(file);
 load(filename)
 
 
@@ -77,8 +80,8 @@ end
 
 % ---------------------  Regularization parameters  -----------------------
 % Define parameters regularization parameters 
-tau_vals = [1];%[0.01, 0.1, 1, 10, 100, 1000];
-gamma_vals = [10];%[2, 10, 20, 100, 200, 500];
+tau_vals = [0.01, 0.1, 1, 10, 100, 1000];
+gamma_vals = [2, 10, 20, 100, 200, 500];
 params_AUCs = zeros(length(tau_vals),length(gamma_vals), 8);
 plot_flag = 1; print = 0;
 if print == 1
@@ -328,10 +331,13 @@ tau = tau_vals(i);
         
 
         %save results
-        if ~exist(strcat('results',filename(5:length(filename)-4)), 'dir')
-            mkdir(strcat('results',filename(5:length(filename)-4)))
+        sub_folder = char(fileparts(filename));
+        save_folder = strcat('results/',sub_folder(6:end));
+        if ~exist(save_folder, 'dir')
+            disp('Making folder');disp(save_folder)
+            mkdir(save_folder)
         end
-        save_path = fprintf('%gtau_%ggamma_RESULTS.mat', tau, gamma);
+        save_path = sprintf(strcat(save_folder,'/%stau_%sgamma_RESULTS.mat'), num2str(tau), num2str(gamma));
         save(save_path)
         if print == 1
             fprintf('= %-10.3f %-10.3f %-10.5f %-10.5f %-10.5f %-10.5f %-10.5f %-10.5f=\n',...
@@ -345,7 +351,7 @@ if print == 1
 end
 format longg
 params_AUCs = reshape(params_AUCs, i*j,8);
-
+end
 
 
 % Confusion Matrix
