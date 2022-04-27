@@ -42,7 +42,6 @@ end
         fhat = f_pred >= thresholds(i);
         FPR(i) = sum(fhat(fhat)-f_true(fhat)) / total_neg;
         TPR(i) = sum(f_true) / total_pos;
-        precision(i) = sum(f_true(fhat))/ sum(fhat);
+        p
     end
-    recall = TPR;
 end
