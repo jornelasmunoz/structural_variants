@@ -5,7 +5,7 @@ addpath([genpath("/Users/jocelynornelasmunoz/Desktop/Research/structural_variant
          genpath("/home/jornelasmunoz/structural_variants/")])
 
 files = dir("results/10000n_5k/2Lp_4Lc/");
-idx = 36;
+idx = 6;
 result_file = files(idx+3).name;
 load(result_file)
 disp(result_file)

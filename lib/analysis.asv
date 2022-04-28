@@ -5,23 +5,23 @@ addpath([genpath("/Users/jocelynornelasmunoz/Desktop/Research/structural_variant
          genpath("/home/jornelasmunoz/structural_variants/")])
 
 files = dir("results/10000n_5k/2Lp_4Lc/");
-idx = 1;
+idx = 4;
 result_file = files(idx+3).name;
 load(result_file)
 disp(result_file)
 %save results
-sub_folder = char(fileparts(result_file));
-fig_folder = strcat('figs/',sub_folder(6:end));
-if ~exist(fig_folder, 'dir')
-    disp('Making folder');disp(fig_folder)
-    mkdir(fig_folder)
-end
+% sub_folder = char(fileparts(result_file));
+% fig_folder = strcat('figs/',sub_folder(6:end));
+% if ~exist(fig_folder, 'dir')
+%     disp('Making folder');disp(fig_folder)
+%     mkdir(fig_folder)
+%end
 %save_path = sprintf(strcat(fig_folder,'/%stau_%sgamma_RESULTS.mat'), num2str(tau), num2str(gamma));
 %save(save_path)
 %-------------------------------------------------------------------------
 % ---------------------  Sparsity - i.e. nonzeros ------------------------
 %-------------------------------------------------------------------------
-
+%%
 [y_St,x_St] = sparsity_search(fhatSPIRAL);
 [y_Nt,x_Nt] = sparsity_search(fhatNEBULA);
 [y_Sp,x_Sp] = sparsity_search(fhatSPIRAL_p);
@@ -63,7 +63,6 @@ title({'Child Signal Sparsity'},'FontSize',16);
 legend('Truth','NEBULA', 'SPIRAL', 'FontSize',14, 'Location','southwest');
 ylim([0, 10^4])
 
-savefig('PeaksFile.png')
 %-------------------------------------------------------------------------
 %------------------   Precision-Recall Curves  ---------------------------
 %-------------------------------------------------------------------------
@@ -104,14 +103,15 @@ legend('NEBULA', 'SPIRAL','No Skill', 'FontSize',14, 'Location','southwest');
 %-------------------------------------------------------------------------
 % order [tau, gamma, AUC_nt, AUC_st, AUC_np, AUC_sp, AUC_nc, AUC_sc];
 params_AUCs = reshape(params_AUCs, 6*6,8);
-params_AUCs = params_AUCs(params_AUCs ~=0);
-params_AUCs = reshape(params_AUCs, length(params_AUCs)/8,8);
+params_AUCs = params_AUCs(params_AUCs ==tau,:);
+%params_AUCs(params_AUCs ~=0);
+%params_AUCs = reshape(params_AUCs, length(params_AUCs)/8,8);
 
 figure()
 scatter(params_AUCs(:,3),params_AUCs(:,4),25, 'k');hold on
 scatter(params_AUCs(:,5),params_AUCs(:,6),25, 'r');
 scatter(params_AUCs(:,7),params_AUCs(:,8),25, 'b');
-plot([0,1],[0,1], '--'); hold off
+plot([0.5,1],[0.5,1], '--'); hold off
 xlabel('NEBULA'); ylabel('SPIRAL')
 legend('Total signal', 'Parent signal', 'Child signal', 'Location','southeast','FontSize',14);
 title('ROC AUC comparison between NEBULA and SPIRAL','FontSize',16)
