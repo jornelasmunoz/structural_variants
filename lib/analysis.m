@@ -4,11 +4,19 @@ addpath([genpath("/Users/jocelynornelasmunoz/Desktop/Research/structural_variant
          genpath("/Users/jocelynornelas/iCloud Drive (Archive)/Desktop/UC Merced/Research/structural_variants/"),...
          genpath("/home/jornelasmunoz/structural_variants/")])
 
-files = dir("results/10000n_5k/2Lp_4Lc/");
-idx = 6;
-result_file = files(idx+3).name;
+% files = dir("results/10000n_5k/2Lp_4Lc/");
+% idx = 7;
+% result_file = files(idx+3).name;
+% %result_file = "results/10000n_5k/2Lp_4Lc/0.01tau_500gamma_RESULTS.mat";
+% result_file = "results/10000n_5k/2Lp_4Lc/0.1tau_500gamma_RESULTS.mat";
+% result_file = "results/10000n_5k/2Lp_4Lc/1tau_500gamma_RESULTS.mat";
+% result_file = "results/10000n_5k/2Lp_4Lc/10.1tau_500gamma_RESULTS.mat";
+% result_file = "results/10000n_5k/2Lp_4Lc/100tau_500gamma_RESULTS.mat";
+% result_file = "results/10000n_5k/2Lp_4Lc/1000tau_500gamma_RESULTS.mat";
+
 load(result_file)
 disp(result_file)
+
 %save results
 % sub_folder = char(fileparts(result_file));
 % fig_folder = strcat('figs/',sub_folder(6:end));
@@ -18,6 +26,7 @@ disp(result_file)
 %end
 %save_path = sprintf(strcat(fig_folder,'/%stau_%sgamma_RESULTS.mat'), num2str(tau), num2str(gamma));
 %save(save_path)
+%%
 %-------------------------------------------------------------------------
 % ---------------------  Sparsity - i.e. nonzeros ------------------------
 %-------------------------------------------------------------------------
@@ -103,7 +112,7 @@ legend('NEBULA', 'SPIRAL','No Skill', 'FontSize',14, 'Location','southwest');
 %-------------------------------------------------------------------------
 % order [tau, gamma, AUC_nt, AUC_st, AUC_np, AUC_sp, AUC_nc, AUC_sc];
 params_AUCs = reshape(params_AUCs, 6*6,8);
-params_AUCs = params_AUCs(params_AUCs ==tau,:);
+params_AUCs = params_AUCs(params_AUCs(:,1) == tau,:);
 %params_AUCs(params_AUCs ~=0);
 %params_AUCs = reshape(params_AUCs, length(params_AUCs)/8,8);
 

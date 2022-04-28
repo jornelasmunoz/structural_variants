@@ -61,7 +61,7 @@ addpath([genpath('/Users/jocelynornelasmunoz/Desktop/Research/structural_variant
 % Haploid data
 %filename = 'data/haploid_5pctNovel_10k_100n.mat';
 %filename = 'data/haploid_20pctNovel_10k_100n_reproducedAPL.mat'; %reproduced data
-%filenames = ["lib/old/neg_binom_nov_p4_c4_5perNov.mat"]; %Andrew's 5%nov 10^6n
+filenames = ["lib/old/neg_binom_nov_p4_c4_5perNov.mat"]; %Andrew's 5%nov 10^6n
 %filenames = ["lib/old/neg_binom_nov_p4_c4_20perNov.mat"]; %Andrew's 20%nov
 %filename = 'lib/old/dummy_data.mat';
 for file = 1:length(filenames)
@@ -88,8 +88,8 @@ end
 
 % ---------------------  Regularization parameters  -----------------------
 % Define parameters regularization parameters 
-tau_vals = 1; %[0.01, 0.1, 1, 10, 100, 1000];
-gamma_vals = 10;%[2, 10, 20, 100, 200, 500];
+tau_vals = [0.01, 0.1, 1, 10, 100, 1000];
+gamma_vals = [2, 10, 20, 100, 200, 500];
 params_AUCs = zeros(length(tau_vals),length(gamma_vals), 8);
 plot_flag = 0; print = 0;
 if print == 1
@@ -183,7 +183,7 @@ tau = tau_vals(i);
         miniter = 5;
         maxiter = 1000;
         tolerance = 1e-8;
-        verbose = 1;
+        verbose = 100;
         stopcriterion = 3; 
             % 3: Relative changes in iterate
             % 4: relative changes in objective
@@ -345,7 +345,9 @@ tau = tau_vals(i);
             disp('Making folder');disp(save_folder)
             mkdir(save_folder)
         end
+    
         save_path = sprintf(strcat(save_folder,'/%stau_%sgamma_RESULTS.mat'), num2str(tau), num2str(gamma));
+        disp(save_path)
         save(save_path)
         if print == 1
             fprintf('= %-10.3f %-10.3f %-10.5f %-10.5f %-10.5f %-10.5f %-10.5f %-10.5f=\n',...
