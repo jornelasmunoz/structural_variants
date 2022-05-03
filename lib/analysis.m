@@ -14,8 +14,8 @@ addpath([genpath("/Users/jocelynornelasmunoz/Desktop/Research/structural_variant
 % result_file = "results/10000n_5k/2Lp_4Lc/100tau_500gamma_RESULTS.mat";
 % result_file = "results/10000n_5k/2Lp_4Lc/1000tau_500gamma_RESULTS.mat";
 
-load(result_file)
-disp(result_file)
+% load(result_file)
+% disp(result_file)
 
 %save results
 % sub_folder = char(fileparts(result_file));
