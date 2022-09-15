@@ -615,6 +615,7 @@ while (iter <= miniter) || ((iter <= maxiter) && not(converged))
                     x = computesubsolution(step,alpha,penalty,subvectors,reg_params_all,mu,...
                         W,WT,subminiter,submaxiter,substopcriterion,...
                         subtolerance);
+                    fprintf('max x = %5.5f \n', max(x))
                     dx = x - dx;
                     Adx = Axprevious;
                     Ax = A(x);
@@ -634,7 +635,7 @@ while (iter <= miniter) || ((iter <= maxiter) && not(converged))
                     acceptalpha = alpha;  % Keep value for displaying
                     % fprintf('acceptmult is %12.4f \nalpha is %12.4f \n', acceptmult, alpha)
                     alpha = acceptmult*alpha;
-                    %fprintf('alpha = %5.5f \n', alpha)
+                    
                 end
             else 
                 % just take bb setp, no enforcing monotonicity.

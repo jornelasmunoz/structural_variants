@@ -20,11 +20,11 @@ addpath([genpath('/Users/jocelynornelasmunoz/Desktop/Research/structural_variant
 % -------------------------  Load Simulated Data  -------------------------
 
 
-%filename = 'data/dummy_2pctNovel_2k_6n.mat';
+%filenames = ["data/old/dummy_2pctNovel_2k_6n.mat"];
 
 
 % Varying coverage datasets for n= 10^4
-% filenames = ["data/10000n_5k/2Lp_4Lc/diploid_2pctNovel_60pctSim.mat",...
+ filenames = "data/10000n_5k/2Lp_4Lc/diploid_2pctNovel_60pctSim.mat";%,...
 %              "data/10000n_5k/4Lp_2Lc/diploid_2pctNovel_60pctSim.mat",...
 %              "data/10000n_5k/4Lp_4Lc/diploid_2pctNovel_60pctSim.mat",...
 %              "data/10000n_5k/4Lp_8Lc/diploid_2pctNovel_60pctSim.mat",...
@@ -61,7 +61,7 @@ addpath([genpath('/Users/jocelynornelasmunoz/Desktop/Research/structural_variant
 % Haploid data
 %filename = 'data/haploid_5pctNovel_10k_100n.mat';
 %filename = 'data/haploid_20pctNovel_10k_100n_reproducedAPL.mat'; %reproduced data
-filenames = ["lib/old/neg_binom_nov_p4_c4_5perNov.mat"]; %Andrew's 5%nov 10^6n
+%filenames = ["lib/old/neg_binom_nov_p4_c4_5perNov.mat"]; %Andrew's 5%nov 10^6n
 %filenames = ["lib/old/neg_binom_nov_p4_c4_20perNov.mat"]; %Andrew's 20%nov
 %filename = 'lib/old/dummy_data.mat';
 for file = 1:length(filenames)
@@ -88,8 +88,8 @@ end
 
 % ---------------------  Regularization parameters  -----------------------
 % Define parameters regularization parameters 
-tau_vals = [0.01, 0.1, 1, 10, 100, 1000];
-gamma_vals = [2, 10, 20, 100, 200, 500];
+tau_vals = 0.01;%[0.01, 0.1, 1, 10, 100, 1000];
+gamma_vals = 500;%[2, 10, 20, 100, 200, 500];
 params_AUCs = zeros(length(tau_vals),length(gamma_vals), 8);
 plot_flag = 0; print = 0;
 if print == 1
@@ -360,7 +360,7 @@ if print == 1
     fprintf(['=========================================================================================='])
 end
 format longg
-params_AUCs = reshape(params_AUCs, 6*6,8);
+params_AUCs = reshape(params_AUCs, length(tau_vals)*length(gamma_vals),8);
 end
 
 
