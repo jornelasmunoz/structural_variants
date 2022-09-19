@@ -19,7 +19,8 @@ def generate_diploid_data(params, prnt=True, seed=None, filepath=None):
         lambda_p, lambda_c: sequence coverage of child and parent, respectively
         erreps: error (>0) incurred by sequencing and mapping process
         r: dispersion parameter for Negative Binomial distribution; we use 1 to maximize variance under Neg Bin
-    
+        pct_similarity: percent similarity of SVs between parents
+        
     The output is provided for different individuals. 
     Here, p2 = parent 2, p = parent 1, c = child, h = inherited, and n = novel. 
     We will calculate necessary variables for parent 1 (p) and the child's inherited (h) and novel (n) 
