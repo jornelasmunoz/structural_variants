@@ -79,10 +79,10 @@ for i = 1:n
             %disp('constraints NOT feasible initially')
             
             % Ensure elements are nonnegative
-            %zP_pos = sort([0, zP(i),1]); z_p = zP_pos(2);
+            zP_pos = sort([0, zP(i),1]); z_p = zP_pos(2);
             zH_pos = sort([0, zH(i),1]); z_h = zH_pos(2);
             zN_pos = sort([0, zN(i),1]); z_n = zN_pos(2);
-            %yP_pos = sort([0, yP(i),1]); y_p = yP_pos(2);
+            yP_pos = sort([0, yP(i),1]); y_p = yP_pos(2);
             yH_pos = sort([0, yH(i),1]); y_h = yH_pos(2);
             yN_pos = sort([0, yN(i),1]); y_n = yN_pos(2);
             
