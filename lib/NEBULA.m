@@ -1,5 +1,6 @@
 % =============================================================================
-% =        SPIRAL:  Sparse Poisson Intensity Reconstruction Algorithms        =
+% =                 Modifications to SPIRAL:                                  =
+% =        Sparse Poisson Intensity Reconstruction Algorithms                 =
 % =                                Version 1.0                                =
 % =============================================================================
 % =    Copyright 2009, 2010                                                   =
@@ -12,15 +13,20 @@
 % =           Merced, CA 95343, USA                                           =
 % =                                                                           =
 % =    Corresponding author: Zachary T. Harmany (zth@duke.edu)                =
+% =    Modifications by Andrew P Lazar in 2020 further modified by            =
+% =    Jocelyn Ornelas in 2021. We add an extension of SPIRALTAP to           =
+% =    incorporate Negative Binomial noise                                    =
 % ============================================================================= 
-%
+%   The following documentation applies to the Structural Variant
+%   Prediction Application
 % =============================================================================
 % =                               Documentation                               =
 % =============================================================================
 % Syntax:
-%   [x, optionalOutputs] = SPIRALTAP(y, A, tau, optionalInputs)
+%   [x, optionalOutputs] = NEBULA(y, A, reg_params, reg_params_all, 
+%                                   noisetype, subvectors, optionalInputs)
 % 
-%   More details and supporting publications are 
+%   More details on the original code and supporting publications are 
 %   available on the SPIRAL Toolbox homepage
 %   http://www.ee.duke.edu/~zth/spiral/
 % 
@@ -39,14 +45,20 @@
 %                   using the 'AT' option that computes matrix-vector 
 %                   products with the adjoint of A such that AT(x) = A'*x.      
 %
-%   tau             Regularization parameter that trades off the data fit
+%   reg_params      Regularization parameter(s) that trades off the data fit
 %                   (negative log-likelihood) with the regularization.
 %                   The regularization parameter can either be a
 %                   nonnegative real scalar or (for all methods except the
 %                   total variation penalty) have n nonnegative real 
 %                   elements which allows for nonuniform penalization 
-%                   schemes. 
-%           
+%                   schemes. [tau, gamma]
+% reg_params_all    Ordered list of regularization parameters for 
+%                   [zP, zH, zN, yP, yH, yN].
+% 
+% noisetype         "Poisson" or "Negative Binomial"
+% 
+% subvectors        Number of subvectors in y. 
+%
 % Optional Inputs:
 % If one were to only input y, A, and tau into the algorithm, there are 
 % many necessary assumptions as to what to do with the inputs.  By default
@@ -105,8 +117,11 @@
 %                   will be iter + 1.
 %
 
-% === This code was edited by Andrew P Lazar in 2020 and later further modified by Jocelyn Ornelas in 2021
-%     We add an extension of SPIRALTAP to incorporate Negative Binomial noise
+
+
+% -------------------------------------------------------------------------
+%                           Start Algorithm
+% -------------------------------------------------------------------------
 
 function [x, varargout] = NEBULA(y, A, reg_params,reg_params_all, noisetype, subvectors, varargin)
 % ==== Set default/initial parameter values ====
@@ -123,7 +138,7 @@ warnings = 1;
 recenter = 0;
 mu = 0;
 
-% specific to SV diploid model with novel variants
+% specific to SV diploid model with novel variants (one parent)
 % % for diploid with novel, this assumes the order of f is  
     % [zP, zH, zN, yP, yH, yN] and we weigh the novel variants more
 if subvectors == 6 && length(reg_params_all) ~= 6
@@ -131,6 +146,7 @@ if subvectors == 6 && length(reg_params_all) ~= 6
 elseif subvectors == 3 && length(reg_params_all) ~= 3
     fprintf('Number of subvectors = %i and regularization = %i parameters do not match\n', subvectors,length(reg_params_all))
 end
+
 % Add a path to the denoising methods folder
 nebula_dir = which('NEBULA');
 [nebula_dir, dummy] = fileparts(nebula_dir);

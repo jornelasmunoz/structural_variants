@@ -9,14 +9,16 @@ clc;
 clear;
 close all
 format longg
+
 % =========================================================================
-% =         Preparation of data variables: Simulated Data
+% =         Preprocessing of data variables: Simulated Data
 % =========================================================================
 
 
 addpath([genpath('/Users/jocelynornelasmunoz/Desktop/Research/structural_variants/'), ...
          genpath('/Users/jocelynornelas/iCloud Drive (Archive)/Desktop/UC Merced/Research/structural_variants/'),...
          genpath('/home/jornelasmunoz/structural_variants/')])
+
 % -------------------------  Load Simulated Data  -------------------------
 
 
@@ -70,6 +72,7 @@ load(filename)
 
 
 if contains(filename, 'neg_binom') || contains(filename, 'dummy_data')
+    % preprocess APL data (used for code validation)
     fprintf('Using Andrews data \n')
     kind = 'haploid';
     f_p = f_p_neg_binom;
@@ -90,13 +93,21 @@ end
 % Define parameters regularization parameters 
 tau_vals = 0.01;%[0.01, 0.1, 1, 10, 100, 1000];
 gamma_vals = 500;%[2, 10, 20, 100, 200, 500];
+
+% initalize vector to save AUCs
+% Tau        Gamma      N_total    S_total    N_parent   S_parent   N_child    S_child
 params_AUCs = zeros(length(tau_vals),length(gamma_vals), 8);
+
+% plot and print flags
 plot_flag = 0; print = 0;
 if print == 1
     fprintf(['==========================================================================================\n',...
              '=                         Regularization parameters and AUCs                             =\n',...
              '= Tau        Gamma      N_total    S_total    N_parent   S_parent   N_child    S_child   =\n'])
 end
+
+
+% -------------------- Begin Loop for Tau and Gamma -----------------------
 for i = 1:length(tau_vals)
 tau = tau_vals(i);
     for j= 1:length(gamma_vals)
@@ -126,7 +137,6 @@ tau = tau_vals(i);
         %     A(1:n,1:n) = A_p;
         %     A(n+1:(2*n),n+1:(2*n)) = A_c;
         %     A(n+1:(2*n), (2*n)+1 :(3*n)) = A_c;
-            
             %reg_params_all corresponds to the penalty for 
             % each corresponding subvector in f_true
             %reg_params_all =[tau; tau; tau*gamma]; %[f_p; f_h; f_n]
@@ -187,7 +197,7 @@ tau = tau_vals(i);
         stopcriterion = 3; 
             % 3: Relative changes in iterate
             % 4: relative changes in objective
-        logepsilon = 1e-2;
+        logepsilon = erreps; %1e-2;
         alphamin = 1e-30;
         alphamax = 1e30;
         alphaaccept = 1e30;
