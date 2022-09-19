@@ -126,9 +126,9 @@ mu = 0;
 % specific to SV diploid model with novel variants
 % % for diploid with novel, this assumes the order of f is  
     % [zP, zH, zN, yP, yH, yN] and we weigh the novel variants more
-if subvectors == 6 & length(reg_params_all) ~= 6
+if subvectors == 6 && length(reg_params_all) ~= 6
     fprintf('Number of subvectors = %i and regularization = %i parameters do not match\n', subvectors,length(reg_params_all))
-elseif subvectors == 3 & length(reg_params_all) ~= 3
+elseif subvectors == 3 && length(reg_params_all) ~= 3
     fprintf('Number of subvectors = %i and regularization = %i parameters do not match\n', subvectors,length(reg_params_all))
 end
 % Add a path to the denoising methods folder
