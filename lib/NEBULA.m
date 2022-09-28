@@ -631,7 +631,7 @@ while (iter <= miniter) || ((iter <= maxiter) && not(converged))
                     x = computesubsolution(step,alpha,penalty,subvectors,reg_params_all,mu,...
                         W,WT,subminiter,submaxiter,substopcriterion,...
                         subtolerance);
-                    fprintf('max x = %5.5f \n', max(x))
+                    %fprintf('max x = %5.5f \n', max(x))
                     dx = x - dx;
                     Adx = Axprevious;
                     Ax = A(x);

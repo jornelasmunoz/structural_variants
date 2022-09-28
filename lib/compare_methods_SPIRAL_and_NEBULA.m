@@ -21,12 +21,18 @@ addpath([genpath('/Users/jocelynornelasmunoz/Desktop/Research/structural_variant
 
 % -------------------------  Load Simulated Data  -------------------------
 
-
+% Coverage (P,C)= (7,3), (3,7), (5,5) x erreps=0.1,0.5
+% 09/26/22 Experiments
+filenames = ["data/100000n_5000k/3Lp_7Lc/diploid_4pctNovel_80pctSim_1e-01eps.mat",
+             "data/100000n_5000k/3Lp_7Lc/diploid_4pctNovel_80pctSim_5e-01eps.mat",
+             "data/100000n_5000k/7Lp_3Lc/diploid_4pctNovel_80pctSim_1e-01eps.mat",
+             "data/100000n_5000k/7Lp_3Lc/diploid_4pctNovel_80pctSim_5e-01eps.mat",
+             "data/100000n_5000k/5Lp_5Lc/diploid_4pctNovel_80pctSim_1e-01eps.mat",
+             "data/100000n_5000k/5Lp_5Lc/diploid_4pctNovel_80pctSim_5e-01eps.mat"];
 %filenames = ["data/old/dummy_2pctNovel_2k_6n.mat"];
 
-
 % Varying coverage datasets for n= 10^4
- filenames = "data/10000n_5k/2Lp_4Lc/diploid_2pctNovel_60pctSim.mat";%,...
+%  filenames = "data/10000n_5k/2Lp_4Lc/diploid_2pctNovel_60pctSim.mat";%,...
 %              "data/10000n_5k/4Lp_2Lc/diploid_2pctNovel_60pctSim.mat",...
 %              "data/10000n_5k/4Lp_4Lc/diploid_2pctNovel_60pctSim.mat",...
 %              "data/10000n_5k/4Lp_8Lc/diploid_2pctNovel_60pctSim.mat",...
@@ -69,7 +75,7 @@ addpath([genpath('/Users/jocelynornelasmunoz/Desktop/Research/structural_variant
 for file = 1:length(filenames)
     filename = filenames(file);
 load(filename)
-
+disp(filename)
 
 if contains(filename, 'neg_binom') || contains(filename, 'dummy_data')
     % preprocess APL data (used for code validation)
@@ -91,15 +97,15 @@ end
 
 % ---------------------  Regularization parameters  -----------------------
 % Define parameters regularization parameters 
-tau_vals = 0.01;%[0.01, 0.1, 1, 10, 100, 1000];
-gamma_vals = 500;%[2, 10, 20, 100, 200, 500];
+tau_vals = 10;%[0.01, 0.1, 1, 10, 100, 1000];
+gamma_vals = 200;%[2, 10, 20, 100, 200, 500];
 
 % initalize vector to save AUCs
 % Tau        Gamma      N_total    S_total    N_parent   S_parent   N_child    S_child
 params_AUCs = zeros(length(tau_vals),length(gamma_vals), 8);
 
 % plot and print flags
-plot_flag = 0; print = 0;
+plot_flag = 1; print = 1;
 if print == 1
     fprintf(['==========================================================================================\n',...
              '=                         Regularization parameters and AUCs                             =\n',...
@@ -117,7 +123,7 @@ tau = tau_vals(i);
         % -------------------------  Define variables  ----------------------------
         % Define true signal f, observed signal s
         s_obs = double([s_p; s_c]);
-        if lower(kind) == 'haploid'
+        if lower(kind) == "haploid"
             % Andrew order
             s_obs = double([s_c; s_p]); 
             f_true = double([f_h; f_n; f_p]);
@@ -143,7 +149,8 @@ tau = tau_vals(i);
             B = A;
             
         
-        elseif lower(kind) == 'diploid'
+        elseif lower(kind) == "diploid"
+            disp('Doing diploid case')
             f_true = double([z_p; z_h; z_n; y_p; y_h; y_n]);
             subvectors = 6;
             N = length(f_true);
@@ -190,10 +197,10 @@ tau = tau_vals(i);
         A   = @(x)A*x;
         
         % set maximum number of iterations, tol, and when to print to screen
-        miniter = 5;
-        maxiter = 1000;
+        miniter = 3;
+        maxiter = 100;
         tolerance = 1e-8;
-        verbose = 100;
+        verbose = 2;
         stopcriterion = 3; 
             % 3: Relative changes in iterate
             % 4: relative changes in objective
@@ -271,6 +278,7 @@ tau = tau_vals(i);
                 fhatSPIRAL_h = 2*fhatSPIRAL(n+1:2*n)  + fhatSPIRAL(4*n+1:5*n);
                 fhatSPIRAL_n = 2*fhatSPIRAL(2*n+1:3*n)+ fhatSPIRAL(5*n+1:6*n);
                 fhatSPIRAL_c = fhatSPIRAL_h + fhatSPIRAL_n;
+            
             elseif lower(kind) == 'haploid'
                 fhatSPIRAL_p = fhatSPIRAL(1:n);
                 fhatSPIRAL_h = fhatSPIRAL(n+1:2*n);
