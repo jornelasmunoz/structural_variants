@@ -3,7 +3,7 @@ function [f_feas] = diploid_novel_projection(f, subvectors, maxit)
 %   f: subsolution reconstruction vector 
 %   subvectors: number of vectors which f is composed of
 %   maxit: number of maximum iterations to project the vector onto the
-%   feasible region
+%          feasible region
 N = length(f);
 n = N/subvectors;
 
@@ -40,8 +40,8 @@ yN = f(5*n+1:6*n);
 %     zN(i) = x_hat(5);
 %     yN(i) = x_hat(6);
 % end
-% Check feasibility of solution and initialize projections, if needed
 
+% Check feasibility of solution and initialize projections, if needed
 for i = 1:n
     
     % start iteration counter
@@ -70,7 +70,7 @@ for i = 1:n
                  (1 - (zP(i) + yP(i)) <= 1) )
              iter = maxit;
              f_feas = [zP;zH;zN;yP;yH;yN];
-             %disp('constraints feasible initially')
+             disp('constraints feasible initially')
             return;
             
             else
@@ -85,17 +85,19 @@ for i = 1:n
             yP_pos = sort([0, yP(i),1]); y_p = yP_pos(2);
             yH_pos = sort([0, yH(i),1]); y_h = yH_pos(2);
             yN_pos = sort([0, yN(i),1]); y_n = yN_pos(2);
+%             z_h = zH(i); y_h = yH(i);
+%             z_n = zN(i); y_n = yN(i);
             
-            % Enforce constraint: homog. + heter. SV <= 1
-                if (z_h + y_h > 1)
-                    z_h = 0.5;
-                    y_h = 0.5;
-                end
-                if (z_n + y_n > 1)
-                    z_n = 0.5;
-                    y_n = 0.5;
-                end
-                
+%             % Enforce constraint: homog. + heter. SV <= 1
+%                 if (z_h + y_h > 1)
+%                     z_h = 0.5;
+%                     y_h = 0.5;
+%                 end
+%                 if (z_n + y_n > 1)
+%                     z_n = 0.5;
+%                     y_n = 0.5;
+%                 end
+%                 
             end
            
             
