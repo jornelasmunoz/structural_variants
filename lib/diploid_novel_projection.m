@@ -70,7 +70,7 @@ for i = 1:n
                  (1 - (zP(i) + yP(i)) <= 1) )
              iter = maxit;
              f_feas = [zP;zH;zN;yP;yH;yN];
-             disp('constraints feasible initially')
+             %disp('constraints feasible initially')
             return;
             
             else

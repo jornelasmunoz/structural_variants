@@ -24,11 +24,12 @@ addpath([genpath('/Users/jocelynornelasmunoz/Desktop/Research/structural_variant
 % Coverage (P,C)= (7,3), (3,7), (5,5) x erreps=0.1,0.5
 % 09/26/22 Experiments
 filenames = ["data/100000n_5000k/3Lp_7Lc/diploid_4pctNovel_80pctSim_1e-01eps.mat",
-             "data/100000n_5000k/3Lp_7Lc/diploid_4pctNovel_80pctSim_5e-01eps.mat",
-             "data/100000n_5000k/7Lp_3Lc/diploid_4pctNovel_80pctSim_1e-01eps.mat",
-             "data/100000n_5000k/7Lp_3Lc/diploid_4pctNovel_80pctSim_5e-01eps.mat",
-             "data/100000n_5000k/5Lp_5Lc/diploid_4pctNovel_80pctSim_1e-01eps.mat",
-             "data/100000n_5000k/5Lp_5Lc/diploid_4pctNovel_80pctSim_5e-01eps.mat"];
+%              "data/100000n_5000k/3Lp_7Lc/diploid_4pctNovel_80pctSim_5e-01eps.mat",
+%              "data/100000n_5000k/7Lp_3Lc/diploid_4pctNovel_80pctSim_1e-01eps.mat",
+%              "data/100000n_5000k/7Lp_3Lc/diploid_4pctNovel_80pctSim_5e-01eps.mat",
+%              "data/100000n_5000k/5Lp_5Lc/diploid_4pctNovel_80pctSim_1e-01eps.mat",
+%              "data/100000n_5000k/5Lp_5Lc/diploid_4pctNovel_80pctSim_5e-01eps.mat"
+            ];
 %filenames = ["data/old/dummy_2pctNovel_2k_6n.mat"];
 
 % Varying coverage datasets for n= 10^4
@@ -75,8 +76,8 @@ filenames = ["data/100000n_5000k/3Lp_7Lc/diploid_4pctNovel_80pctSim_1e-01eps.mat
 for file = 1:length(filenames)
     filename = filenames(file);
 load(filename)
-disp(filename)
-
+fprintf(strcat('\n', filename, '\n'))
+                                                                                                                                                                                                                                                         
 if contains(filename, 'neg_binom') || contains(filename, 'dummy_data')
     % preprocess APL data (used for code validation)
     fprintf('Using Andrews data \n')
@@ -98,7 +99,7 @@ end
 % ---------------------  Regularization parameters  -----------------------
 % Define parameters regularization parameters 
 tau_vals = 10;%[0.01, 0.1, 1, 10, 100, 1000];
-gamma_vals = 200;%[2, 10, 20, 100, 200, 500];
+gamma_vals = 5;%[2, 10, 20, 100, 200, 500];
 
 % initalize vector to save AUCs
 % Tau        Gamma      N_total    S_total    N_parent   S_parent   N_child    S_child
@@ -358,13 +359,14 @@ tau = tau_vals(i);
 
         %save results
         sub_folder = char(fileparts(filename));
+        char_filename = char(filename);
         save_folder = strcat('results/',sub_folder(6:end));
         if ~exist(save_folder, 'dir')
             disp('Making folder');disp(save_folder)
             mkdir(save_folder)
         end
     
-        save_path = sprintf(strcat(save_folder,'/%stau_%sgamma_RESULTS.mat'), num2str(tau), num2str(gamma));
+        save_path = sprintf(strcat(save_folder,char_filename(length(sub_folder)+1:end-4),'_%stau_%sgamma_RESULTS.mat'), num2str(tau), num2str(gamma));
         disp(save_path)
         save(save_path)
         if print == 1
