@@ -851,7 +851,6 @@ end
 % = Denoising Subproblem Computation: = 
 % ===================================== 
 function subsolution = computesubsolution(step,alpha,penalty,subvectors,reg_params_all,mu,varargin)
-%APL: Now adding the input grad which is the gradient
     switch lower(penalty)
         case 'canonical'
             n = length(step)/subvectors;

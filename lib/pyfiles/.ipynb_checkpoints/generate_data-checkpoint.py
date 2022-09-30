@@ -68,8 +68,10 @@ def generate_diploid_data(params, prnt=True, seed=None, filepath=None):
     # the remaining k - similarity positions will be chosen randomly as to not overlap with existing SVs
     rand_choices = np.random.choice(np.setdiff1d(q, q[0:similarity]), size=params['k'] -similarity, replace= False); #rand_choices.sort(); q[0:similarity].sort()
     d['f_p2'][q[0:similarity]] = d['f_p'][q[0:similarity]]
-    d['f_p2'][rand_choices]= np.random.randint(1,3) 
+    d['f_p2'][rand_choices]= np.random.randint(1,3)
+    sv_pos = np.concatenate((q[0:similarity],rand_choices))
 
+    
     # verify that both parents have the same amount of nonzero entries
     if np.count_nonzero(d['f_p2']) != np.count_nonzero(d['f_p']): 
         print('PARENTS DO NOT HAVE EQUAL AMOUNT OF NONZERO ENTRIES !!')
@@ -79,7 +81,7 @@ def generate_diploid_data(params, prnt=True, seed=None, filepath=None):
     # Child signal
     #     First, we defined the inherited SVs through a logical implementation 
     #     of inheritance using parent 1 (f_p) and parent 2 (f_p2)
-    for i in np.arange(d['f_p'].shape[0]):
+    for i in sv_pos:#np.arange(d['f_p'].shape[0]):
         if   (d['f_p'][i]==2 and d['f_p2'][i]==2): d['f_h'][i]= 2
         elif (d['f_p'][i]==1 and d['f_p2'][i]==1): d['f_h'][i]= np.random.randint(0,3)
         elif (d['f_p'][i]==2 and d['f_p2'][i]==0) or (d['f_p'][i]==0 and d['f_p2'][i]==2): d['f_h'][i]= 1
@@ -90,8 +92,9 @@ def generate_diploid_data(params, prnt=True, seed=None, filepath=None):
     #    define inherited indices and novel indices, make sure they do not overlap
     inherited_pos = d['f_h'].nonzero()[0]; inherited_pos.sort()
     novel_pos = np.random.choice(np.setdiff1d(q, inherited_pos), size=int(params['k'] *params['pctNovel']), replace= False)
-    d['f_n'][novel_pos]= np.random.randint(1,3) 
-
+    for i in novel_pos:
+        d['f_n'][i] = np.random.randint(1,3)
+    
     #    Lastly, we define the complete child signal
     d['f_c'] = d['f_h'] + d['f_n']
 

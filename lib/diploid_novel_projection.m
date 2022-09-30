@@ -43,7 +43,7 @@ yN = f(5*n+1:6*n);
 
 % Check feasibility of solution and initialize projections, if needed
 for i = 1:n
-    
+    disp([zP(i), yP(i), zH(i), yH(i), zN(i), yH(i)])
     % start iteration counter
     iter = 1;
     
@@ -80,13 +80,13 @@ for i = 1:n
             
             % Ensure elements are nonnegative
             zP_pos = sort([0, zP(i),1]); z_p = zP_pos(2);
-            zH_pos = sort([0, zH(i),1]); z_h = zH_pos(2);
-            zN_pos = sort([0, zN(i),1]); z_n = zN_pos(2);
+%             zH_pos = sort([0, zH(i),1]); z_h = zH_pos(2);
+%             zN_pos = sort([0, zN(i),1]); z_n = zN_pos(2);
             yP_pos = sort([0, yP(i),1]); y_p = yP_pos(2);
-            yH_pos = sort([0, yH(i),1]); y_h = yH_pos(2);
-            yN_pos = sort([0, yN(i),1]); y_n = yN_pos(2);
-%             z_h = zH(i); y_h = yH(i);
-%             z_n = zN(i); y_n = yN(i);
+%             yH_pos = sort([0, yH(i),1]); y_h = yH_pos(2);
+%             yN_pos = sort([0, yN(i),1]); y_n = yN_pos(2);
+            z_h = zH(i); y_h = yH(i);
+            z_n = zN(i); y_n = yN(i);
             
 %             % Enforce constraint: homog. + heter. SV <= 1
 %                 if (z_h + y_h > 1)
@@ -97,7 +97,7 @@ for i = 1:n
 %                     z_n = 0.5;
 %                     y_n = 0.5;
 %                 end
-%                 
+                
             end
            
             
@@ -136,6 +136,7 @@ for i = 1:n
         yH(i) = yH_new;
         zN(i) = zN_new;
         yN(i) = yN_new;
+        disp([zP(i), yP(i), zH(i), yH(i), zN(i), yH(i)])
 end
 
 f_feas = [zP;zH;zN;yP;yH;yN];
