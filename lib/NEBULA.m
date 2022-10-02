@@ -861,7 +861,7 @@ function subsolution = computesubsolution(step,alpha,penalty,subvectors,reg_para
 
             % Projection onto feasible region
             if subvectors == 6
-                subsolution = diploid_novel_projection(subsolution, subvectors, 6);
+                subsolution = diploid_novel_projection(subsolution, subvectors, 2);
             elseif subvectors == 3
                 subsolution = Novel_const(subsolution);
             else

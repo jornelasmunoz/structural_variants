@@ -33,7 +33,7 @@ switch upper(vary)
     end
     
     % Feasible Region
-    if (x1 >= 0 && x2 >= 0 && x2 >= zF -x1 && ...
+    if (x1 >= 0 && x2 >= 0 && x2 >= zF - x1 && ...
             x2 <= 1 - (zN + yN) - x1 && ...
             x1 <= (zF + yF) )
         z_proj = x1;
@@ -115,7 +115,7 @@ switch upper(vary)
     elseif (x2 >= x1 + 1 && x2 >= 1)
         %disp('Region 10')
         z_proj = 0;
-        y_proj = 1- (zN + yN);
+        y_proj = 1 - (zN + yN);
         return;
     %return;
     end

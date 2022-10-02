@@ -24,9 +24,9 @@ addpath([genpath('/Users/jocelynornelasmunoz/Desktop/Research/structural_variant
 % Coverage (P,C)= (7,3), (3,7), (5,5) x erreps=0.1,0.5
 % 09/26/22 Experiments
 filenames = [
-%             "data/100000n_5000k/3Lp_7Lc/diploid_4pctNovel_80pctSim_1e-01eps.mat",
+            "data/100000n_5000k/3Lp_7Lc/diploid_4pctNovel_80pctSim_1e-01eps.mat",
 %              "data/100000n_5000k/3Lp_7Lc/diploid_4pctNovel_80pctSim_5e-01eps.mat",
-              "data/100000n_5000k/7Lp_3Lc/diploid_4pctNovel_80pctSim_1e-01eps.mat",
+%               "data/100000n_5000k/7Lp_3Lc/diploid_4pctNovel_80pctSim_1e-01eps.mat",
 %              "data/100000n_5000k/7Lp_3Lc/diploid_4pctNovel_80pctSim_5e-01eps.mat",
 %              "data/100000n_5000k/5Lp_5Lc/diploid_4pctNovel_80pctSim_1e-01eps.mat",
 %              "data/100000n_5000k/5Lp_5Lc/diploid_4pctNovel_80pctSim_5e-01eps.mat"
@@ -99,7 +99,7 @@ end
 
 % ---------------------  Regularization parameters  -----------------------
 % Define parameters regularization parameters 
-tau_vals = 10 ;%[0.01, 0.1, 1, 10, 100, 1000];
+tau_vals = 1 ;%[0.01, 0.1, 1, 10, 100, 1000];
 gamma_vals = 5;%[2, 10, 20, 100, 200, 500];
 
 % initalize vector to save AUCs
@@ -107,7 +107,7 @@ gamma_vals = 5;%[2, 10, 20, 100, 200, 500];
 params_AUCs = zeros(length(tau_vals),length(gamma_vals), 8);
 
 % plot and print flags
-plot_flag = 1; print = 1;
+plot_flag = 1; print = 0;
 if print == 1
     fprintf(['==========================================================================================\n',...
              '=                         Regularization parameters and AUCs                             =\n',...
@@ -200,7 +200,7 @@ tau = tau_vals(i);
         
         % set maximum number of iterations, tol, and when to print to screen
         miniter = 3;
-        maxiter = 5;
+        maxiter = 50;
         tolerance = 1e-8;
         verbose = 2;
         stopcriterion = 3; 
@@ -427,7 +427,7 @@ tau = tau_vals(i);
         save(save_path)
         if print == 1
             fprintf('= %-10.3f %-10.3f %-10.5f %-10.5f %-10.5f %-10.5f %-10.5f %-10.5f=\n',...
-                     tau, gamma, AUC_nt, AUC_st, AUC_np, AUC_sp, AUC_nc, AUC_sc)
+                     tau, gamma, AUC_nt, AUC_st, AUC_np_2, AUC_np_1, AUC_sp, AUC_nc, AUC_sc)
         end
     end
 end
