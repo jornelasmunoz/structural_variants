@@ -24,12 +24,13 @@ addpath([genpath('/Users/jocelynornelasmunoz/Desktop/Research/structural_variant
 % Coverage (P,C)= (7,3), (3,7), (5,5) x erreps=0.1,0.5
 % 09/26/22 Experiments
 filenames = [
-            "data/100000n_5000k/3Lp_7Lc/diploid_4pctNovel_80pctSim_1e-01eps.mat",
-             "data/100000n_5000k/3Lp_7Lc/diploid_4pctNovel_80pctSim_5e-01eps.mat",
-             "data/100000n_5000k/7Lp_3Lc/diploid_4pctNovel_80pctSim_1e-01eps.mat",
-             "data/100000n_5000k/7Lp_3Lc/diploid_4pctNovel_80pctSim_5e-01eps.mat",
-             "data/100000n_5000k/5Lp_5Lc/diploid_4pctNovel_80pctSim_1e-01eps.mat",
-             "data/100000n_5000k/5Lp_5Lc/diploid_4pctNovel_80pctSim_5e-01eps.mat"
+            "data/100000n_5000k/3Lp_7Lc/diploid_4pctNovel_80pctSim_5e-02eps.mat"
+%             "data/100000n_5000k/3Lp_7Lc/diploid_4pctNovel_80pctSim_1e-01eps.mat",
+%              "data/100000n_5000k/3Lp_7Lc/diploid_4pctNovel_80pctSim_5e-01eps.mat",
+%              "data/100000n_5000k/7Lp_3Lc/diploid_4pctNovel_80pctSim_1e-01eps.mat",
+%              "data/100000n_5000k/7Lp_3Lc/diploid_4pctNovel_80pctSim_5e-01eps.mat",
+%              "data/100000n_5000k/5Lp_5Lc/diploid_4pctNovel_80pctSim_1e-01eps.mat",
+%              "data/100000n_5000k/5Lp_5Lc/diploid_4pctNovel_80pctSim_5e-01eps.mat"
             ];
 %filenames = ["data/old/dummy_2pctNovel_2k_6n.mat"];
 
@@ -100,7 +101,7 @@ end
 
 % ---------------------  Regularization parameters  -----------------------
 % Define parameters regularization parameters 
-tau_vals = 5 ;%[0.01, 0.1, 1, 10, 100, 1000];
+tau_vals = 0.001 ;%[0.01, 0.1, 1, 10, 100, 1000];
 gamma_vals = 10;%[2, 10, 20, 100, 200, 500];
 
 % initalize vector to save AUCs
