@@ -25,11 +25,11 @@ addpath([genpath('/Users/jocelynornelasmunoz/Desktop/Research/structural_variant
 % 09/26/22 Experiments
 filenames = [
             "data/100000n_5000k/3Lp_7Lc/diploid_4pctNovel_80pctSim_1e-01eps.mat",
-%              "data/100000n_5000k/3Lp_7Lc/diploid_4pctNovel_80pctSim_5e-01eps.mat",
-%               "data/100000n_5000k/7Lp_3Lc/diploid_4pctNovel_80pctSim_1e-01eps.mat",
-%              "data/100000n_5000k/7Lp_3Lc/diploid_4pctNovel_80pctSim_5e-01eps.mat",
-%              "data/100000n_5000k/5Lp_5Lc/diploid_4pctNovel_80pctSim_1e-01eps.mat",
-%              "data/100000n_5000k/5Lp_5Lc/diploid_4pctNovel_80pctSim_5e-01eps.mat"
+             "data/100000n_5000k/3Lp_7Lc/diploid_4pctNovel_80pctSim_5e-01eps.mat",
+             "data/100000n_5000k/7Lp_3Lc/diploid_4pctNovel_80pctSim_1e-01eps.mat",
+             "data/100000n_5000k/7Lp_3Lc/diploid_4pctNovel_80pctSim_5e-01eps.mat",
+             "data/100000n_5000k/5Lp_5Lc/diploid_4pctNovel_80pctSim_1e-01eps.mat",
+             "data/100000n_5000k/5Lp_5Lc/diploid_4pctNovel_80pctSim_5e-01eps.mat"
             ];
 %filenames = ["data/old/dummy_2pctNovel_2k_6n.mat"];
 
@@ -75,6 +75,7 @@ filenames = [
 %filenames = ["lib/old/neg_binom_nov_p4_c4_20perNov.mat"]; %Andrew's 20%nov
 %filename = 'lib/old/dummy_data.mat';
 for file = 1:length(filenames)
+    clearvars -except filenames file
     filename = filenames(file);
 load(filename)
 fprintf(strcat('\n', filename, '\n'))
@@ -99,8 +100,8 @@ end
 
 % ---------------------  Regularization parameters  -----------------------
 % Define parameters regularization parameters 
-tau_vals = 1 ;%[0.01, 0.1, 1, 10, 100, 1000];
-gamma_vals = 5;%[2, 10, 20, 100, 200, 500];
+tau_vals = 5 ;%[0.01, 0.1, 1, 10, 100, 1000];
+gamma_vals = 10;%[2, 10, 20, 100, 200, 500];
 
 % initalize vector to save AUCs
 % Tau        Gamma      N_total    S_total    N_parent   S_parent   N_child    S_child
@@ -426,8 +427,8 @@ tau = tau_vals(i);
         disp(save_path)
         save(save_path)
         if print == 1
-            fprintf('= %-10.3f %-10.3f %-10.5f %-10.5f %-10.5f %-10.5f %-10.5f %-10.5f=\n',...
-                     tau, gamma, AUC_nt, AUC_st, AUC_np_2, AUC_np_1, AUC_sp, AUC_nc, AUC_sc)
+            fprintf('= %-10.3f %-10.3f %-10.5f %-10.5f %-10.5f %-10.5f %-10.5f %-10.5f %-10.5f %-10.5f %-10.5f %-10.5f %-10.5f %-10.5f %-10.5f=\n',...
+                     tau, gamma, AUC_nt, AUC_st, AUC_np_2, AUC_np_1, AUC_sp_2, AUC_sp_1, AUC_nc_2n,AUC_nc_2h, AUC_nc_1h,AUC_nc_1n,AUC_sc_2h,AUC_sc_2n,AUC_sc_1h,AUC_sc_1n)
         end
     end
 end
@@ -436,7 +437,7 @@ if print == 1
     fprintf(['=========================================================================================='])
 end
 format longg
-params_AUCs = reshape(params_AUCs, length(tau_vals)*length(gamma_vals),8);
+% params_AUCs = reshape(params_AUCs, length(tau_vals)*length(gamma_vals),8);
 end
 
 
