@@ -24,10 +24,10 @@ addpath([genpath('/Users/jocelynornelasmunoz/Desktop/Research/structural_variant
 % Coverage (P,C)= (7,3), (3,7), (5,5) x erreps=0.1,0.5
 % 09/26/22 Experiments
 filenames = [
-            "data/100000n_5000k/3Lp_7Lc/diploid_4pctNovel_80pctSim_5e-02eps.mat"
+%            "data/100000n_5000k/3Lp_7Lc/diploid_4pctNovel_80pctSim_5e-02eps.mat"
 %             "data/100000n_5000k/3Lp_7Lc/diploid_4pctNovel_80pctSim_1e-01eps.mat",
 %              "data/100000n_5000k/3Lp_7Lc/diploid_4pctNovel_80pctSim_5e-01eps.mat",
-%              "data/100000n_5000k/7Lp_3Lc/diploid_4pctNovel_80pctSim_1e-01eps.mat",
+              "data/100000n_5000k/7Lp_3Lc/diploid_4pctNovel_80pctSim_1e-01eps.mat",
 %              "data/100000n_5000k/7Lp_3Lc/diploid_4pctNovel_80pctSim_5e-01eps.mat",
 %              "data/100000n_5000k/5Lp_5Lc/diploid_4pctNovel_80pctSim_1e-01eps.mat",
 %              "data/100000n_5000k/5Lp_5Lc/diploid_4pctNovel_80pctSim_5e-01eps.mat"
@@ -101,8 +101,8 @@ end
 
 % ---------------------  Regularization parameters  -----------------------
 % Define parameters regularization parameters 
-tau_vals = 0.001 ;%[0.01, 0.1, 1, 10, 100, 1000];
-gamma_vals = 10;%[2, 10, 20, 100, 200, 500];
+tau_vals = 1 ;%[0.01, 0.1, 1, 10, 100, 1000];
+gamma_vals = 2;%[2, 10, 20, 100, 200, 500];
 
 % initalize vector to save AUCs
 % Tau        Gamma      N_total    S_total    N_parent   S_parent   N_child    S_child
@@ -202,7 +202,7 @@ tau = tau_vals(i);
         
         % set maximum number of iterations, tol, and when to print to screen
         miniter = 3;
-        maxiter = 50;
+        maxiter = 70;
         tolerance = 1e-8;
         verbose = 2;
         stopcriterion = 3; 
