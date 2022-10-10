@@ -1,0 +1,102 @@
+\begin{thebibliography}{10}
+
+\bibitem{pevsner2015bioinformatics}
+Jonathan Pevsner,
+\newblock {\em Bioinformatics and functional genomics},
+\newblock John Wiley \& Sons, 2015.
+
+\bibitem{SPENCE202061}
+Melissa Spence, Mario Banuelos, Roummel~F. Marcia, and Suzanne Sindi,
+\newblock ``Detecting inherited and novel structural variants in low-coverage
+  parent-child sequencing data,''
+\newblock {\em Methods}, vol. 173, pp. 61--68, 2020,
+\newblock Multiscale Network-based Approaches.
+
+\bibitem{kosugi2019comprehensive}
+Shunichi Kosugi, Yukihide Momozawa, Xiaoxi Liu, Chikashi Terao, Michiaki Kubo,
+  and Yoichiro Kamatani,
+\newblock ``Comprehensive evaluation of structural variation detection
+  algorithms for whole genome sequencing,''
+\newblock {\em Genome biology}, vol. 20, no. 1, pp. 1--18, 2019.
+
+\bibitem{lander1988genomic}
+Eric~S Lander and Michael~S Waterman,
+\newblock ``Genomic mapping by fingerprinting random clones: a mathematical
+  analysis,''
+\newblock {\em Genomics}, vol. 2, no. 3, pp. 231--239, 1988.
+
+\bibitem{medvedev2009computational}
+Paul Medvedev, Monica Stanciu, and Michael Brudno,
+\newblock ``Computational methods for discovering structural variation with
+  next-generation sequencing,''
+\newblock {\em Nature methods}, vol. 6, no. 11, pp. S13--S20, 2009.
+
+\bibitem{genome2014whole}
+``Whole-genome sequence variation, population structure and demographic history
+  of the dutch population,''
+\newblock {\em Nature genetics}, vol. 46, no. 8, pp. 818--825, 2014.
+
+\bibitem{chen2009breakdancer}
+Ken Chen, John~W Wallis, Michael~D McLellan, David~E Larson, Joelle~M Kalicki,
+  Craig~S Pohl, Sean~D McGrath, Michael~C Wendl, Qunyuan Zhang, Devin~P Locke,
+  et~al.,
+\newblock ``Breakdancer: an algorithm for high-resolution mapping of genomic
+  structural variation,''
+\newblock {\em Nature methods}, vol. 6, no. 9, pp. 677--681, 2009.
+
+\bibitem{rausch2012delly}
+Tobias Rausch, Thomas Zichner, Andreas Schlattl, Adrian~M St{\"u}tz, Vladimir
+  Benes, and Jan~O Korbel,
+\newblock ``Delly: structural variant discovery by integrated paired-end and
+  split-read analysis,''
+\newblock {\em Bioinformatics}, vol. 28, no. 18, pp. i333--i339, 2012.
+
+\bibitem{quinlan2010genome}
+Aaron~R Quinlan, Royden~A Clark, Svetlana Sokolova, Mitchell~L Leibowitz, Yujun
+  Zhang, Matthew~E Hurles, Joshua~C Mell, and Ira~M Hall,
+\newblock ``Genome-wide mapping and assembly of structural variant breakpoints
+  in the mouse genome,''
+\newblock {\em Genome research}, vol. 20, no. 5, pp. 623--635, 2010.
+
+\bibitem{alliance2010understanding}
+Genetic Alliance,
+\newblock ``Understanding genetics: a district of columbia guide for patients
+  and health professionals,''
+\newblock 2010.
+
+\bibitem{MB_diploidTrios}
+Melissa Spence, Mario Banuelos, Roummel~F. Marcia, and Suzanne Sindi,
+\newblock ``Genomic signal processing for variant detection in diploid
+  parent-child trios,''
+\newblock in {\em 2020 28th European Signal Processing Conference (EUSIPCO)},
+  2021, pp. 1318--1322.
+
+\bibitem{lazar_2021}
+Andrew~P. Lazar,
+\newblock ``Novel structural variant detection through relatedness with
+  negative binomial optimizaiton,''
+\newblock M.S. thesis, 2021.
+
+\bibitem{Marcia_SPIRALTAP}
+Zachary~T. Harmany, Roummel~F. Marcia, and Rebecca~M. Willett,
+\newblock ``This is spiral-tap: Sparse poisson intensity reconstruction
+  algorithms—theory and practice,''
+\newblock {\em IEEE Transactions on Image Processing}, vol. 21, no. 3, pp.
+  1084--1096, 2012.
+
+\bibitem{MB_SingleParentDiploid}
+Mario Banuelos, Lasith Adhikari, Rubi Almanza, Andrew Fujikawa, Jonathan
+  Sahagún, Katharine Sanderson, Melissa Spence, Suzanne Sindi, and Roummel~F.
+  Marcia,
+\newblock ``Sparse diploid spatial biosignal recovery for genomic variation
+  detection,''
+\newblock in {\em 2017 IEEE International Symposium on Medical Measurements and
+  Applications (MeMeA)}, 2017, pp. 275--280.
+
+\bibitem{saito2015precision}
+Takaya Saito and Marc Rehmsmeier,
+\newblock ``The precision-recall plot is more informative than the roc plot
+  when evaluating binary classifiers on imbalanced datasets,''
+\newblock {\em PloS one}, vol. 10, no. 3, pp. e0118432, 2015.
+
+\end{thebibliography}

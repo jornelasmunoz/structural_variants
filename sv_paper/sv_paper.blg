@@ -1,57 +1,55 @@
-This is BibTeX, Version 0.99d (TeX Live 2021)
-Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+This is BibTeX, Version 0.99d (TeX Live 2015)
+Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
 The top-level auxiliary file: sv_paper.aux
-I couldn't open style file IEEEbib.bst
----line 41 of file sv_paper.aux
- : \bibstyle{IEEEbib
- :                  }
-I'm skipping whatever remains of this command
-I couldn't open database file strings.bib
----line 42 of file sv_paper.aux
- : \bibdata{strings
- :                 ,references.bib}
-I'm skipping whatever remains of this command
-I found no database files---while reading file sv_paper.aux
-I found no style file---while reading file sv_paper.aux
-You've used 4 entries,
-            0 wiz_defined-function locations,
-            91 strings with 613 characters,
-and the built_in function-call counts, 0 in all, are:
-= -- 0
-> -- 0
-< -- 0
-+ -- 0
-- -- 0
-* -- 0
-:= -- 0
-add.period$ -- 0
-call.type$ -- 0
-change.case$ -- 0
+The style file: IEEEbib.bst
+Database file #1: references.bib
+You're missing a field name---line 27 of file references.bib
+ :  
+ :  %date = {2010/10/01},
+(Error may have been on previous line)
+I'm skipping whatever remains of this entry
+Warning--empty author in genome2014whole
+Warning--empty journal in alliance2010understanding
+Warning--empty school in lazar_2021
+You've used 15 entries,
+            1838 wiz_defined-function locations,
+            558 strings with 6989 characters,
+and the built_in function-call counts, 3916 in all, are:
+= -- 333
+> -- 209
+< -- 2
++ -- 76
+- -- 61
+* -- 356
+:= -- 632
+add.period$ -- 15
+call.type$ -- 15
+change.case$ -- 14
 chr.to.int$ -- 0
-cite$ -- 0
-duplicate$ -- 0
-empty$ -- 0
-format.name$ -- 0
-if$ -- 0
+cite$ -- 18
+duplicate$ -- 147
+empty$ -- 354
+format.name$ -- 61
+if$ -- 852
 int.to.chr$ -- 0
-int.to.str$ -- 0
-missing$ -- 0
-newline$ -- 0
-num.names$ -- 0
-pop$ -- 0
-preamble$ -- 0
+int.to.str$ -- 15
+missing$ -- 15
+newline$ -- 78
+num.names$ -- 14
+pop$ -- 36
+preamble$ -- 1
 purify$ -- 0
 quote$ -- 0
-skip$ -- 0
+skip$ -- 55
 stack$ -- 0
-substring$ -- 0
-swap$ -- 0
-text.length$ -- 0
+substring$ -- 302
+swap$ -- 35
+text.length$ -- 2
 text.prefix$ -- 0
 top$ -- 0
 type$ -- 0
-warning$ -- 0
-while$ -- 0
-width$ -- 0
-write$ -- 0
-(There were 4 error messages)
+warning$ -- 3
+while$ -- 35
+width$ -- 17
+write$ -- 163
+(There was 1 error message)

@@ -1,0 +1,56 @@
+We will denote the observation vectors for the parent and the child by the vectors $\sP \in \R^n$, $\sC \in \R^n$, respectively. We assume the data follows a negative binomial distribution:
+\begin{equation} \label{observational_model}
+	\begin{bmatrix}
+		\sP \\
+		\sC
+	\end{bmatrix}
+	\sim \text{NegBin}
+	\Bigg( \begin{bmatrix}
+		\zP (2 \lambda_P - \varepsilon) + \yP (\lambda_P - \varepsilon) \\
+		\zH (2 \lambda_C - \varepsilon) + \yH (\lambda_C - \varepsilon) + \zN (2 \lambda_C - \varepsilon) + \yN (\lambda_C - \varepsilon) \\
+	\end{bmatrix} \Bigg)
+\end{equation}
+
+where $\lambda_P, \lambda_C$ represent the sequencing coverage \textemdash the average number of reads that align to known reference bases\textemdash of the parent and the child, respectively  and $\varepsilon >0$ is used to reflect the measurement errors incurred through the sequencing and mapping processes \cite{MB_diploidTrios, lazar_2021}. \\
+Let 
+$$
+\vec{s} = \begin{bmatrix}
+	\sP \\ \sC % \\ \sN
+\end{bmatrix}, \quad 
+\vec{z} = \begin{bmatrix}
+	\zP \\ \zH \\ \zN
+\end{bmatrix}, \quad 
+\vec{y} = \begin{bmatrix}
+	\yP \\ \yH \\ \yN
+\end{bmatrix}, \quad  
+\vec{f} = \begin{bmatrix}
+	\vec{z} \\ \vec{y}
+\end{bmatrix}, 
+$$
+where $\vec{f} \in \{0,1\}^{6n}$. Then we can express the general observation model as
+$$ \vec{s} \sim \text{NegBin}(A \vec{f} + \varepsilon \mathbf{1)}$$
+where $\mathbf{1} \in \R^{2n}$ is the vector of ones, $A$ is the sequence coverage matrix. 
+
+Let $I_n \in \R^{n \times n}$ be the $n \times n$ identity matrix. Then we can write the sequence coverage matrix $A = [A_1 \; A_2] \in \R^{2n \times 6n}$ with
+\renewcommand{\arraystretch}{2}
+\begin{center}
+	$$ A_1 = 
+	\left[
+	\begin{array}{c|c|c}
+		(2 \lambda_P - \varepsilon)I_n  & 0 & 0 \\ \hline
+		0  & (2 \lambda_C - \varepsilon)I_n &  (2 \lambda_C - \varepsilon)I_n 
+	\end{array}
+	\right]
+	$$
+\end{center}
+and 
+\begin{center}
+	$$ A_2 = 
+	\left[
+	\begin{array}{c|c|c}
+		(\lambda_P - \varepsilon)I_n  & 0 & 0 \\ \hline
+		0  & (\lambda_C - \varepsilon)I_n &  (\lambda_C- \varepsilon)I_n 
+	\end{array}
+	\right]
+	$$
+\end{center}
