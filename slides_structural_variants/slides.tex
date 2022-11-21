@@ -27,7 +27,7 @@ $^\dagger$ Department of Mathematics California State University, Fresno}\\
 	\vspace{-3mm}
 }
 
-\date{Wednesday, October 26, 2022}
+\date{Wednesday, November 16, 2022}
 
 \titlegraphic{\vspace{-5pt}
 	\includegraphics[width=1.5cm]{images/UCM_Seal.png}
@@ -85,6 +85,7 @@ $^\dagger$ Department of Mathematics California State University, Fresno}\\
 %     \item Rare, hard to detect occurrences in the genome
 % \end{itemize}
 
+Goal: Reconstruct signals from noisy measurements as accurately as possible. 
 
 \end{frame}
 
@@ -110,23 +111,23 @@ where $\fH \in \{0,1,2\}^n$ and $\fN \in \{0,1,2\}^n$ correspond to the vectors 
 \end{frame}
 
 \begin{frame}{Problem Formulation}
-    For each individual signal we consider two indicator signals such that $\vec{f}_i = 2\vec{z}_i + \vec{y}_i$ for $i \in \{P, H, N\}$. %\cite{MB_diploidTrios}.
+    For each individual signal we consider two indicator signals such that $\vec{f}_i = 2\vec{z}_i + \vec{y}_i$ for $i \in \{P, H, N\}$. \ %\cite{MB_diploidTrios}.
 {\begin{center}
 	\begin{columns}
 		\begin{column}{0.3\textwidth}
-		Homozygous indicator:
-			\vspace{5mm}
+		Homozygous indicator: 
+			\vspace{3mm}
 			\scalebox{0.8}{
 				\begin{tabular}{cl}
-					$\vec{z}_j = 1$  & if 2 copies of an SV are present at location $j$ \\ 
+					$\vec{z}_j = 1$  & if 2 copies of an SV are present at location $j$ \medskip \\  
 					$\vec{z}_j = 0$ & otherwise
 				\end{tabular}
 			}
-		Heterozygous indicator:
+		Heterozygous indicator: 
 			\vspace{5mm}
 			\scalebox{0.8}{
 				\begin{tabular}{cl}
-					$\vec{y}_j = 1$  & if 1 copy of an SV is present at location $j$ \\
+					$\vec{y}_j = 1$  & if 1 copy of an SV is present at location $j$ \medskip \\
 					$\vec{y}_j = 0$ & otherwise
 				\end{tabular}
 			}
@@ -142,25 +143,176 @@ where $\fH \in \{0,1,2\}^n$ and $\fN \in \{0,1,2\}^n$ correspond to the vectors 
 	\end{center}}
 \end{frame}
 
+\begin{frame}{Problem Formulation}
+	Next, we split the child's diploid indicators into inherited, $H$, and novel, $N$, indicators 
+	{\begin{center}
+			\begin{columns}
+				\begin{column}{0.49\textwidth}
+					\begin{figure}
+						\includegraphics[width=.9\linewidth]{imgs/parent_z_y.png}
+					\end{figure}
+				\end{column}
+				%\hspace{5mm}
+				\begin{column}{0.49\textwidth}
+					\vspace{-5mm}
+					\begin{figure}
+						\includegraphics[width=.9\linewidth]{imgs/child_z_y_all.png}
+					\end{figure}
+				\end{column}
+			\end{columns}
+	\end{center}}
+\end{frame}
 
 \begin{frame}{Problem Formulation}
-    We will denote the set of all vectors satisfying the constraints by $\mathcal{S}$,
-    \renewcommand{\arraystretch}{1.3}
-    \begin{align*}
-        \mathcal{S} = \left\{
-            \vec{f} = 
-            \begin{bmatrix}
-                \zP \\ \zH \\ \zN \\ \yP \\ \yH \\ \yN 
-            \end{bmatrix} \in \R^{6n} : 
-            \begin{matrix*}[l]
-            &\mathbf{0} \leq \, \vec{z}_i + \vec{y}_i \, \leq \mathbf{1}\\
-            & \mathbf{0} \leq \, \zH + \yH + \zN + \yN \, \leq \mathbf{1}\\
-            &\mathbf{0} \leq \, \zH   \, \leq \, \zP + \yP  \, \leq \mathbf{1}\\
-            &\mathbf{0} \leq \, \zP   \, \leq \, \zH + \yH  \, \leq \mathbf{1}\\
-            &\mathbf{0} \leq \, \zN + \yN   \, \leq \, 1- (\zP +\yP)  \, \leq \mathbf{1}
-            \end{matrix*}
-             \right\}
-    \end{align*}
+Next, we split the child's diploid indicators into inherited, $H$, and novel, $N$, indicators 
+	{\begin{center}
+			\begin{columns}
+				\begin{column}{0.49\textwidth}
+					\begin{figure}
+						\includegraphics[width=.9\linewidth]{imgs/parent_z_y_arrows.png}
+					\end{figure}
+				\end{column}
+				%\hspace{5mm}
+				\begin{column}{0.49\textwidth}
+					\vspace{-5mm}
+					\begin{figure}
+						\includegraphics[width=.9\linewidth]{imgs/child_z_y_arrows.png}
+					\end{figure}
+				\end{column}
+			\end{columns}
+	\end{center}}
+\end{frame}
+
+\begin{frame}{Problem Formulation}
+	We leverage relatedness in our model by incorporating the following assumptions:
+	\pause
+	\begin{itemize}
+		\item An individual can only have 0, 1, or 2 copies of an SV per candidate location
+		\pause
+		
+		\item 	If the child has an inherited SV,  the SV cannot also be novel
+		\pause
+		
+		\item 	If the child has an inherited homogenous SV, the parent has at least a heterogeneous SV 
+		\pause
+		
+		\item 	If the parent has a homogeneous SV, the child must have at least a heterogeneous SV
+		\pause
+		
+		\item 	If the child has a novel SV, the parent does not have that SV
+		
+	\end{itemize}
+\pause
+Mathematically, these are written as constraints:
+%\renewcommand{\arraystretch}{1.3}
+\begin{align*}
+	\mathcal{S} = \left\{
+	\vec{f} = 
+	\begin{bmatrix}
+		\zP \\ \zH \\ \zN \\ \yP \\ \yH \\ \yN 
+	\end{bmatrix} \in \R^{6n} : 
+	\begin{matrix*}[l]
+		&\mathbf{0} \leq \, \vec{z}_i + \vec{y}_i \, \leq \mathbf{1}\\
+		& \mathbf{0} \leq \, \zH + \yH + \zN + \yN \, \leq \mathbf{1}\\
+		&\mathbf{0} \leq \, \zH   \, \leq \, \zP + \yP  \, \leq \mathbf{1}\\
+		&\mathbf{0} \leq \, \zP   \, \leq \, \zH + \yH  \, \leq \mathbf{1}\\
+		&\mathbf{0} \leq \, \zN + \yN   \, \leq \, 1- (\zP +\yP)  \, \leq \mathbf{1}
+	\end{matrix*}
+	\right\}
+\end{align*}
+
+	
+\end{frame}
+%\begin{frame}{Problem Formulation}
+%    We will denote the set of all vectors satisfying the constraints by $\mathcal{S}$,
+%    \renewcommand{\arraystretch}{1.3}
+%    \begin{align*}
+%        \mathcal{S} = \left\{
+%            \vec{f} = 
+%            \begin{bmatrix}
+%                \zP \\ \zH \\ \zN \\ \yP \\ \yH \\ \yN 
+%            \end{bmatrix} \in \R^{6n} : 
+%            \begin{matrix*}[l]
+%            &\mathbf{0} \leq \, \vec{z}_i + \vec{y}_i \, \leq \mathbf{1}\\
+%            & \mathbf{0} \leq \, \zH + \yH + \zN + \yN \, \leq \mathbf{1}\\
+%            &\mathbf{0} \leq \, \zH   \, \leq \, \zP + \yP  \, \leq \mathbf{1}\\
+%            &\mathbf{0} \leq \, \zP   \, \leq \, \zH + \yH  \, \leq \mathbf{1}\\
+%            &\mathbf{0} \leq \, \zN + \yN   \, \leq \, 1- (\zP +\yP)  \, \leq \mathbf{1}
+%            \end{matrix*}
+%             \right\}
+%    \end{align*}
+%\end{frame}
+\begin{frame}{Observational Model}
+	Under the Negative Binomial assumption, we can model the noise in our observation as \vspace{2em}
+	\begin{equation*}
+		\begin{bmatrix}
+			\vec{s}_P \\
+			\vec{s}_C
+		\end{bmatrix}
+		\sim \text{NegBin}
+		\Bigg( \begin{bmatrix}
+			\vec{z}_P \,(2 \lambda_P - \varepsilon)\; +\; \vec{y}_P \,(\lambda_P - \varepsilon) \\
+			\vec{z}_H \,(2 \lambda_C - \varepsilon)\; +\; \vec{y}_H \,(\lambda_C - \varepsilon) \;+ \; \vec{z}_N \,(2 \lambda_C - \varepsilon) \;+ \;\vec{y}_N \,(\lambda_C - \varepsilon) \\
+		\end{bmatrix} \Bigg)
+	\end{equation*}
+\vspace{2em}
+
+where \smallskip
+\begin{itemize}
+	\item $\vec{s}_P, \; \vec{s}_C \in \mathbb{R}^n$: length-$n$ vector of counts for the parent and the child, respectively
+	\item $\lambda_P, \, \lambda_C$ : sequencing coverage of the parent and the child, respectively
+	\item $\varepsilon >0$: measurement errors incurred in the sequencing and mapping process
+	
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Observational Model}
+More generally, if we let  
+$$\vec{s} = \begin{bmatrix}
+	\vec{s}_P \\ \vec{s}_C
+\end{bmatrix}, \quad 
+\vec{z} = \begin{bmatrix}
+	\vec{z}_P \\ \vec{z}_H \\ \vec{z}_N
+\end{bmatrix}, \quad 
+\vec{y} = \begin{bmatrix}
+	\vec{y}_P \\ \vec{y}_H \\ \vec{y}_N
+\end{bmatrix}, \quad  
+\vec{f} = \begin{bmatrix}
+	\vec{z} \\ \vec{y}
+\end{bmatrix}$$
+
+we can express our observation model as
+$$\vec{s} \sim \text{NegBin}(A \vec{f} + \varepsilon \mathbf{1)}$$
+where
+\begin{itemize}
+	\item $\vec{s} \in \mathbb{Z}_{+}^{2n}$ is a length-$2n$ vector of observed coverage counts
+	\item $\vec{f} \in \{0,1\}^{6n}$ is the signal of interest
+	\item $\mathbf{1} \in \mathbb{R}^{2n}$ is the vector of ones
+	\item $A \in \mathbb{R}^{2n \times 6n}$ is the sequence coverage matrix
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Observational Model}
+	
+	The probability of observing a particular vector of counts $\vec{s}$ given the true signal $\vec{f}$ is given by
+	\medskip 
+	$$p(\vec{s} \; | A\vec{f})\; = \prod_{l=1}^{2n} \left( \frac{1}{1+ (A \vec{f})_l + \varepsilon} \right) \left(  \frac{((A \vec{f})_l + \varepsilon)}{1+ (A \vec{f})_l + \varepsilon} \right)^{s_l} $$
+	
+	\medskip
+	We use gradient-based maximum likelihood approach to recover the indicator variables $\vec{z}_i, \, \vec{y}_i, \; i \in \{\ P,H,N\}$. 
+\end{frame}
+
+\begin{frame}{Observational Model}
+	
+	The probability of observing a particular vector of counts $\vec{s}$ given the true signal $\vec{f}$ is given by
+	\medskip 
+	$$p(\vec{s} \; | A\vec{f})\; = \prod_{l=1}^{2n} \left( \frac{1}{1+ (A \vec{f})_l + \varepsilon} \right) \left(  \frac{((A \vec{f})_l + \varepsilon)}{1+ (A \vec{f})_l + \varepsilon} \right)^{s_l} $$
+	
+	\medskip
+	We want to minimize the Negative Binomial negative log-likelihood function
+	$$F(\vec{f}) \equiv \sum_{l=1}^{2n}  (1 + s_l)\log \big(1+ e_l^T A \vec{f} + \varepsilon \big) - s_l \log \big( e_l^T A \vec{f} + \varepsilon \big)$$
 \end{frame}
 
 \begin{frame}{Optimization Framework}
@@ -178,41 +330,167 @@ Our objective function takes the following form:
 where 
 \begin{itemize}
     \item $F(\vec{f})$ is the Negative Binomial negative log-likelihood function
-    \item $\text{pen}(\vec{f}) = (\|\zP\|_1 + \|\zH\|_1 + \|\yP\|_1 + \|\yH\|_1) + \gamma (\|\zN\|_1 + \|\yN\|_1)$
+    \item $\text{pen}(\vec{f}) = (\|\zP\|_1 + \|\zH\|_1 + \|\yP\|_1 + \|\yH\|_1) + \gamma (\|\zN\|_1 + \|\yN\|_1)$ is the $\ell_1$ penalty term
     \item $\tau > 0 $ and $\gamma \gg 1$ are regularization parameters
-    \item \mathcal{S} is the set of vectors satisfying the biological constraints
+    \item $\mathcal{S}$ is the set of vectors satisfying the biological constraints
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Numerical Experiments}
-    \begin{itemize}
-        \item Individual signal size: $n = 10^5$
-        \item Total SVs: $k=50$
-        \item Coverage: $\lambda_p = 2$, $\lambda_c = 4$ 
-    \end{itemize}
-    \begin{figure}
- 	 	\includegraphics[width = .75\textwidth]{imgs/table.png}
- 	 	\caption{Table of vector values for resulting reconstructions}
-	 \end{figure}
+\begin{frame}{Optimization Framework}
+ We use a second-order Taylor series expansion to approximate $F(\vec{f})$ at iterate $\vec{f}^k$ and solve the separable quadratic subproblem,
+ \smallskip
+ \begin{equation} \label{subproblemIterate}
+ 	\vec{f}^{k+1} = 
+ 	\begin{aligned}
+ 		& \underset{\vec{f} \in \R^{6n}}{\text{arg min}}
+ 		& & \mathcal{Q}(\vec{f})= \frac{1}{2}\|\vec{f} - \vec{r}^{\,k}\|_2^2 + \frac{\tau}{\alpha_k} \text{pen}(\vec{f}) \\
+ 		& \text{subject to}
+ 		& & \vec{f} \in \mathcal{S}
+ 	\end{aligned}
+ \end{equation}
+
+\smallskip
+where $\vec{r}^{\,k} = 
+[\vec{r}_{z_P}^{\,k} ,\vec{r}_{z_H}^{\,k},\vec{r}_{z_N}^{\,k},\vec{r}_{y_P}^{\,k},\vec{r}_{y_H}^{\,k},\vec{r}_{y_N}^{\,k}]^T
+= \vec{f}^k $ $- \frac{1}{\alpha_k} \nabla F(\vec{f}^k)$ and $\alpha_k$ is \textcolor{red}{INSERT HERE}.
+
+% ADD FOOTNOTE: (Banuelos et. al., 2018, Harmany, et.al., 2012)
+\end{frame}
+
+\begin{frame}{Optimization Framework}
+	Our objective function $\mathcal{Q}(\vec{f})$ is separable and decouples into the function
+	%\begin{equation*}
+	$\mathcal{Q}(\vec{f}) = \sum_{j=1}^{n} \mathcal{Q}_j(\zP, \zH, \zN, \yP, \yH, \yN),$
+	%\end{equation*}
+	where
+			\begin{align*}
+			\mathcal{Q}_j(\zP, \zH, \zN, \yP, \yH, \yN) = 
+				&\frac{1}{2}\Bigg\{
+				((\zP - \vec{r}_{\zP}^{\, k})_j)^2 + 
+				((\zH - \vec{r}_{\zH}^{\, k})_j)^2 +
+				((\zN - \vec{r}_{\zN}^{\, k})_j)^2 \\ 
+				&+ 
+				((\yP - \vec{r}_{\yP}^{\, k})_j)^2 + 
+				((\yH - \vec{r}_{\yH}^{\, k})_j)^2 +
+				((\yN - \vec{r}_{\yN}^{\, k})_j)^2 \Bigg\} \\
+				&+
+				\frac{\tau}{\alpha_k} \Big\{ |(\zP)_j| + 
+				|(\zH)_j| + \gamma |(\zN)_j| \\
+				&+ 
+				|(\yP)_j| +  |(\yH)_j| + \gamma |(\yN)_j|\Big\}
+			\end{align*}
+\end{frame}
+
+\begin{frame}{Optimization Framework}
+	Since the bounds that define the region $\mathcal{S}$ are component-wise, then  \Cref{subproblemIterate} separates into subproblems of the form: 
+			\begin{equation} \label{scalarSubprob}
+				\begin{aligned}
+					\vec{f}^{k+1}= %\arg
+					\min_{\substack{z_P,z_H,z_N,\\ y_P,y_H,y_N \in \R}}
+				    &\frac{\tau}{\alpha_k}\; \Big\{ 
+					|(\zP)_j| + |(\zH)_j| + \gamma |(\zN)_j| %\\
+					%\hspace{10pt}  & +
+					+	|(\yP)_j| + |(\yH)_j| + \gamma |(\yN)_j|\Big\} \\
+					& + \frac{1}{2} \Big\{
+					((\zP - \vec{r}_{\zP}^{\, k})_j)^2 + 
+					((\zH - \vec{r}_{\zH}^{\, k})_j)^2 +
+					((\zN - \vec{r}_{\zN}^{\, k})_j)^2 \\ & + 
+					((\yP - \vec{r}_{\yP}^{\, k})_j)^2 + 
+					((\yH - \vec{r}_{\yH}^{\, k})_j)^2 +
+					((\yN - \vec{r}_{\yN}^{\, k})_j)^2 \Big\} \\
+					& \text{subject to } \vec{f} \in S
+				\end{aligned}
+			\end{equation}
+		where $f_i$ and $r_{z_i}, r_{y_i}$ %for $i \in \{P,H,N\},\,$ 
+		are scalar components of $\vec{f_i}$ and $\vec{r}_{z_i}, \vec{r}_{y_i}$, respectively, at the same location.  
+\end{frame}
+\begin{frame}{Optimization Approach}
+	We solve our problem using an alternating block-coordinate descent approach, following the methods. We fix all but one individual and solve \Cref{subproblemIterate} over both indicator variables for that individual.\\
+	\medskip
+	\begin{tabular}{c c}
+		\textbf{Step 0:} & \text{Compute the unconstrained minimizer of \Cref{subproblemIterate}  given by}\\
+								   & $\vec{f} = [\vec{r}_{z_P} - \frac{\tau}{\alpha_k} \mathbf{1}_n, \; \vec{r}_{z_H} - \frac{\tau}{\alpha_k} \mathbf{1}_n, \; \vec{r}_{z_N} - \frac{\tau}{\alpha_k}  \gamma \mathbf{1}_n, \; $\\
+								   & \hspace{2.5em}$\vec{r}_{y_P} - \frac{\tau}{\alpha_k} \mathbf{1}_n, \; \vec{r}_{y_H} - \frac{\tau}{\alpha_k} \mathbf{1}_n, \; \vec{r}_{y_N} - \frac{\tau}{\alpha_k} \gamma \mathbf{1}_n]^T$\\
+								   & \hspace{-12em}where $\mathbf{1}_n \in \R^n$\\
+								   & \phantom{ }\\
+								   & \hspace{-15em} Initialize indicator variables\\
+								   & \phantom{ }\\
+								   & %\begin{equation*}
+								   	$\begin{aligned}
+								   		\hat{z}_P^{(0)} &= r_{z_P}^k - \frac{\tau}{\alpha_k} 						  	 & \quad \hat{y}_P^{(0)} &= r_{y_P}^k - \frac{\tau}{\alpha_k}, \\
+								   		\hat{z}_H^{(0)} & = \{0,r_{z_H}^k - \frac{\tau}{\alpha_k},1 \} 			     & \quad \hat{y}_H^{(0)} &= \{0,r_{y_H}^k - \frac{\tau}{\alpha_k},1 \}, \\
+								   	    \hat{z}_N^{(0)} &= \{0,r_{z_N}^k - \frac{\tau}{\alpha_k}\gamma,1 \}  & \quad \hat{y}_N^{(0)} &= \{0,r_{y_N}^k - \frac{\tau}{\alpha_k}\gamma,1 \}
+								   	\end{aligned}$\\
+								   %\end{equation*}\\
+	\end{tabular}
+	
+\end{frame}
+
+\begin{frame}{Optimization Approach}
+	(cont.)\\
+	\medskip
+	\begin{tabular}{c l}
+		\textbf{Step 1:}  & Project $\hat{z}_P^{(k-1)}$ and $\hat{y}_P^{(k-1)}$ onto the feasible set $S$ with fixed \\
+								   &  inherited and novel variables to obtain  $\hat{z}_P^{(k)}$ and $\hat{y}_P^{(k)}$.\\
+								   & \phantom{ }\\ \pause
+		\textbf{Step 2:} & Project $\hat{z}_H^{(k-1)}, \hat{y}_H^{(k-1)}$ onto the feasible set $S$ with fixed \\
+								   &  parent and child's novel indicator variables to obtain  $\hat{z}_H^{(k)}$ and $\hat{y}_H^{(k)}$.\\
+								   & \phantom{ }\\ \pause
+		\textbf{Step 3:} & Project $\hat{z}_N^{(k-1)}, \hat{y}_N^{(k-1)}$ onto the feasible set $S$ with fixed \\
+								   & parent and child's inherited indicator variables to obtain  $\hat{z}_N^{(k)}$ and $\hat{y}_N^{(k)}$.\\
+								   & \phantom{ }\\ \pause
+		\textbf{Step 4:} & Repeat Steps $1, 2,$ and $3$ until the relative difference between \\
+								   & consecutive iterates converges to $\|\vec{f}^{k+1} - \vec{f}^{k}\|/\|\vec{f}^{k}\| \leq 10^{-8}$.				
+	\end{tabular}
+	
+\end{frame}
+
+\begin{frame}{Optimization Approach}
+Insert figure of feasible regions (or do it by steps)
 \end{frame}
 
 \begin{frame}{Numerical Experiments}
-    \begin{itemize}
-        \item Individual signal size: $n = 10^5$
-        \item Total SVs: $k=50$
-        \item Coverage: $\lambda_p = 2$, $\lambda_c = 4$ 
-    \end{itemize}
-    \begin{figure}
- 	 	\includegraphics[width = .75\textwidth]{imgs/distribution.png}
- 	 	\caption{Distribution of values for resulting reconstructions over 36 experiments}
-	 \end{figure}
+We implemented our method by  modifying the existing SPIRAL approach to include the negative binomial statistical method.
+We compared the Poisson-based predictions (SPIRAL) with the Negative Binomial-based predictions (NEBULA).
+
+%we simulated two parent signals of size $10^5$ with a set number of structural variants and a set similarity of $80\%$ between the parent signals \cite{MB_diploidTrios, MB_SingleParentDiploid}. In the parent signals, $5000$ locations were chosen at random to be structural variants. We then constructed the child signal by first applying a logical implementation of inheritance to $\lfloor 5000p \rfloor$ randomly selected parent structural variants (where $p$ is the percent overlap between parent and child SVs). Next, we chose  $(5000 - \lfloor 5000p \rfloor)$ locations from the remaining $(10^5 - 5000)$ that were not chosen as a parent variant to be novel variants in the child.  After forming the true signals for each individual, the observed signals were generated by sampling from the Negative Binomial distribution with a given coverage and error. For the purpose of testing the proposed approach, only one parent signal was used.
 \end{frame}
+%\begin{frame}{Numerical Experiments}
+%    \begin{itemize}
+%        \item Individual signal size: $n = 10^5$
+%        \item Total SVs: $k=50$
+%        \item Coverage: $\lambda_p = 2$, $\lambda_c = 4$ 
+%    \end{itemize}
+%    \begin{figure}
+% 	 	\includegraphics[width = .75\textwidth]{imgs/table.png}
+% 	 	\caption{Table of vector values for resulting reconstructions}
+%	 \end{figure}
+%\end{frame}
+%
+%\begin{frame}{Numerical Experiments}
+%    \begin{itemize}
+%        \item Individual signal size: $n = 10^5$
+%        \item Total SVs: $k=50$
+%        \item Coverage: $\lambda_p = 2$, $\lambda_c = 4$ 
+%    \end{itemize}
+%    \begin{figure}
+% 	 	\includegraphics[width = .75\textwidth]{imgs/distribution.png}
+% 	 	\caption{Distribution of values for resulting reconstructions over 36 experiments}
+%	 \end{figure}
+%\end{frame}
 
 
 
 %%%% BACKUPPPP
-
-\begin{frame}{Observational Model}
+\begin{frame}{}
+	\begin{center}
+		\vspace{30mm}
+		\Large	Gracias!
+	\end{center}
+%	\centering \Large
+%	\emph{Gracias}
+\end{frame}
+\begin{frame}{Observational Model}[noframenumbering]
 %\textcolor{forestgreen}{Goal:} Reconstruct signals from noisy measurements as accurately as possible. 
   Let $I_n \in \mathbb{R}^{n \times n}$ be the $n \times n$ identity matrix. Then we can write the sequence coverage matrix $A = [A_1 \; A_2] \in \mathbb{R}^{2n \times 6n}$ with:
   \renewcommand{\arraystretch}{2}
